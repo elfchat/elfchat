@@ -20,4 +20,5 @@ src/scroll.js \
 src/view.js \
 src/server.js \
 src/tabs.js \
+src/popover.js \
 src/application.js

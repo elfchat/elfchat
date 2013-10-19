@@ -99,3 +99,14 @@ class ChatBoardView extends View {
         return template('chat/board/chat')(this);
     }
 }
+
+class UserProfileView extends View {
+    constructor(user) {
+        this.id = 'profile-' + user.id;
+        this.user = user;
+    }
+
+    render() {
+        return template('chat/popover/profile')(this);
+    }
+}

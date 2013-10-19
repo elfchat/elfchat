@@ -35,7 +35,7 @@ class Application {
             .on('user_update', $.proxy(this.onUserUpdate, this));
 
         $(document)
-            .on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick));
+            .on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this));
 
         $(this.dom.textarea)
             .bind('keydown', 'return', $.proxy(this.onSend, this));
@@ -83,7 +83,7 @@ class Application {
     }
 
     addRecentMessages() {
-        for(var message of window.recent) {
+        for (var message of window.recent) {
             this.addMessage(new MessageView(message));
         }
         this.scroll.down();
@@ -111,23 +111,9 @@ class Application {
 
     onPopoverClick(event) {
         event.stopPropagation();
-
         var button = $(event.target);
         var id = button.attr('data-popover');
-        var popover = this.popovers.get(id);
-
-        if (null === popover) {
-            var userId = button.attr('data-user-id');
-            if (null === userId) {
-                popover = new Popover.Popover(id);
-            } else {
-                user = this.users.get(userId);
-                popover = new Popover.User(user);
-            }
-            this.popovers.add(popover);
-        }
-
-        popover.setButton(button);
+        var popover = Popover.create(id, button);
         popover.toggle();
     }
 

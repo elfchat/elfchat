@@ -214,6 +214,20 @@ var ChatBoardView = function($__super) {
   }, {}, $__proto, $__super, true);
   return $ChatBoardView;
 }(View);
+var UserProfileView = function($__super) {
+  'use strict';
+  var $__proto = $__getProtoParent($__super);
+  var $UserProfileView = ($__createClass)({
+    constructor: function(user) {
+      this.id = 'profile-' + user.id;
+      this.user = user;
+    },
+    render: function() {
+      return template('chat/popover/profile')(this);
+    }
+  }, {}, $__proto, $__super, true);
+  return $UserProfileView;
+}(View);
 var Server = function() {
   'use strict';
   var $Server = ($__createClassNoExtends)({
@@ -380,6 +394,126 @@ var Tabs = function() {
   }, {});
   return $Tabs;
 }();
+var popovers = {};
+var Popover = function() {
+  'use strict';
+  var $Popover = ($__createClassNoExtends)({
+    constructor: function(popover) {
+      var button = arguments[1] !== (void 0) ? arguments[1]: null;
+      var box = arguments[2] !== (void 0) ? arguments[2]: '.box';
+      var _this = this;
+      this.popover = popover;
+      this.box = $(box);
+      this.margin = 10;
+      this.onTop = 'top';
+      this.onBottom = 'bottom';
+      this.onLeft = 'left';
+      this.onRight = 'right';
+      this.arrow = this.popover.find('.arrow');
+      this.autohide = false;
+      if (button !== null) {
+        this.on(button);
+      }
+      $(window).resize(function() {
+        return _this.reposition();
+      });
+      $('body').mouseup((function(event) {
+        if (_this.autohide && _this.popover.has(event.target).length === 0) {
+          _this.hide();
+        }
+      }));
+    },
+    on: function(button) {
+      var _this = this;
+      this.button = button;
+      this.button.mousedown((function(event) {
+        _this.autohide = false;
+      }));
+      return this;
+    },
+    reposition: function() {
+      var arrowPosition, boxSize, buttonOffset, buttonSize, offset, over, popoverPosition, popoverSize;
+      boxSize = {
+        width: this.box.width(),
+        height: this.box.height()
+      };
+      buttonOffset = this.button.offset();
+      buttonSize = {
+        width: this.button.outerWidth(),
+        height: this.button.outerHeight()
+      };
+      popoverSize = {
+        width: this.popover.outerWidth(),
+        height: this.popover.outerHeight()
+      };
+      if (this.popover.hasClass(this.onLeft) || this.popover.hasClass(this.onRight)) {
+        if (this.popover.hasClass(this.onLeft)) {
+          popoverPosition = {
+            top: buttonOffset.top - (popoverSize.height / 2) + (buttonSize.height / 2),
+            left: buttonOffset.left - popoverSize.width
+          };
+        } else {
+          popoverPosition = {
+            top: buttonOffset.top - (popoverSize.height / 2) + (buttonSize.height / 2),
+            left: buttonOffset.left + buttonSize.width
+          };
+        }
+        arrowPosition = {top: popoverSize.height / 2};
+        if ((over = popoverPosition.top + popoverSize.height) > boxSize.height) {
+          offset = over - boxSize.height + this.margin;
+          popoverPosition.top -= offset;
+          arrowPosition.top += offset;
+        }
+        if ((over = popoverPosition.top) < 0) {
+          offset = - over + this.margin;
+          popoverPosition.top += offset;
+          arrowPosition.top -= offset;
+        }
+      } else {
+        popoverPosition = {
+          top: buttonSize.height + buttonOffset.top,
+          left: buttonOffset.left - (popoverSize.width / 2) + (buttonSize.width / 2)
+        };
+        arrowPosition = {left: popoverSize.width / 2};
+        if (popoverPosition.top + popoverSize.height > boxSize.height || this.popover.hasClass(this.onTop)) {
+          popoverPosition.top = buttonOffset.top - popoverSize.height;
+        }
+        if ((over = popoverPosition.left + popoverSize.width) > boxSize.width) {
+          offset = over - boxSize.width + this.margin;
+          popoverPosition.left -= offset;
+          arrowPosition.left += offset;
+        }
+        if ((over = popoverPosition.left) < 0) {
+          offset = - over + this.margin;
+          popoverPosition.left += offset;
+          arrowPosition.left -= offset;
+        }
+      }
+      this.popover.css(popoverPosition);
+      return this.arrow.css(arrowPosition);
+    },
+    show: function() {
+      this.reposition();
+      this.popover.show();
+      return this.autohide = true;
+    },
+    hide: function() {
+      return this.popover.hide();
+    },
+    toggle: function() {
+      this.reposition();
+      this.popover.toggle();
+      return this.autohide = true;
+    }
+  }, {create: function(id, button) {
+      if (popovers[id]) {
+        return popovers[id].on(button);
+      } else {
+        return popovers[id] = new Popover($('#' + id), button);
+      }
+    }});
+  return $Popover;
+}();
 var Application = function() {
   'use strict';
   var $Application = ($__createClassNoExtends)({
@@ -400,7 +534,7 @@ var Application = function() {
     },
     bind: function() {
       $(window).on('connect', $.proxy(this.onConnect, this)).on('login_success', $.proxy(this.onLoginSuccess, this)).on('synchronize', $.proxy(this.onSynchronize, this)).on('message', $.proxy(this.onMessage, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('user_update', $.proxy(this.onUserUpdate, this));
-      $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick));
+      $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this));
       $(this.dom.textarea).bind('keydown', 'return', $.proxy(this.onSend, this));
     },
     onSend: function(event) {
@@ -458,18 +592,7 @@ var Application = function() {
       event.stopPropagation();
       var button = $(event.target);
       var id = button.attr('data-popover');
-      var popover = this.popovers.get(id);
-      if (null === popover) {
-        var userId = button.attr('data-user-id');
-        if (null === userId) {
-          popover = new Popover.Popover(id);
-        } else {
-          user = this.users.get(userId);
-          popover = new Popover.User(user);
-        }
-        this.popovers.add(popover);
-      }
-      popover.setButton(button);
+      var popover = Popover.create(id, button);
       popover.toggle();
     },
     addMessage: function(messageView) {
