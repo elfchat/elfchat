@@ -1,0 +1,14 @@
+{
+  "name": "jquery.scrollto",
+  "_cacheHeaders": {
+    "ETag": "\"85ce427927c3dd725b7fd5c0c33a77e6\"",
+    "Content-Length": "2434",
+    "Content-Type": "text/plain; charset=utf-8",
+    "Content-Disposition": "inline"
+  },
+  "_release": "e-tag:85ce42792",
+  "main": "index.js",
+  "_source": "https://raw.github.com/flesler/jquery.scrollTo/master/jquery.scrollTo.min.js",
+  "_target": "*",
+  "_originalSource": "https://raw.github.com/flesler/jquery.scrollTo/master/jquery.scrollTo.min.js"
+}

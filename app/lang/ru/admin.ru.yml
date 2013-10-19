@@ -1,0 +1,36 @@
+title: ElfChat Admin
+home: Домой
+users: Пользователи
+
+config: Конфигурация
+database: База данных
+rest: Остальное
+config_saved: Настройки успешно сохранены.
+
+
+save: Сохранить
+reset: Отменить
+
+
+user:
+  id: "#"
+  name: Имя
+  email: E-Mail
+  password: Пароль
+  roles: Группа
+
+  edit: Редактировать
+  edit.title: Редактирование %name%
+  edit.success: Пользователь "%name%" успешно отредактирован.
+  delete: Удалить
+
+  notfound: Пользователь не найден.
+
+  role:
+    user: Пользователь
+    moderator: Модератор
+    admin: Администратор
+
+Remove avatar: Удалить аватар пользователя
+User not found: Пользовтель не найден
+

@@ -1,0 +1,56 @@
+<script src="{{ asset('lib/vendors.js') }}"></script>
+<script src="{{ asset('app.js') }}"></script>
+<script src="{{ app.config.server }}/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+    // Config
+    {% autoescape false %}
+    window.config = {
+        server: '{{ app.config.server }}',
+        namespace: '{{ app.config.domain }}',
+        domain: '{{ app.config.domain }}',
+        auth: {{ save|json_encode() }},
+        api: {
+            send: '{{ url('send') }}'
+        },
+        sound: {
+            message: '{{ app.request.basePath }}/web/lib/media/sound/beep.mp3',
+            join: '{{ app.request.basePath }}/web/lib/media/sound/online.mp3'
+        }
+    };
+    {% endautoescape %}
+
+    // Recent messages
+    window.recent = {{ recent|json_encode|raw }};
+
+    // Translation
+    window.lang = {{ lang|json_encode|raw }};
+
+    // Room
+    window.room = 'main';
+
+    // Application
+    $(function () {
+        window.sound = new Sound();
+        window.tabs = new Tabs();
+        window.chat = new Application();
+        window.chat.run();
+    });
+</script>
+
+{# Emotions #}
+{% include 'chat/popover/emotion.twig' %}
+{{ view('chat/popover/emotionTab.view')|raw }}
+
+{# Chat #}
+{{ view('chat/tab/room.view')|raw }}
+{{ view('chat/tab/user.view')|raw }}
+{{ view('chat/board/log.view')|raw }}
+{{ view('chat/board/message.view')|raw }}
+{{ view('chat/board/chat.view')|raw }}
+
+{# Profile #}
+{{ view('chat/popover/profile.view')|raw }}
+
+{# Settings#}
+{% include 'chat/popover/settings.twig' %}
+

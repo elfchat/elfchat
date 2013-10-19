@@ -1,0 +1,37 @@
+{% extends 'users/layout.twig' %}
+{% trans_default_domain 'users' %}
+
+{% block content %}
+    <form class="form" action="{{ path('login_check') }}" method="POST">
+        <h1>{{ 'title.login'|trans() }}</h1>
+        {% if error is not empty %}
+            <div class="alert alert-error">
+                {{ error|trans({}, 'security') }}
+            </div>
+        {% endif %}
+        <div class="control-group">
+
+            <label for="_username">{{ 'form.name'|trans({}, 'users') }}</label>
+            <div class="controls">
+                <input type="text"
+                       class="input-block-level"
+                       name="_username"
+                       value="{{ last_username }}">
+            </div>
+
+            <label for="_password">{{ 'form.password'|trans() }}</label>
+            <div class="controls">
+                <input type="password"
+                       class="input-block-level"
+                       name="_password">
+            </div>
+
+            <div class="controls">
+                <input type="checkbox" id="remember_me" name="_remember_me" checked />
+                <label for="remember_me">{{ 'form.remember_me'|trans() }}</label>
+            </div>
+        </div>
+        <button class="btn btn-large btn-primary" type="submit">{{ 'button.login'|trans() }}</button>
+        <a href="{{ url('register') }}" class="btn btn-large">{{ 'button.register'|trans() }}</a>
+    </form>
+{% endblock %}

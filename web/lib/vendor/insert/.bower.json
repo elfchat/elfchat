@@ -1,0 +1,18 @@
+{
+  "name": "insert",
+  "main": "insert.js",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ],
+  "homepage": "https://github.com/elfet/insert",
+  "_release": "d626877386",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "d62687738632208cfe1746d137831defc9941e3b"
+  },
+  "_source": "git://github.com/elfet/insert.git",
+  "_target": "*",
+  "_originalSource": "insert"
+}

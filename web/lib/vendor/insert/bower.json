@@ -1,0 +1,9 @@
+{
+  "name": "insert",
+  "version": "1.0.0",
+  "main": "insert.js",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ]
+}

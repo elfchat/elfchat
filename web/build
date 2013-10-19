@@ -1,0 +1,23 @@
+#!/bin/bash
+
+cat \
+lib/runtime \
+lib/vendor/mustache/mustache.js \
+lib/vendor/jquery.scrollto/index.js \
+lib/vendor/jquery.hotkeys/jquery.hotkeys.js \
+lib/vendor/moment/moment.js \
+lib/vendor/howler/howler.min.js \
+> lib/vendors.js
+
+# Minify vendors:
+#java -jar lib/yuicompressor-2.4.8.jar --type js --nomunge --disable-optimizations -o lib/vendors.js lib/vendors.js
+
+/usr/local/bin/traceur --sourcemap --out app.js \
+src/config.js \
+src/helpers.js \
+src/sound.js \
+src/scroll.js \
+src/view.js \
+src/server.js \
+src/tabs.js \
+src/application.js

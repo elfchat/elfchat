@@ -1,0 +1,14 @@
+{
+  "name": "prefix-free",
+  "_cacheHeaders": {
+    "ETag": "\"a2c6db60b5fc62997f512ead47bae686\"",
+    "Content-Length": "6139",
+    "Content-Type": "text/plain; charset=utf-8",
+    "Content-Disposition": "inline"
+  },
+  "_release": "e-tag:a2c6db60b",
+  "main": "index.js",
+  "_source": "https://github.com/LeaVerou/prefixfree/raw/gh-pages/prefixfree.min.js",
+  "_target": "*",
+  "_originalSource": "https://github.com/LeaVerou/prefixfree/raw/gh-pages/prefixfree.min.js"
+}

@@ -1,0 +1,6 @@
+<div class="tab room [#tab.active]active[/tab.active]" id="tab-[tab.id]">
+    <span class="title">[tab.title]</span>
+    <div class="badges">
+        <div class="count" style="display: none;">[tab.count]</div>
+    </div>
+</div>

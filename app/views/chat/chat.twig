@@ -1,0 +1,51 @@
+{% extends 'base.twig' %}
+{% trans_default_domain 'chat' %}
+
+{% block style %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('lib/vendor/font-awesome/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('lib/vendor/notification/notification.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/font/stylesheet.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/chat.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/theme.css') }}">
+{% endblock style %}
+
+{% block body %}
+    <div class="box">
+        <header>
+            ElfChat
+            <div class="buttons">
+                <div data-popover="settings" class="icon-cog icon-large"></div>
+            </div>
+        </header>
+
+        <div class="tabs" id="tabs">
+            <div id="rooms">
+            </div>
+            <div id="users">
+            </div>
+        </div>
+
+        <div id="board" class="board">
+            <div class="chat" id="chat-main"></div>
+        </div>
+
+        <footer>
+            <div class="controls">
+                <textarea id="message"></textarea>
+
+                <div class="buttons">
+                    <div id="emotionButton" class="icon-smile"></div>
+                </div>
+            </div>
+        </footer>
+        <div class="copyright">
+            &copy; 2013 <a href="http://elfchat.net" target="_blank">ElfChat</a> {{ app.version }}
+        </div>
+    </div>
+{% endblock body %}
+
+{% block script %}
+    {{ parent() }}
+    {% include 'chat/script.twig' %}
+{% endblock script %}

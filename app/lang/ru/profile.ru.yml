@@ -1,0 +1,11 @@
+profile:
+  title: Профиль
+
+menu:
+  avatar: Аватар
+
+button:
+  avatar: Загрузить
+  crop: Обрезать
+
+new_avatar: Загрузить новый аватар

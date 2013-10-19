@@ -1,0 +1,104 @@
+{% extends 'profile/layout.twig' %}
+{% trans_default_domain 'profile' %}
+
+{% block style %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/jcrop/css/jquery.Jcrop.min.css') }}">
+    <style type="text/css">
+        .avatarBox {
+            display: inline-block;
+        }
+
+        #avatar {
+            max-width: 500px;
+            max-height: 500px;
+        }
+
+        .previewBox {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 1px 1px 1px 1px #747474;
+        }
+
+        #preview {
+            vertical-align: baseline;
+            max-width: none;
+            max-height: none;
+        }
+    </style>
+{% endblock style %}
+
+{% block content %}
+    <div>
+        <div class="avatarBox thumbnail">
+            <img id="avatar" src="{{ app.user.avatar }}">
+        </div>
+        <div class="previewBox">
+            <img id="preview" src="{{ app.user.avatar }}">
+        </div>
+    </div>
+    <button id="crop" class="btn btn-large btn-success">{{ 'button.crop'|trans() }}</button>
+{% endblock %}
+
+{% block script %}
+    {{ parent() }}
+    <script src="{{ asset('vendor/jcrop/js/jquery.Jcrop.min.js') }}"></script>
+    <script>
+        $(function () {
+            var avatar = $('#avatar');
+            var preview = $('#preview');
+            var button = $('#crop');
+            var cropSize;
+
+            var showPreview = function (c) {
+                cropSize = $.extend({}, c);
+
+                var scaleX = avatar[0].naturalWidth / avatar.width();
+                var scaleY = avatar[0].naturalHeight / avatar.height();
+
+                cropSize.x *= scaleX;
+                cropSize.w *= scaleX;
+                cropSize.y *= scaleY;
+                cropSize.h *= scaleY;
+
+                var rx = preview.parent().width() / c.w;
+                var ry = preview.parent().height() / c.h;
+
+                preview.css({
+                    width: Math.round(rx * avatar.width()) + 'px',
+                    height: Math.round(ry * avatar.height()) + 'px',
+                    marginLeft: '-' + Math.round(rx * c.x) + 'px',
+                    marginTop: '-' + Math.round(ry * c.y) + 'px'
+                });
+            }
+
+            avatar.load(function () {
+                var m = Math.min(avatar.width(), avatar.height()) - 10;
+
+                if(m <= 50) {
+                    window.location.href = '{{ url('profile_avatar') }}';
+                }
+
+                avatar.Jcrop({
+                    aspectRatio: 1,
+                    minSize: [50, 50],
+                    setSelect: [10, 10, m, m],
+                    onChange: showPreview,
+                    onSelect: showPreview
+                });
+            });
+
+            button.click(function () {
+
+                $.post('{{ url('profile_avatar_crop') }}', cropSize, function () {
+                    window.location.href = '{{ url('profile_avatar') }}';
+                });
+            });
+        });
+
+
+    </script>
+{% endblock %}

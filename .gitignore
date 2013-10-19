@@ -1,0 +1,6 @@
+app/vendor/
+app/open/
+upload/
+.idea/
+.DS_Store
+*.dev

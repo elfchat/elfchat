@@ -1,0 +1,11 @@
+{% trans_default_domain 'chat' %}
+
+<div id="settings" class="popover left" style="top: 0; left: 0; display: none;">
+    <div class="arrow"></div>
+    <h3 class="popover-title">
+        {{ 'settings.title'|trans() }}
+    </h3>
+        <ul class="menu">
+            <li><a id="avatarButton" target="_blank" href={{ url('profile_avatar') }}>{{ 'settings.avatar'|trans() }}</a></li>
+        </ul>
+</div>

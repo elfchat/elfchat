@@ -1,0 +1,23 @@
+{% extends 'admin/layout.twig' %}
+{% trans_default_domain 'admin' %}
+{% form_theme form 'admin/form_theme.twig' %}
+{% set title = 'user.edit.title'|trans()|replace({'%name%': user.name}) %}
+
+{% block title %}
+    {{ title }} - {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <form class="form-horizontal" action="" {{ form_enctype(form) }} method="post">
+        <fieldset>
+            <legend>{{ title }}</legend>
+
+            {{ form_widget(form) }}
+
+            <div class="form-actions">
+                <button class="btn btn-primary" type="submit">{{ 'save'|trans() }}</button>
+                <a href="{{ path('admin_users') }}" class="btn" type="reset">{{ 'reset'|trans() }}</a>
+            </div>
+        </fieldset>
+    </form>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'admin/layout.twig' %}
+{% trans_default_domain 'admin' %}
+
+{% block content %}
+    <h1>{{ 'users'|trans() }}</h1>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th width="20px"><i class="icon-ok"></i></th>
+            <th>{{ 'user.id'|trans() }}</th>
+            <th>{{ 'user.name'|trans() }}</th>
+            <th>{{ 'user.email'|trans() }}</th>
+            <th><i class="icon-barcode"></i></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td><input type="checkbox" name="user-{{ user.id }}"></td>
+                <td>{{ user.id }}</td>
+                <td>
+                    <img src="{{ user.avatar }}" style="max-width: 40px;">
+                    <span>{{ user.username }}</span>
+                </td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td>
+                    <a href="{{ path('admin_users_edit', {'id': user.id}) }}" class="btn">
+                        <i class="icon-edit"></i>
+                        {{ 'user.edit'|trans() }}
+                    </a>
+                    <a href="{{ path('admin_users_delete', {'id': user.id}) }}" class="btn btn-danger">
+                        <i class="icon-remove"></i>
+                        {{ 'user.delete'|trans() }}
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

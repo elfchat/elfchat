@@ -1,0 +1,13 @@
+join: %name% входит в чат.
+leave: %name% выходит из чата.
+
+emotion:
+  emoticons: Смайлики
+  signs: Знаки
+  animals: Животные
+
+error:
+  title: Обнаружена ошибка
+  content: Код ошибки: %error%
+
+connecting: Подключение...
