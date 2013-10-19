@@ -548,7 +548,7 @@ var Application = function() {
     },
     bind: function() {
       $(window).on('connect', $.proxy(this.onConnect, this)).on('login_success', $.proxy(this.onLoginSuccess, this)).on('synchronize', $.proxy(this.onSynchronize, this)).on('message', $.proxy(this.onMessage, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('user_update', $.proxy(this.onUserUpdate, this));
-      $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this));
+      $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this)).on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this));
       $(this.dom.textarea).bind('keydown', 'return', $.proxy(this.onSend, this));
     },
     onSend: function(event) {
@@ -644,6 +644,10 @@ var Application = function() {
         this.dom.chat[room] = $('#chat-' + room);
       }
       return this.dom.chat[room];
+    },
+    onUsernameClick: function(event) {
+      var name = $(event.target).attr('data-user-name');
+      this.dom.textarea.insertAtCaret(' ' + name + ' ');
     }
   }, {});
   return $Application;

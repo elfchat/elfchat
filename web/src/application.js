@@ -37,7 +37,8 @@ class Application {
 
         $(document)
             .on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this))
-            .on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this));
+            .on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this))
+            .on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this));
 
         $(this.dom.textarea)
             .bind('keydown', 'return', $.proxy(this.onSend, this));
@@ -161,5 +162,10 @@ class Application {
         }
 
         return this.dom.chat[room];
+    }
+
+    onUsernameClick(event) {
+        var name = $(event.target).attr('data-user-name');
+        this.dom.textarea.insertAtCaret(' ' + name + ' ');
     }
 }

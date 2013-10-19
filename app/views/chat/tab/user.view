@@ -1,6 +1,6 @@
 <div class="tab user" id="tab-[tab.id]" data-chat="private-[user.id]">
     <span class="avatar" data-user-id="[user.id]" style="background-image: url('[user.avatar]')"></span>
-    <span class="name" data-name="[user.name.plain]">[&user.name]</span>
+    <span class="name" data-user-name="[user.name]">[&user.name]</span>
     <div class="badges">
         <span class="count" style="display: none;">[count]</span>
     </div>
