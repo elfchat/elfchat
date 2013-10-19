@@ -109,6 +109,7 @@ class Application {
 
     onUserUpdate(event, user) {
         this.addUser(user);
+        new UserProfileView(user).remove();
     }
 
     onPopoverClick(event) {
@@ -124,11 +125,13 @@ class Application {
         var button = $(event.target);
         var user = this.getUser(button.attr('data-user-id'));
         if (user) {
-            var id = 'profile-' + user.id;
-            if (!$('#' + id).exist()) {
-                this.dom.body.append(new UserProfileView(user).render());
+            var view = new UserProfileView(user);
+
+            if (!view.exist()) {
+                this.dom.body.append(view.render());
             }
-            var popover = Popover.create(id, button);
+
+            var popover = Popover.create(view.id, button);
             popover.toggle();
         }
     }

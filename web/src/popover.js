@@ -7,20 +7,19 @@
 var popovers = {};
 
 class Popover {
-    constructor(popover, button = null, box = '.box') {
+    constructor(id, button = null, box = '.box') {
         var _this = this;
 
-        this.popover = popover;
+        this.id = id;
         this.box = $(box);
         this.margin = 10;
         this.onTop = 'top';
         this.onBottom = 'bottom';
         this.onLeft = 'left';
         this.onRight = 'right';
-        this.arrow = this.popover.find('.arrow');
         this.autohide = false;
 
-        if(button !== null) {
+        if (button !== null) {
             this.on(button);
         }
 
@@ -29,7 +28,7 @@ class Popover {
         });
 
         $('body').mouseup((event) => {
-            if (_this.autohide && _this.popover.has(event.target).length === 0) {
+            if (_this.autohide && _this.getPopover().has(event.target).length === 0) {
                 _this.hide();
             }
         });
@@ -39,13 +38,13 @@ class Popover {
         if (popovers[id]) {
             return popovers[id].on(button);
         } else {
-            return popovers[id] = new Popover($('#' + id), button);
+            return popovers[id] = new Popover(id, button);
         }
     }
 
     on(button) {
         var _this = this;
-        this.button = button;
+        this.button = $(button);
         this.button.mousedown((event) => {
             _this.autohide = false;
         });
@@ -53,8 +52,10 @@ class Popover {
     }
 
     reposition() {
-        var arrowPosition, boxSize, buttonOffset, buttonSize, offset, over, popoverPosition, popoverSize;
+        var arrow, arrowPosition, boxSize, buttonOffset, buttonSize, offset, over, popover, popoverPosition, popoverSize;
 
+        arrow = this.getArrow();
+        popover = this.getPopover();
         boxSize = {
             width: this.box.width(),
             height: this.box.height()
@@ -65,11 +66,11 @@ class Popover {
             height: this.button.outerHeight()
         };
         popoverSize = {
-            width: this.popover.outerWidth(),
-            height: this.popover.outerHeight()
+            width: popover.outerWidth(),
+            height: popover.outerHeight()
         };
-        if (this.popover.hasClass(this.onLeft) || this.popover.hasClass(this.onRight)) {
-            if (this.popover.hasClass(this.onLeft)) {
+        if (popover.hasClass(this.onLeft) || popover.hasClass(this.onRight)) {
+            if (popover.hasClass(this.onLeft)) {
                 popoverPosition = {
                     top: buttonOffset.top - (popoverSize.height / 2) + (buttonSize.height / 2),
                     left: buttonOffset.left - popoverSize.width
@@ -101,7 +102,7 @@ class Popover {
             arrowPosition = {
                 left: popoverSize.width / 2
             };
-            if (popoverPosition.top + popoverSize.height > boxSize.height || this.popover.hasClass(this.onTop)) {
+            if (popoverPosition.top + popoverSize.height > boxSize.height || popover.hasClass(this.onTop)) {
                 popoverPosition.top = buttonOffset.top - popoverSize.height;
             }
             if ((over = popoverPosition.left + popoverSize.width) > boxSize.width) {
@@ -115,24 +116,32 @@ class Popover {
                 arrowPosition.left -= offset;
             }
         }
-        this.popover.css(popoverPosition);
-        return this.arrow.css(arrowPosition);
+        popover.css(popoverPosition);
+        arrow.css(arrowPosition);
     }
 
     show() {
         this.reposition();
-        this.popover.show();
+        this.getPopover().show();
         return this.autohide = true;
     }
 
     hide() {
-        return this.popover.hide();
+        return this.getPopover().hide();
     }
 
     toggle() {
         this.reposition();
-        this.popover.toggle();
+        this.getPopover().toggle();
         return this.autohide = true;
+    }
+
+    getPopover() {
+        return $('#' + this.id);
+    }
+
+    getArrow() {
+        return this.getPopover().find('.arrow');
     }
 }
 
