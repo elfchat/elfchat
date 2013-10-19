@@ -1,6 +1,6 @@
 <div class="message" id="message-[id]">
     [#user.avatar]
-    <span class="avatar"  data-user-id="[user.id]" data-popover="user-popover-[user.id]" style="background-image: url('[user.avatar]')"></span>
+    <span class="avatar" data-user-id="[user.id]" style="background-image: url('[user.avatar]')"></span>
     [/user.avatar]
     <span class="time">
         [time]

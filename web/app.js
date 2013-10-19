@@ -522,7 +522,8 @@ var Application = function() {
       this.dom = {
         board: $('#board'),
         chat: {main: $('#chat-main')},
-        textarea: $('#message')
+        textarea: $('#message'),
+        body: $('body')
       };
       this.bind();
       this.scroll = new Scroll(this.dom.board);
@@ -534,7 +535,7 @@ var Application = function() {
     },
     bind: function() {
       $(window).on('connect', $.proxy(this.onConnect, this)).on('login_success', $.proxy(this.onLoginSuccess, this)).on('synchronize', $.proxy(this.onSynchronize, this)).on('message', $.proxy(this.onMessage, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('user_update', $.proxy(this.onUserUpdate, this));
-      $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this));
+      $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this));
       $(this.dom.textarea).bind('keydown', 'return', $.proxy(this.onSend, this));
     },
     onSend: function(event) {
@@ -594,6 +595,19 @@ var Application = function() {
       var id = button.attr('data-popover');
       var popover = Popover.create(id, button);
       popover.toggle();
+    },
+    onProfileClick: function(event) {
+      event.stopPropagation();
+      var button = $(event.target);
+      var user = this.getUser(button.attr('data-user-id'));
+      if (user) {
+        var id = 'profile-' + user.id;
+        if (!$('#' + id).exist()) {
+          this.dom.body.append(new UserProfileView(user).render());
+        }
+        var popover = Popover.create(id, button);
+        popover.toggle();
+      }
     },
     addMessage: function(messageView) {
       var room = arguments[1] !== (void 0) ? arguments[1]: 'main';

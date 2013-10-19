@@ -12,7 +12,8 @@ class Application {
             chat: {
                 main: $('#chat-main')
             },
-            textarea: $('#message')
+            textarea: $('#message'),
+            body: $('body')
         };
         this.bind();
         this.scroll = new Scroll(this.dom.board);
@@ -35,7 +36,8 @@ class Application {
             .on('user_update', $.proxy(this.onUserUpdate, this));
 
         $(document)
-            .on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this));
+            .on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this))
+            .on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this));
 
         $(this.dom.textarea)
             .bind('keydown', 'return', $.proxy(this.onSend, this));
@@ -115,6 +117,20 @@ class Application {
         var id = button.attr('data-popover');
         var popover = Popover.create(id, button);
         popover.toggle();
+    }
+
+    onProfileClick(event) {
+        event.stopPropagation();
+        var button = $(event.target);
+        var user = this.getUser(button.attr('data-user-id'));
+        if (user) {
+            var id = 'profile-' + user.id;
+            if (!$('#' + id).exist()) {
+                this.dom.body.append(new UserProfileView(user).render());
+            }
+            var popover = Popover.create(id, button);
+            popover.toggle();
+        }
     }
 
     addMessage(messageView, room = 'main') {
