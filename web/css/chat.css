@@ -203,11 +203,16 @@ footer .buttons > div {
 
 #emotions .left {
     cursor: pointer;
+    float: left;
+    margin-top: 3px;
+    margin-right: 10px;
 }
 
 #emotions .right {
     cursor: pointer;
     float: right;
+    margin-top: 3px;
+    margin-left: 10px;
 }
 
 #emotions .content {

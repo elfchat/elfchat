@@ -42,6 +42,10 @@ class Popover {
         }
     }
 
+    static get(id) {
+        return popovers[id];
+    }
+
     on(button) {
         var _this = this;
         this.button = $(button);

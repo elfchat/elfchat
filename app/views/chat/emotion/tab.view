@@ -1,11 +1,13 @@
 <div class="tab">
     <h3 class="popover-title">
         <i class="left icon-chevron-left"></i>
-        <% title %>
+        [title]
         <i class="right icon-chevron-right"></i>
     </h3>
 
     <div class="popover-content">
-        <% &emotions %>
+        [#emotions]
+        <div class="img"><img src="{{ asset('emotion/[src]') }}" data-emotion="[name]"></div>
+        [/emotions]
     </div>
 </div>

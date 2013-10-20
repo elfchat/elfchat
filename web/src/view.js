@@ -118,3 +118,14 @@ class UserProfileView extends View {
         return $('#' + this.id).exist();
     }
 }
+
+class EmotionTabView extends View {
+    constructor(title, emotions) {
+        this.title = title;
+        this.emotions = emotions;
+    }
+
+    render() {
+        return template('chat/emotion/tab')(this);
+    }
+}

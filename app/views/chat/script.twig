@@ -1,5 +1,7 @@
 <script src="{{ asset('lib/vendors.js') }}"></script>
 <script src="{{ asset('app.js') }}"></script>
+<script src="{{ asset('emotion/catalog.js') }}"></script>
+<script src="{{ asset('emotion/list.js') }}"></script>
 <script src="{{ app.config.server }}/socket.io/socket.io.js"></script>
 <script type="text/javascript">
     // Config
@@ -15,7 +17,8 @@
         sound: {
             message: '{{ app.request.basePath }}/web/lib/media/sound/beep.mp3',
             join: '{{ app.request.basePath }}/web/lib/media/sound/online.mp3'
-        }
+        },
+        emotionPath: '{{ asset('emotion/') }}'
     };
     {% endautoescape %}
 
@@ -32,25 +35,24 @@
     $(function () {
         window.sound = new Sound();
         window.tabs = new Tabs();
+        window.emotion = new Emotion();
         window.chat = new Application();
         window.chat.run();
     });
 </script>
 
-{# Emotions #}
+{# Views #}
+{% autoescape false %}
+{{ view('chat/tab/room.view') }}
+{{ view('chat/tab/user.view') }}
+{{ view('chat/board/log.view') }}
+{{ view('chat/board/message.view') }}
+{{ view('chat/board/chat.view') }}
+{{ view('chat/emotion/tab.view') }}
+{{ view('chat/popover/profile.view') }}
+{% endautoescape %}
+
+{# Popovers #}
 {% include 'chat/popover/emotion.twig' %}
-{{ view('chat/popover/emotionTab.view')|raw }}
-
-{# Chat #}
-{{ view('chat/tab/room.view')|raw }}
-{{ view('chat/tab/user.view')|raw }}
-{{ view('chat/board/log.view')|raw }}
-{{ view('chat/board/message.view')|raw }}
-{{ view('chat/board/chat.view')|raw }}
-
-{# Profile #}
-{{ view('chat/popover/profile.view')|raw }}
-
-{# Settings#}
 {% include 'chat/popover/settings.twig' %}
 

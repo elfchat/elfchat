@@ -163,7 +163,7 @@ footer .buttons {
     right: 25px;
 }
 
-footer #emotionButton {
+footer .emotions {
     font-size: 25px;
     opacity: 0.50;
 }
