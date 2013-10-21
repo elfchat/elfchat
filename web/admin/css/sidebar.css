@@ -84,6 +84,7 @@
 
 #menu-toggle {
     display: none;
+    float: left;
 }
 
 .inset {
@@ -105,7 +106,7 @@
         left: 250px;
     }
 
-    .sidebar-wrapper.active #sidebar-wrapper {
+    .sidebar-wrapper.active .sidebar {
         left: 250px;
         width: 250px;
         transition: all 0.4s ease 0s;
@@ -114,9 +115,4 @@
     #menu-toggle {
         display: inline-block;
     }
-
-    .inset {
-        padding: 15px;
-    }
-
 }
