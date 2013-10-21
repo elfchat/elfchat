@@ -5,7 +5,6 @@
         "jquery": "~2.0",
         "jquery.scrollto": "https://raw.github.com/flesler/jquery.scrollTo/master/jquery.scrollTo.min.js",
         "jquery.hotkeys": "git://github.com/jeresig/jquery.hotkeys.git",
-        "bootstrap": "http://twitter.github.com/bootstrap/assets/bootstrap.zip",
         "prefix-free": "https://github.com/LeaVerou/prefixfree/raw/gh-pages/prefixfree.min.js",
         "mustache": "*",
         "insert": "*",
