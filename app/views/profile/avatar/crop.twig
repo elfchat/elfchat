@@ -3,7 +3,7 @@
 
 {% block style %}
     {{ parent() }}
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/jcrop/css/jquery.Jcrop.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('lib/vendor/jcrop/css/jquery.Jcrop.min.css') }}">
     <style type="text/css">
         .avatarBox {
             display: inline-block;
@@ -45,7 +45,7 @@
 
 {% block script %}
     {{ parent() }}
-    <script src="{{ asset('vendor/jcrop/js/jquery.Jcrop.min.js') }}"></script>
+    <script src="{{ asset('lib/vendor/jcrop/js/jquery.Jcrop.min.js') }}"></script>
     <script>
         $(function () {
             var avatar = $('#avatar');
