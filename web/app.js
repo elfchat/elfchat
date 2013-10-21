@@ -55,6 +55,38 @@ function format(message) {
   return message;
 }
 ;
+function Notify() {
+  this.error = function(error) {
+    return $.notification({
+      title: tr('Error'),
+      content: error,
+      icon: 'icon-info-sign',
+      error: true
+    });
+  };
+  this.alert = function(text) {
+    return $.notification({
+      title: tr('Info'),
+      content: text,
+      icon: 'icon-html5'
+    });
+  };
+  var connecting = null;
+  this.connecting = {
+    start: function() {
+      if (connecting != null) {
+        connecting.hide();
+      }
+      return connecting = $.notification({
+        content: tr('Connecting'),
+        icon: 'icon-spinner icon-spin'
+      });
+    },
+    stop: function() {
+      return connecting.remove();
+    }
+  };
+}
 var Sound = function() {
   'use strict';
   var $Sound = ($__createClassNoExtends)({
@@ -312,6 +344,9 @@ var Server = function() {
     bindSocket: function() {
       this.socket.on('connect', (function() {
         $(window).trigger('connect');
+      }));
+      this.socket.on('disconnect', (function() {
+        $(window).trigger('disconnect');
       }));
       this.socket.on('reconnect', (function() {
         $(window).trigger('reconnect');
@@ -918,11 +953,12 @@ var Application = function() {
       this.addFilters();
     },
     run: function() {
+      notify.connecting.start();
       this.server.connect();
       this.addRecentMessages();
     },
     bind: function() {
-      $(window).on('connect', $.proxy(this.onConnect, this)).on('login_success', $.proxy(this.onLoginSuccess, this)).on('synchronize', $.proxy(this.onSynchronize, this)).on('message', $.proxy(this.onMessage, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('user_update', $.proxy(this.onUserUpdate, this));
+      $(window).on('connect', $.proxy(this.onConnect, this)).on('disconnect', $.proxy(this.onDisconnect, this)).on('login_success', $.proxy(this.onLoginSuccess, this)).on('synchronize', $.proxy(this.onSynchronize, this)).on('message', $.proxy(this.onMessage, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('user_update', $.proxy(this.onUserUpdate, this));
       $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this)).on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this));
       $(this.dom.textarea).bind('keydown', 'return', $.proxy(this.onSend, this));
     },
@@ -936,7 +972,11 @@ var Application = function() {
       return false;
     },
     onConnect: function(event) {
+      notify.connecting.stop();
       this.server.login(window.config.auth);
+    },
+    onDisconnect: function(event) {
+      notify.connecting.start();
     },
     onLoginSuccess: function(event) {
       this.server.join(window.room);

@@ -43,6 +43,10 @@ class Server {
             $(window).trigger('connect');
         });
 
+        this.socket.on('disconnect', () => {
+            $(window).trigger('disconnect');
+        });
+
         this.socket.on('reconnect', () => {
             $(window).trigger('reconnect');
         });

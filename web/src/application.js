@@ -24,6 +24,7 @@ class Application {
     }
 
     run() {
+        notify.connecting.start();
         this.server.connect();
         this.addRecentMessages();
     }
@@ -31,6 +32,7 @@ class Application {
     bind() {
         $(window)
             .on('connect', $.proxy(this.onConnect, this))
+            .on('disconnect', $.proxy(this.onDisconnect, this))
             .on('login_success', $.proxy(this.onLoginSuccess, this))
             .on('synchronize', $.proxy(this.onSynchronize, this))
             .on('message', $.proxy(this.onMessage, this))
@@ -65,7 +67,12 @@ class Application {
     }
 
     onConnect(event) {
+        notify.connecting.stop();
         this.server.login(window.config.auth);
+    }
+
+    onDisconnect(event) {
+        notify.connecting.start();
     }
 
     onLoginSuccess(event) {
