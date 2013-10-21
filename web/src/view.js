@@ -69,10 +69,16 @@ class MessageView extends View {
         } else {
             this.user = user;
         }
+
+        this.spirit = false;
+        if(this.text.match(/^∞/)) {
+            this.text = this.text.substring(1);
+            this.spirit = true;
+        }
     }
 
     render() {
-        return template('chat/board/message')(this);
+        return template(this.spirit ? 'chat/board/spirit' : 'chat/board/message')(this);
     }
 
     escape(html) {

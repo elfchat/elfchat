@@ -172,9 +172,14 @@ var MessageView = function($__super) {
       } else {
         this.user = user;
       }
+      this.spirit = false;
+      if (this.text.match(/^∞/)) {
+        this.text = this.text.substring(1);
+        this.spirit = true;
+      }
     },
     render: function() {
-      return template('chat/board/message')(this);
+      return template(this.spirit ? 'chat/board/spirit': 'chat/board/message')(this);
     },
     escape: function(html) {
       return html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
@@ -923,11 +928,21 @@ var Application = function() {
       }
     },
     onMessage: function(event, message) {
-      var user;
       if (!this.isUserExist(message.user.id)) {
         return;
       }
-      this.addMessage(new MessageView(message, this.getUser(message.user.id)));
+      var user = this.getUser(message.user.id);
+      var messageView = new MessageView(message, user);
+      var isPrivate = message.room.match(/^private-(.*)$/);
+      if (isPrivate === null) {
+        this.addMessage(messageView, message.room);
+      } else {
+        if (user.id === window.user.id) {
+          this.addMessage(messageView, message.room);
+        } else {
+          this.addMessage(messageView, 'private-' + user.id);
+        }
+      }
       window.sound.message.play();
     },
     onMessageRemove: function(event, message) {},
@@ -982,7 +997,7 @@ var Application = function() {
       return this.users[id];
     },
     isUserExist: function(id) {
-      return this.users[id] === void 0 ? false: true;
+      return this.users[id] !== void 0;
     },
     addUser: function(user) {
       this.users[user.id] = user;
