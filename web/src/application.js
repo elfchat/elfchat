@@ -38,7 +38,8 @@ class Application {
             .on('message', $.proxy(this.onMessage, this))
             .on('user_join', $.proxy(this.onUserJoin, this))
             .on('user_leave', $.proxy(this.onUserLeave, this))
-            .on('user_update', $.proxy(this.onUserUpdate, this));
+            .on('user_update', $.proxy(this.onUserUpdate, this))
+            .on('error', $.proxy(this.onError, this));
 
         $(document)
             .on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this))
@@ -194,5 +195,9 @@ class Application {
     onUsernameClick(event) {
         var name = $(event.target).attr('data-user-name');
         this.dom.textarea.insertAtCaret(' ' + name + ' ');
+    }
+
+    onError(event, error) {
+        notify.error(error);
     }
 }

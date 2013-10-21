@@ -958,7 +958,7 @@ var Application = function() {
       this.addRecentMessages();
     },
     bind: function() {
-      $(window).on('connect', $.proxy(this.onConnect, this)).on('disconnect', $.proxy(this.onDisconnect, this)).on('login_success', $.proxy(this.onLoginSuccess, this)).on('synchronize', $.proxy(this.onSynchronize, this)).on('message', $.proxy(this.onMessage, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('user_update', $.proxy(this.onUserUpdate, this));
+      $(window).on('connect', $.proxy(this.onConnect, this)).on('disconnect', $.proxy(this.onDisconnect, this)).on('login_success', $.proxy(this.onLoginSuccess, this)).on('synchronize', $.proxy(this.onSynchronize, this)).on('message', $.proxy(this.onMessage, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('user_update', $.proxy(this.onUserUpdate, this)).on('error', $.proxy(this.onError, this));
       $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this)).on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this));
       $(this.dom.textarea).bind('keydown', 'return', $.proxy(this.onSend, this));
     },
@@ -1076,6 +1076,9 @@ var Application = function() {
     onUsernameClick: function(event) {
       var name = $(event.target).attr('data-user-name');
       this.dom.textarea.insertAtCaret(' ' + name + ' ');
+    },
+    onError: function(event, error) {
+      notify.error(error);
     }
   }, {});
   return $Application;
