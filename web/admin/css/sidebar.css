@@ -70,21 +70,10 @@
     background: none;
 }
 
-.content-header {
-    height: 65px;
-    line-height: 65px;
-}
-
-.content-header h1 {
-    margin: 0;
-    margin-left: 20px;
-    line-height: 65px;
-    display: inline-block;
-}
-
-#menu-toggle {
+.sidebar-toggle {
     display: none;
     float: left;
+    margin-right: 10px;
 }
 
 .inset {
@@ -112,7 +101,7 @@
         transition: all 0.4s ease 0s;
     }
 
-    #menu-toggle {
+    .sidebar-toggle {
         display: inline-block;
     }
 }

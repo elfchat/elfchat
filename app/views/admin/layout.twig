@@ -34,7 +34,9 @@
             {% endfor %}
 
             <h1>
-                <a id="menu-toggle" href="#" class="btn btn-default"><i class="glyphicon glyphicon-th-list"></i></a>
+                <a href="#" class="btn btn-default sidebar-toggle">
+                    <i class="glyphicon glyphicon-th-list"></i>
+                </a>
                 {% block h1 %}
                 {% endblock %}
             </h1>
@@ -65,7 +67,7 @@
             /**
              * Show hide menu.
              */
-            $("#menu-toggle").click(function(e) {
+            $(".sidebar-toggle").click(function (e) {
                 e.preventDefault();
                 $(".sidebar-wrapper").toggleClass("active");
             });
