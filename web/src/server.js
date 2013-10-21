@@ -116,7 +116,7 @@ class Server {
         });
 
         socket.on('message', (m) => {
-            console.log('message');
+            console.log('message ' + m.room);
         });
 
         socket.on('error', (code) => {

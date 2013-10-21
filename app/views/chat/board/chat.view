@@ -1,1 +1,1 @@
-<div class="chat" id="chat-[room]"></div>
+<div class="chat" id="chat-[room]" style="display: none;"></div>

@@ -6,7 +6,7 @@
 
 
 class Tabs {
-    constructor(tabs) {
+    constructor() {
         var tabs = $('#tabs');
         this.dom = {
             rooms: tabs.find('#rooms'),
@@ -18,6 +18,7 @@ class Tabs {
         this.select = {
             tabs: '#tabs .tab'
         };
+        this.current = 'tab-main';
 
         this.bind();
         this.addMainRoom();
@@ -26,12 +27,12 @@ class Tabs {
     bind() {
         $(window)
             .on('synchronize', $.proxy(this.onSynchronize, this))
-            .on('message', $.proxy(this.onMessage, this))
             .on('user_join', $.proxy(this.onUserJoin, this))
             .on('user_leave', $.proxy(this.onUserLeave, this))
             .on('user_update', $.proxy(this.onUserUpdate, this));
 
-        $(document).on('click', this.select.tabs, $.proxy(this.onTabClick, this));
+        $(document)
+            .on('click', this.select.tabs, $.proxy(this.onTabClick, this));
     }
 
     addMainRoom() {
@@ -63,10 +64,19 @@ class Tabs {
 
     onUserUpdate(event, user) {
         var tab = new UserTab(user);
-        if(this.isUserTab(user)) {
+        if (this.isUserTab(user)) {
             $('#tab-user-' + user.id).replaceWith(tab.render());
         } else {
             this.dom.users.append(tab.render());
+        }
+    }
+
+    increaseCounter(room) {
+        var tab = $('[data-room="' + room + '"]');
+        if (tab.exist() && !tab.hasClass('active')) {
+            var count = tab.find('.count');
+            var val = parseInt(count.text()) || 0;
+            count.text(val + 1).show();
         }
     }
 
@@ -75,6 +85,27 @@ class Tabs {
     }
 
     onTabClick(event) {
-        console.log(event.target);
+        this.selectTab($(event.currentTarget));
+    }
+
+    selectTab(tab) {
+        var old = $('#' + this.current);
+
+        // Change active tab
+        old.removeClass('active');
+        this.current = tab.attr('id');
+        tab.addClass('active');
+
+        // Reset counter
+        tab.find('.count').text('0').hide();
+
+        // Switch chat rooms and save current room id
+        window.chat.getChatRoom(window.room).hide();
+        window.room = tab.attr('data-room');
+        window.chat.getChatRoom(window.room).show();
+
+        // Scroll and focus
+        window.chat.scroll.instantlyDown();
+        window.chat.dom.textarea.focus();
     }
 }

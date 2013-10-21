@@ -104,8 +104,9 @@ class LogView extends MessageView {
 }
 
 class ChatBoardView extends View {
-    constructor(room) {
+    constructor(room, visible = true) {
         this.room = room;
+        this.visible = visible;
     }
 
     render() {

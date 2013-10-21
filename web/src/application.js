@@ -57,7 +57,7 @@ class Application {
     }
 
     onSend(event) {
-        this.server.send(this.dom.textarea.val(), 'main');
+        this.server.send(this.dom.textarea.val(), window.room);
         this.dom.textarea.val('');
 
         event.stopPropagation();
@@ -79,16 +79,24 @@ class Application {
     }
 
     onMessage(event, message) {
-        var user;
-
         if (!this.isUserExist(message.user.id)) {
             return;
         }
 
-        // Add message
-        this.addMessage(new MessageView(message, this.getUser(message.user.id)));
+        var user = this.getUser(message.user.id);
+        var messageView = new MessageView(message, user);
+        var isPrivate = message.room.match(/^private-(.*)$/);
 
-        // Play sound
+        if (isPrivate === null) {
+            this.addMessage(messageView, message.room);
+        } else {
+            if (user.id === window.user.id) {
+                this.addMessage(messageView, message.room);
+            } else {
+                this.addMessage(messageView, 'private-' + user.id);
+            }
+        }
+
         window.sound.message.play();
     }
 
@@ -149,8 +157,9 @@ class Application {
     }
 
     addMessage(messageView, room = 'main') {
-        var chat = this.getChat(room);
+        var chat = this.getChatRoom(room);
         chat.append(messageView.render());
+        window.tabs.increaseCounter(room);
         this.scroll.down();
     }
 
@@ -159,14 +168,14 @@ class Application {
     }
 
     isUserExist(id) {
-        return this.users[id] === void 0 ? false : true;
+        return this.users[id] !== void 0;
     }
 
     addUser(user) {
         this.users[user.id] = user;
     }
 
-    getChat(room) {
+    getChatRoom(room) {
         if (!this.dom.chat[room]) {
             this.dom.board.append(new ChatBoardView(room).render());
             this.dom.chat[room] = $('#chat-' + room);

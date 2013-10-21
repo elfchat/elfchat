@@ -220,7 +220,9 @@ var ChatBoardView = function($__super) {
   var $__proto = $__getProtoParent($__super);
   var $ChatBoardView = ($__createClass)({
     constructor: function(room) {
+      var visible = arguments[1] !== (void 0) ? arguments[1]: true;
       this.room = room;
+      this.visible = visible;
     },
     render: function() {
       return template('chat/board/chat')(this);
@@ -372,7 +374,7 @@ var Server = function() {
         console.log('user_leave ' + user.name);
       }));
       socket.on('message', (function(m) {
-        console.log('message');
+        console.log('message ' + m.room);
       }));
       socket.on('error', (function(code) {
         console.log('error ' + code);
@@ -384,7 +386,7 @@ var Server = function() {
 var Tabs = function() {
   'use strict';
   var $Tabs = ($__createClassNoExtends)({
-    constructor: function(tabs) {
+    constructor: function() {
       var tabs = $('#tabs');
       this.dom = {
         rooms: tabs.find('#rooms'),
@@ -394,11 +396,12 @@ var Tabs = function() {
         }
       };
       this.select = {tabs: '#tabs .tab'};
+      this.current = 'tab-main';
       this.bind();
       this.addMainRoom();
     },
     bind: function() {
-      $(window).on('synchronize', $.proxy(this.onSynchronize, this)).on('message', $.proxy(this.onMessage, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('user_update', $.proxy(this.onUserUpdate, this));
+      $(window).on('synchronize', $.proxy(this.onSynchronize, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('user_update', $.proxy(this.onUserUpdate, this));
       $(document).on('click', this.select.tabs, $.proxy(this.onTabClick, this));
     },
     addMainRoom: function() {
@@ -432,11 +435,31 @@ var Tabs = function() {
         this.dom.users.append(tab.render());
       }
     },
+    increaseCounter: function(room) {
+      var tab = $('[data-room="' + room + '"]');
+      if (tab.exist() && !tab.hasClass('active')) {
+        var count = tab.find('.count');
+        var val = parseInt(count.text()) || 0;
+        count.text(val + 1).show();
+      }
+    },
     isUserTab: function(user) {
       return $('#tab-user-' + user.id).exist();
     },
     onTabClick: function(event) {
-      console.log(event.target);
+      this.selectTab($(event.currentTarget));
+    },
+    selectTab: function(tab) {
+      var old = $('#' + this.current);
+      old.removeClass('active');
+      this.current = tab.attr('id');
+      tab.addClass('active');
+      tab.find('.count').text('0').hide();
+      window.chat.getChatRoom(window.room).hide();
+      window.room = tab.attr('data-room');
+      window.chat.getChatRoom(window.room).show();
+      window.chat.scroll.instantlyDown();
+      window.chat.dom.textarea.focus();
     }
   }, {});
   return $Tabs;
@@ -907,7 +930,7 @@ var Application = function() {
       this.filters = [new BBCodeFilter(), new UriFilter({chat: this.dom.board}), new EmotionFilter(EmotionList), new RestrictionFilter()];
     },
     onSend: function(event) {
-      this.server.send(this.dom.textarea.val(), 'main');
+      this.server.send(this.dom.textarea.val(), window.room);
       this.dom.textarea.val('');
       event.stopPropagation();
       return false;
@@ -989,8 +1012,9 @@ var Application = function() {
     },
     addMessage: function(messageView) {
       var room = arguments[1] !== (void 0) ? arguments[1]: 'main';
-      var chat = this.getChat(room);
+      var chat = this.getChatRoom(room);
       chat.append(messageView.render());
+      window.tabs.increaseCounter(room);
       this.scroll.down();
     },
     getUser: function(id) {
@@ -1002,7 +1026,7 @@ var Application = function() {
     addUser: function(user) {
       this.users[user.id] = user;
     },
-    getChat: function(room) {
+    getChatRoom: function(room) {
       if (!this.dom.chat[room]) {
         this.dom.board.append(new ChatBoardView(room).render());
         this.dom.chat[room] = $('#chat-' + room);
