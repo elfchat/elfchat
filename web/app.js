@@ -165,7 +165,7 @@ var MessageView = function($__super) {
       var user = arguments[1] !== (void 0) ? arguments[1]: null;
       this.id = message.id;
       this.time = moment(message.datetime).format('hh:mm:ss');
-      this.text = this.escape(message.text);
+      this.text = this.filter(this.escape(message.text));
       this.room = message.room;
       if (user === null) {
         this.user = message.user;
@@ -178,6 +178,15 @@ var MessageView = function($__super) {
     },
     escape: function(html) {
       return html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+    },
+    filter: function(text) {
+      for (var $__1 = $traceurRuntime.getIterator(window.chat.filters), $__2; !($__2 = $__1.next()).done;) {
+        var filter = $__2.value;
+        {
+          text = filter.filter(text);
+        }
+      }
+      return text;
     }
   }, {}, $__proto, $__super, true);
   return $MessageView;
@@ -247,6 +256,19 @@ var EmotionTabView = function($__super) {
     }
   }, {}, $__proto, $__super, true);
   return $EmotionTabView;
+}(View);
+var EmotionImageView = function($__super) {
+  'use strict';
+  var $__proto = $__getProtoParent($__super);
+  var $EmotionImageView = ($__createClass)({
+    constructor: function(src) {
+      this.src = src;
+    },
+    render: function() {
+      return template('chat/emotion/image')(this);
+    }
+  }, {}, $__proto, $__super, true);
+  return $EmotionImageView;
 }(View);
 var Server = function() {
   'use strict';
@@ -380,8 +402,8 @@ var Tabs = function() {
     onSynchronize: function(event) {
       for (var users = [], $__3 = 1; $__3 < arguments.length; $__3++) users[$__3 - 1] = arguments[$__3];
       this.dom.users.html('');
-      for (var $__1 = $traceurRuntime.getIterator(users), $__2; !($__2 = $__1.next()).done;) {
-        var user = $__2.value;
+      for (var $__2 = $traceurRuntime.getIterator(users), $__1; !($__1 = $__2.next()).done;) {
+        var user = $__1.value;
         {
           this.dom.users.append(new UserTabView(user).render());
         }
@@ -497,8 +519,8 @@ var EmotionTabs = function() {
       var html = '';
       for (var title in this.catalog) if (this.catalog.hasOwnProperty(title)) {
         var tab = this.catalog[title];
-        for (var $__2 = $traceurRuntime.getIterator(tab), $__1; !($__1 = $__2.next()).done;) {
-          var emotion = $__1.value;
+        for (var $__1 = $traceurRuntime.getIterator(tab), $__2; !($__2 = $__1.next()).done;) {
+          var emotion = $__2.value;
           {
             this.emotions.push(emotion);
             if (this.n >= this.pertab - 1) {
@@ -523,44 +545,200 @@ var EmotionTabs = function() {
   }, {});
   return $EmotionTabs;
 }();
-var EmotionFilter = function() {
+var Filter = function() {
   'use strict';
-  var $EmotionFilter = ($__createClassNoExtends)({
-    constructor: function(map, init) {
-      var _ref, _ref1;
-      this.map = map;
-      this.text = __bind(this.text, this);
-      this.max = (_ref = init.max) != null ? _ref: 20;
-      this.url = (_ref1 = init.url) != null ? _ref1: 'web/emotion/';
+  var $Filter = ($__createClassNoExtends)({
+    constructor: function() {},
+    filter: function(html) {
+      return this.explode(html, {
+        tag: $.proxy(this.tag, this),
+        text: $.proxy(this.text, this)
+      });
     },
-    toUrl: function(path) {
-      return require.toUrl(this.url + path);
+    explode: function(html, map) {
+      var array, i, length, part, tag, text, _i, _ref, _ref1;
+      if (map == null) {
+        map = null;
+      }
+      array = [''];
+      length = html.length;
+      part = 0;
+      for (i = _i = 0; 0 <= length ? _i <= length: _i >= length; i = 0 <= length ? ++_i: --_i) {
+        if (html.charAt(i) === '<') {
+          array.push('');
+          part++;
+        }
+        array[part] += html.charAt(i);
+        if (html.charAt(i) === '>') {
+          array.push('');
+          part++;
+        }
+      }
+      tag = (_ref = map.tag) != null ? _ref: function(value) {
+        return value;
+      };
+      text = (_ref1 = map.text) != null ? _ref1: function(value) {
+        return value;
+      };
+      array = array.map(function(value, n) {
+        if (value === '') {
+          return value;
+        }
+        if (n % 2 === 1) {
+          return tag(value);
+        } else {
+          return text(value);
+        }
+      });
+      return array.join('');
+    }
+  }, {});
+  return $Filter;
+}();
+var BBCodeFilter = function($__super) {
+  'use strict';
+  var $__proto = $__getProtoParent($__super);
+  var $BBCodeFilter = ($__createClass)({
+    constructor: function() {
+      $__superCall(this, $__proto, "constructor", arguments);
     },
     text: function(text) {
-      var count, regexp, row, _i, _ref, _this = this;
-      count = 0;
+      text = text.replace(/\[bg=([#0-9a-z]{1,20})\]((?:.(?!\[bg))*)\[\/bg\]/ig, '<span style="background-color:$1;">$2</span>');
+      text = text.replace(/\[color=([#0-9a-z]{1,20})\]((?:.(?!\[color))*)\[\/color\]/ig, '<span style="color:$1;">$2</span>');
+      text = text.replace(/\[b\]((?:.(?!\[b\]))*)\[\/b\]/ig, '<b>$1</b>');
+      text = text.replace(/\[i\]((?:.(?!\[i\]))*)\[\/i\]/ig, '<i>$1</i>');
+      text = text.replace(/\[s\]((?:.(?!\[s\]))*)\[\/s\]/ig, '<s>$1</s>');
+      text = text.replace(/\[m\]((?:.(?!\[s\]))*)\[\/m\]/ig, '<marquee>$1</marquee>');
+      text = text.replace(/\[quote([^\]]*)\]((?:.(?!\[quote))*)\[\/quote\]/ig, function(m, p1, p2) {
+        var info, msg, name, quote, time;
+        info = '';
+        quote = '';
+        msg = p1.match(/msg=&quot;([0-9]*)&quot;/);
+        if (msg !== null && msg[1] !== '') {
+          quote = ' ref="' + msg[1] + '"';
+        }
+        time = p1.match(/time=&quot;([\.:0-9]*)&quot;/);
+        if (time !== null && time[1] !== '') {
+          info += '<i>' + time[1] + '</i> ';
+        }
+        name = p1.match(/name=&quot;(.*)&quot;/);
+        if (name !== null && name[1] !== '') {
+          info += name[1];
+        }
+        if (info !== '') {
+          info = '&copy; ' + info + ': ';
+        }
+        return '<blockquote' + quote + '>' + info + p2 + '</blockquote>';
+      });
+      return text;
+    }
+  }, {}, $__proto, $__super, false);
+  return $BBCodeFilter;
+}(Filter);
+var RestrictionFilter = function($__super) {
+  'use strict';
+  var $__proto = $__getProtoParent($__super);
+  var $RestrictionFilter = ($__createClass)({
+    constructor: function() {
+      this.maximumLengthOfWords = 100;
+      this.maximumNumberOfLines = 20;
+    },
+    filter: function(html) {
+      var linesCount, _this = this;
+      html = this.explode(html, {text: function(text) {
+          return text.replace(new RegExp('[^\\s]{' + _this.maximumLengthOfWords + ',}', 'g'), function(all) {
+            return all.substr(0, 20) + '...' + all.substr(all.length - 20, all.length);
+          });
+        }});
+      html = html.replace(/([\s]{100,})/g, function(all) {
+        return all.substr(0, 100);
+      });
+      html = html.replace(/(\n){3,}/g, '\n\n');
+      linesCount = 0;
+      html = html.replace(/[\n\r\t]/g, function(all) {
+        if (++linesCount < _this.maximumNumberOfLines) {
+          return '\n';
+        } else {
+          return ' ';
+        }
+      });
+      return html;
+    }
+  }, {}, $__proto, $__super, true);
+  return $RestrictionFilter;
+}(Filter);
+var UriFilter = function($__super) {
+  'use strict';
+  var $__proto = $__getProtoParent($__super);
+  var $UriFilter = ($__createClass)({
+    constructor: function(init) {
+      var _ref, _ref1, _ref2;
+      this.chat = (_ref = init.chat) != null ? _ref: $(window);
+      this.imageable = (_ref1 = init.imageable) != null ? _ref1: true;
+      this.imageCount = 0;
+      this.maxImages = (_ref2 = init.maxImages) != null ? _ref2: 3;
+      this.regex = /(https?):\/\/((?:[a-z0-9.-]|%[0-9A-F]{2}){3,})(?::(\d+))?((?:\/(?:[a-z0-9-._~!$&'()*+,;=:@]|%[0-9A-F]{2})*)*)(?:\?((?:[a-z0-9-._~!$&'()*+,;=:\/?@]|%[0-9A-F]{2})*))?(?:#((?:[a-z0-9-._~!$&'()*+,;=:\/?@]|%[0-9A-F]{2})*))?/ig;
+    },
+    text: function(text) {
+      this.images = 0;
+      return text = text.replace(this.regex, $.proxy(this.callback, this));
+    },
+    callback: function(uri, p1, p2, p3, p4, p5, p6, p7, p8, p9) {
+      var ext, id, img, text, _ref, _this = this;
+      text = uri;
+      ext = uri.match(/\.([a-z0-9]+)$/i);
+      if (((_ref = ext != null ? ext[1]: void 0) === 'jpg' || _ref === 'jpeg' || _ref === 'png' || _ref === 'gif') && this.imageable && this.images++ < this.maxImages) {
+        this.imageCount += 1;
+        id = 'external-img-' + this.imageCount;
+        text = "<img class=\"external\" id=\"" + id + "\" src=\"" + uri + "\">";
+        img = new Image();
+        img.src = uri;
+        img.onload = function() {
+          return (function(id, uri) {
+            var height;
+            height = $('#' + id).height();
+            return _this.chat.scrollTo('+=' + height);
+          })(id, uri);
+        };
+      }
+      return "<a href=\"" + uri + "\" target=\"_blank\">" + text + "</a>";
+    }
+  }, {}, $__proto, $__super, true);
+  return $UriFilter;
+}(Filter);
+var EmotionFilter = function($__super) {
+  'use strict';
+  var $__proto = $__getProtoParent($__super);
+  var $EmotionFilter = ($__createClass)({
+    constructor: function(list) {
+      this.list = list;
+      this.max = 20;
+    },
+    text: function(text) {
+      var _this = this;
+      var count = 0;
       text = text.replace(/&apos;/g, "'");
-      _ref = this.map;
-      for (_i = _ref.length - 1; _i >= 0; _i += - 1) {
-        row = _ref[_i];
-        regexp = row[0];
-        text = text.replace(regexp, function(str) {
-          var src;
-          src = _this.toUrl(row[1]);
-          count++;
-          if (count > _this.max) {
-            return str;
-          } else {
-            return "<img class=\"emotion\" src=\"" + src + "\">";
-          }
-        });
+      for (var $__2 = $traceurRuntime.getIterator(this.list), $__1; !($__1 = $__2.next()).done;) {
+        var row = $__1.value;
+        {
+          var regexp = row[0];
+          var src = row[1];
+          text = text.replace(regexp, (function(str) {
+            count++;
+            if (count > _this.max) {
+              return str;
+            } else {
+              return new EmotionImageView(src).render();
+            }
+          }));
+        }
       }
       text = text.replace(/'/g, '&apos;');
       return text;
     }
-  }, {});
+  }, {}, $__proto, $__super, true);
   return $EmotionFilter;
-}();
+}(Filter);
 var popovers = {};
 var Popover = function() {
   'use strict';
@@ -698,16 +876,18 @@ var Application = function() {
   var $Application = ($__createClassNoExtends)({
     constructor: function() {
       this.server = new Server(window.config.server, window.config.namespace);
+      this.users = {};
+      this.filters = [];
       this.dom = {
         board: $('#board'),
         chat: {main: $('#chat-main')},
         textarea: $('#message'),
         body: $('body')
       };
-      this.bind();
       this.scroll = new Scroll(this.dom.board);
-      this.users = {};
       this.sound = new Sound();
+      this.bind();
+      this.addFilters();
     },
     run: function() {
       this.server.connect();
@@ -716,6 +896,9 @@ var Application = function() {
       $(window).on('connect', $.proxy(this.onConnect, this)).on('login_success', $.proxy(this.onLoginSuccess, this)).on('synchronize', $.proxy(this.onSynchronize, this)).on('message', $.proxy(this.onMessage, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('user_update', $.proxy(this.onUserUpdate, this));
       $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this)).on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this));
       $(this.dom.textarea).bind('keydown', 'return', $.proxy(this.onSend, this));
+    },
+    addFilters: function() {
+      this.filters = [new BBCodeFilter(), new UriFilter({chat: this.dom.board}), new EmotionFilter(EmotionList), new RestrictionFilter()];
     },
     onSend: function(event) {
       this.server.send(this.dom.textarea.val(), 'main');

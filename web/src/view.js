@@ -60,7 +60,7 @@ class MessageView extends View {
     constructor(message, user = null) {
         this.id = message.id;
         this.time = moment(message.datetime).format('hh:mm:ss');
-        this.text = this.escape(message.text);
+        this.text = this.filter(this.escape(message.text));
         this.room = message.room;
 
         // Add user to message.
@@ -77,6 +77,13 @@ class MessageView extends View {
 
     escape(html) {
         return html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+    }
+
+    filter(text) {
+        for(var filter of window.chat.filters) {
+            text = filter.filter(text);
+        }
+        return text;
     }
 }
 
@@ -127,5 +134,15 @@ class EmotionTabView extends View {
 
     render() {
         return template('chat/emotion/tab')(this);
+    }
+}
+
+class EmotionImageView extends View {
+    constructor(src) {
+        this.src = src;
+    }
+
+    render() {
+        return template('chat/emotion/image')(this);
     }
 }

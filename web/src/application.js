@@ -7,6 +7,8 @@
 class Application {
     constructor() {
         this.server = new Server(window.config.server, window.config.namespace);
+        this.users = {};
+        this.filters = [];
         this.dom = {
             board: $('#board'),
             chat: {
@@ -15,10 +17,10 @@ class Application {
             textarea: $('#message'),
             body: $('body')
         };
-        this.bind();
         this.scroll = new Scroll(this.dom.board);
-        this.users = {};
         this.sound = new Sound();
+        this.bind();
+        this.addFilters();
     }
 
     run() {
@@ -42,6 +44,15 @@ class Application {
 
         $(this.dom.textarea)
             .bind('keydown', 'return', $.proxy(this.onSend, this));
+    }
+
+    addFilters() {
+        this.filters = [
+            new BBCodeFilter(),
+            new UriFilter({chat: this.dom.board}),
+            new EmotionFilter(EmotionList),
+            new RestrictionFilter()
+        ];
     }
 
     onSend(event) {

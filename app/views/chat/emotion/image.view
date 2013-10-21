@@ -1,0 +1,1 @@
+<img class="emotion" src="{{ asset('emotion/[src]') }}">

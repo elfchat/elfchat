@@ -22,5 +22,6 @@ src/view.js \
 src/server.js \
 src/tabs.js \
 src/emotion.js \
+src/filters.js \
 src/popover.js \
 src/application.js

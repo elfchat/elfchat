@@ -17,8 +17,7 @@
         sound: {
             message: '{{ app.request.basePath }}/web/lib/media/sound/beep.mp3',
             join: '{{ app.request.basePath }}/web/lib/media/sound/online.mp3'
-        },
-        emotionPath: '{{ asset('emotion/') }}'
+        }
     };
     {% endautoescape %}
 
@@ -49,6 +48,7 @@
 {{ view('chat/board/message.view') }}
 {{ view('chat/board/chat.view') }}
 {{ view('chat/emotion/tab.view') }}
+{{ view('chat/emotion/image.view') }}
 {{ view('chat/popover/profile.view') }}
 {% endautoescape %}
 
