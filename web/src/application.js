@@ -25,6 +25,7 @@ class Application {
 
     run() {
         this.server.connect();
+        this.addRecentMessages();
     }
 
     bind() {
@@ -68,7 +69,6 @@ class Application {
     }
 
     onLoginSuccess(event) {
-        this.addRecentMessages();
         this.server.join(window.room);
     }
 

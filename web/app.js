@@ -891,6 +891,7 @@ var Application = function() {
     },
     run: function() {
       this.server.connect();
+      this.addRecentMessages();
     },
     bind: function() {
       $(window).on('connect', $.proxy(this.onConnect, this)).on('login_success', $.proxy(this.onLoginSuccess, this)).on('synchronize', $.proxy(this.onSynchronize, this)).on('message', $.proxy(this.onMessage, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('user_update', $.proxy(this.onUserUpdate, this));
@@ -910,7 +911,6 @@ var Application = function() {
       this.server.login(window.config.auth);
     },
     onLoginSuccess: function(event) {
-      this.addRecentMessages();
       this.server.join(window.room);
     },
     onSynchronize: function(event) {
