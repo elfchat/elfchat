@@ -1,18 +1,18 @@
 {% trans_default_domain 'chat' %}
 
-<div id="[id]" class="popover right" style="top: 0; left: 0; display: none;">
+<div id="[id]" class="popover right profile" style="top: 0; left: 0; display: none;">
     <div class="arrow"></div>
     <h3 class="popover-title">
-        {{ 'Profile'|trans() }}
+        [user.name]
     </h3>
+    <div class="popover-side">
+        <div class="avatar" style="background-image: url('[user.avatar]')"></div>
+        <button>{{ 'Bun'|trans() }}</button>
+        <button>{{ 'Silence'|trans() }}</button>
+    </div>
     <div class="popover-content">
-        <h3>[user.name]</h3>
-        <span class="avatar" data-user-id="[user.id]" style="background-image: url('[user.avatar]')"></span><br>
-        [user.name.plain]<br>
-        <br>
-        <br>
-        <br>
-        <br>
-        [user.avatar]<br>
+        <div class="group">User</div>
+        <div class="sex">Male</div>
+        <div class="ip">154.32.23.12</div>
     </div>
 </div>
