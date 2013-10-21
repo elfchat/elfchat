@@ -20,7 +20,7 @@ class Login extends Controller
      */
     public function index(Request $request)
     {
-        $response = $this->render('users/login/index.twig', array(
+        $response = $this->render('users/login.twig', array(
             'error' => $this->app['security.last_error']($request),
             'last_username' => $this->app['session']->get('_security.last_username'),
         ));

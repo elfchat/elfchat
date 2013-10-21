@@ -35,7 +35,7 @@ class Register extends Controller
             }
         }
 
-        $response =  $this->render('users/register/index.twig', array(
+        $response =  $this->render('users/register.twig', array(
             'form' => $form->createView(),
         ));
         $response->setSharedMaxAge(5);
