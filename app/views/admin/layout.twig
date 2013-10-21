@@ -4,54 +4,43 @@
 {% block title %}{{ 'title'|trans() }}{% endblock %}
 
 {% block style %}
-    <link rel="stylesheet" href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ asset('lib/bootstrap/css/bootstrap.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ asset('admin/css/sidebar.css') }}" type="text/css">
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('vendor/bootstrap/css/bootstrap-responsive.min.css') }}" type="text/css">
 {% endblock style %}
 
 {% block body %}
-    <div class="navbar navbar-inverse navbar-static-top">
-        <div class="navbar-inner">
-            <div class="container">
-                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="brand" href="{{ path('admin') }}">{{ 'title'|trans() }}</a>
-
-                <div class="nav-collapse collapse">
-                    <ul class="nav">
-                        <li><a href="{{ path('admin_dashboard') }}">{{ 'home'|trans() }}</a></li>
-                        <li><a href="{{ path('admin_config') }}">{{ 'config'|trans() }}</a></li>
-                        <li><a href="{{ path('admin_users') }}">{{ 'users'|trans() }}</a></li>
-                        <li><a href="#">{{ 'Themes'|trans() }}</a></li>
-                        <li><a href="#">{{ 'Plugins'|trans() }}</a></li>
-                    </ul>
-                </div>
-                <!--/.nav-collapse -->
-            </div>
+    <div class="sidebar-wrapper">
+        <div class="sidebar">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand"><a href="{{ path('admin') }}">{{ 'ElfChat Admin'|trans() }}</a></li>
+                <li><a href="{{ path('admin_dashboard') }}">{{ 'Home'|trans() }}</a></li>
+                <li><a href="{{ path('admin_config') }}">{{ 'Configuration'|trans() }}</a></li>
+                <li><a href="{{ path('admin_users') }}">{{ 'Users'|trans() }}</a></li>
+                <li><a href="#">{{ 'Themes'|trans() }}</a></li>
+                <li><a href="#">{{ 'Plugins'|trans() }}</a></li>
+            </ul>
         </div>
-    </div>
 
-    <div class="container">
-        {% for message in app.session.flashBag.get('success') %}
-            <div class="alert alert-success">{{ message|trans() }}</div>
-        {% endfor %}
-        {% for message in app.session.flashBag.get('error') %}
-            <div class="alert alert-error">{{ message|trans() }}</div>
-        {% endfor %}
-        {% for message in app.session.flashBag.get('info') %}
-            <div class="alert alert-info">{{ message|trans() }}</div>
-        {% endfor %}
-        {% block content %}
-        {% endblock %}
+        <div class="container sidebar-content">
+            {% for message in app.session.flashBag.get('success') %}
+                <div class="alert alert-success">{{ message|trans() }}</div>
+            {% endfor %}
+            {% for message in app.session.flashBag.get('error') %}
+                <div class="alert alert-error">{{ message|trans() }}</div>
+            {% endfor %}
+            {% for message in app.session.flashBag.get('info') %}
+                <div class="alert alert-info">{{ message|trans() }}</div>
+            {% endfor %}
+            {% block content %}
+            {% endblock %}
+        </div>
     </div>
 {% endblock %}
 
 {% block script %}
     {{ parent() }}
-    <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('lib/bootstrap/js/bootstrap.min.js') }}"></script>
     <script type="text/javascript">
         $(function () {
             /**
