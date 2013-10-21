@@ -2,6 +2,11 @@
     [#user.avatar]
     <span class="avatar" data-user-id="[user.id]" style="background-image: url('[user.avatar]')"></span>
     [/user.avatar]
+
+    [^user.avatar]
+    <span class="avatar icon-user" data-user-id="[user.id]"></span>
+    [/user.avatar]
+
     <span class="time">
         [time]
     </span>

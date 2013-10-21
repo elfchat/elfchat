@@ -1,5 +1,12 @@
 <div class="tab user" id="tab-[tab.id]" data-chat="private-[user.id]">
+    [#user.avatar]
     <span class="avatar" data-user-id="[user.id]" style="background-image: url('[user.avatar]')"></span>
+    [/user.avatar]
+
+    [^user.avatar]
+    <span class="avatar icon-user" data-user-id="[user.id]"></span>
+    [/user.avatar]
+
     <span class="name" data-user-name="[user.name]">[&user.name]</span>
     <div class="badges">
         <span class="count" style="display: none;">[count]</span>

@@ -15,6 +15,10 @@ html, body {
     margin: 0;
 }
 
+img {
+    border: none;
+}
+
 /* Header */
 
 header {
@@ -50,6 +54,7 @@ header .buttons > div {
     display: inline-block;
     width: 32px;
     height: 32px;
+    font-size: 32px;
     background-size: contain;
 }
 
