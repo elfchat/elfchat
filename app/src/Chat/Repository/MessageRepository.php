@@ -21,9 +21,10 @@ class MessageRepository extends EntityRepository
     public function getLastMessages($room)
     {
         $dql = "
-        SELECT m, u
+        SELECT m, u, a
         FROM Chat\Entity\Message m
         JOIN m.user u
+        JOIN u.avatar a
         WHERE m.room = :room
         ORDER BY m.id DESC
         ";
