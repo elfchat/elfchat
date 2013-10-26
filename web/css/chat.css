@@ -268,3 +268,25 @@ footer .buttons > div {
     max-width: 24px;
     max-height: 24px;
 }
+
+/*
+ * Copyright
+ */
+
+.copyright {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    color: #9b9b9b;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.copyright:first-letter {
+    font-size: 14px;
+}
+
+.copyright a {
+    color: #9b9b9b;
+    font-size: 10px;
+}
