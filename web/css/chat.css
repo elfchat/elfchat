@@ -160,31 +160,28 @@ header .buttons > div {
 /* Profiles */
 
 .profile {
-    position: relative;
 }
 
 .profile .avatar {
-    display: block;
     width: 64px;
     height: 64px;
     box-shadow: 0 2px 2px rgba(0,0,0,0.2);
 }
 
 .profile .popover-side {
-    position: absolute;
-    left: 10px;
-    top: 10px;
+    float: left;
     width: 64px;
+    margin: 5px;
+    margin-top: -30px;
 }
 
 .profile .popover-title {
-    padding-left: 85px;
+    padding-left: 80px;
     font-weight: bold;
 }
 
 .profile .popover-content {
-    padding-left: 85px;
-    min-height: 80px;
+    padding-left: 80px;
 }
 
 .profile .popover-side button {
