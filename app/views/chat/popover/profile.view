@@ -7,7 +7,7 @@
     </h3>
     <div class="popover-side">
         <div class="avatar" style="background-image: url('[user.avatar]')"></div>
-        <button>{{ 'Bun'|trans() }}</button>
+        <a class="button" href="{{ url('profile_avatar') }}" target="_blank">{{ 'Bun'|trans() }}</a>
         <button>{{ 'Silence'|trans() }}</button>
     </div>
     <div class="popover-content">

@@ -290,3 +290,28 @@ footer .buttons > div {
     color: #9b9b9b;
     font-size: 10px;
 }
+
+/*
+ * Buttons
+ */
+
+.button,
+button {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    background: #ffffff;
+    border: solid 1px #a2a2a2;
+    color: #696969;
+    border-radius: 5px;
+    font-family: 'Open Sans', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.button:hover {
+    color: #696969;
+    text-decoration: none;
+}
