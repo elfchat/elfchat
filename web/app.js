@@ -1078,7 +1078,7 @@ var Application = function() {
       this.dom.textarea.insertAtCaret(' ' + name + ' ');
     },
     onError: function(event, error) {
-      notify.error(error);
+      notify.error(tr(error));
     }
   }, {});
   return $Application;

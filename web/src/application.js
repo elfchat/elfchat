@@ -198,6 +198,6 @@ class Application {
     }
 
     onError(event, error) {
-        notify.error(error);
+        notify.error(tr(error));
     }
 }
