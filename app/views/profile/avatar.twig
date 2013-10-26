@@ -1,5 +1,4 @@
 {% extends 'profile/layout.twig' %}
-{% trans_default_domain 'profile' %}
 
 {% block style %}
     {{ parent() }}
@@ -19,11 +18,11 @@
                 <img class="avatar" src="{{ app.user.avatar }}">
             </div>
             <div class="col-md-10">
-                <h4>{{ 'new_avatar'|trans() }}</h4>
+                <h4>{{ 'New avatar'|trans() }}</h4>
                 {{ form_widget(form.file) }}
                 <br>
-                <button class="btn btn-success" type="submit">{{ 'button.avatar'|trans() }}</button>
-                {{ form_errors(form) }}
+                <button class="btn btn-success" type="submit">{{ 'Upload'|trans() }}</button>
+                {{ form_errors(form.file) }}
             </div>
         </div>
     </form>

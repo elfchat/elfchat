@@ -25,20 +25,16 @@ class Profile extends Controller
     {
         $em = $this->app->entityManager();
         $user = $this->app->user();
-        $avatar = $user->getAvatar();
 
-        if (null === $avatar) {
-            $avatar = new Avatar();
-            $user->setAvatar($avatar);
-        }
-
-        $form = $this->app->form($avatar, array('validation_groups' => array('avatar')))
+        $form = $this->app->form(new Avatar(), array('validation_groups' => array('avatar')))
             ->add('file')
             ->getForm();
 
         $form->handleRequest($this->request);
 
         if ($form->isValid()) {
+            $avatar = $form->getData();
+            $user->setAvatar($avatar);
             $em->persist($avatar);
             $em->flush();
 
