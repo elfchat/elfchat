@@ -1,0 +1,13 @@
+{
+  "name": "typeahead",
+  "_cacheHeaders": {
+    "ETag": "\"f67744bb96e3ce280c861e3d4699f445\"",
+    "Content-Length": "217805",
+    "Content-Type": "text/html; charset=utf-8"
+  },
+  "_release": "e-tag:f67744bb9",
+  "main": "index.js",
+  "_source": "https://github.com/twitter/typeahead.js/blob/244e1e5e0097659d4dd22be63be96d770ade86fa/dist/typeahead.min.js",
+  "_target": "*",
+  "_originalSource": "https://github.com/twitter/typeahead.js/blob/244e1e5e0097659d4dd22be63be96d770ade86fa/dist/typeahead.min.js"
+}

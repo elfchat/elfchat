@@ -11,7 +11,6 @@ class Guest extends User
 {
     public function __construct()
     {
-        $this->role = 'ROLE_GUEST';
-        $this->id = uniqid();
+
     }
 } 
