@@ -38,6 +38,7 @@ class BanController extends Controller
     {
         $ban = new Ban();
 
+        $user = null;
         if ($id = $this->request->get('id')) {
             if ($user = $this->app->repository()->users()->find($id)) {
                 $ban->setUser($user);
@@ -59,9 +60,9 @@ class BanController extends Controller
             return $this->app->redirect($this->app->url('moderator_bans'));
         }
 
-
         return $this->render('moderator/ban/add.twig', array(
             'form' => $form->createView(),
+            'user' => $user,
         ));
     }
 

@@ -7,8 +7,9 @@
     </h3>
     <div class="popover-side">
         <div class="avatar" style="background-image: url('[user.avatar]')"></div>
-        <a class="button" href="{{ url('profile_avatar') }}" target="_blank">{{ 'Bun'|trans() }}</a>
-        <button>{{ 'Silence'|trans() }}</button>
+        {% if app.isModerator() %}
+            <a class="button" href="{{ url('moderator_add_ban') }}?id=[user.id]" target="_blank">{{ 'Bun'|trans() }}</a>
+        {% endif %}
     </div>
     <div class="popover-content">
         <div class="group">User</div>
