@@ -59,6 +59,15 @@
 
 {% block user_widget %}
     {{ block('form_widget_simple') }}
+    <script src="{{ asset('lib/vendor/typeahead/index.js') }}"></script>
+    <script>
+        $(function () {
+            $('#{{ id }}').typeahead({
+                name: 'Anton',
+                local: ['Anton', 'Elfet']
+            });
+        });
+    </script>
 {% endblock %}
 
 

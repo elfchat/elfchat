@@ -13,7 +13,7 @@
         "jcrop": "*",
         "moment": "*",
         "howler": "*",
-        "typeahead": "https://github.com/twitter/typeahead.js/blob/244e1e5e0097659d4dd22be63be96d770ade86fa/dist/typeahead.min.js"
+        "typeahead.js": "*"
     },
     "ignore": [
         "**/.*",
