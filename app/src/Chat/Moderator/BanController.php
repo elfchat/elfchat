@@ -79,4 +79,16 @@ class BanController extends Controller
 
         return $this->app->redirect($this->app->url('moderator_bans'));
     }
+
+    /**
+     * @Route("/users", name="query_users")
+     */
+    public function users()
+    {
+        $users = $this->app->repository()->users()->queryNames($this->request->get('query'));
+        $users = array_map(function (User $user) {
+            return $user->export();
+        }, $users);
+        return $this->app->json($users);
+    }
 }
