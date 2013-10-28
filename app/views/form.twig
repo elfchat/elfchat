@@ -58,31 +58,7 @@
 
 
 {% block user_widget %}
-    <link rel="stylesheet" href="{{ asset('lib/hack/typeahead.css') }}" type="text/css">
-    <script src="{{ asset('lib/vendor/typeahead.js/dist/typeahead.min.js') }}"></script>
-    <script src="{{ asset('lib/vendor/mustache/mustache.js') }}"></script>
-    <script type="text/html" id="view_user_widget">
-        <p>
-            <img src="[avatar]" style="max-width: 32px; max-height: 32px; min-height: 32px; min-width: 32px;">&nbsp;
-            <strong>[name]</strong> (id:[id])
-        </p>
-    </script>
-
     {{ block('form_widget_simple') }}
-
-    <script>
-        Mustache.tags = ['[', ']'];
-        $(function () {
-            $('#{{ id }}').typeahead({
-                name: 'users',
-                valueKey: 'name',
-                remote: '{{ url('query_users') }}?query=%QUERY',
-                template: Mustache.compile($('#view_user_widget').html())
-            }).on('typeahead:selected', function (event, data) {
-
-                    });
-        });
-    </script>
 {% endblock %}
 
 
