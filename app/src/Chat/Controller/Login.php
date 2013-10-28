@@ -7,6 +7,8 @@
 
 namespace Chat\Controller;
 
+use Chat\Entity\Guest;
+use Chat\Entity\Message;
 use Silicone\Route;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -25,5 +27,16 @@ class Login extends Controller
             'last_username' => $this->app['session']->get('_security.last_username'),
         ));
         return $response;
+    }
+
+    /**
+     * @Route("/guest", name="login_guest")
+     */
+    public function guest()
+    {
+        $guest = new Guest();
+        $guest->setUsername('Guest');
+
+        return $this->app->redirect($this->app->url('chat'));
     }
 }

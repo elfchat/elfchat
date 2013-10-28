@@ -1,0 +1,10 @@
+{% extends 'moderator/layout.twig' %}
+{% form_theme form 'form.twig' %}
+
+{% block content %}
+    <h1>{{ 'Ban'|trans() }}</h1>
+    <form action="{{ url('moderator_add_ban') }}" method="post" class="form-horizontal">
+        {{ form_widget(form) }}
+        <button class="btn btn-danger">Ban</button>
+    </form>
+{% endblock %}

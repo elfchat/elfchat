@@ -22,7 +22,7 @@ class Users extends Controller
      */
     public function index()
     {
-        $users = $this->app->users()->findAll();
+        $users = $this->app->repository()->users()->findAll();
         return $this->render('admin/users/list.twig', array(
             'users' => $users,
         ));
@@ -33,7 +33,7 @@ class Users extends Controller
      */
     public function edit($id)
     {
-        $user = $this->app->users()->find($id);
+        $user = $this->app->repository()->users()->find($id);
 
         if (!$user) {
             throw new NotFoundHttpException($this->app->trans('user.notfound', array(), 'admin'));
@@ -67,7 +67,7 @@ class Users extends Controller
      */
     public function remove($id)
     {
-        $user = $this->app->users()->find($id);
+        $user = $this->app->repository()->users()->find($id);
 
         if (!$user) {
             throw new NotFoundHttpException($this->app->trans('User not found', array(), 'admin'));

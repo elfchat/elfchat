@@ -23,11 +23,12 @@ class Chat extends Controller
     public function index()
     {
         $em = $this->app->entityManager();
-        $user = $this->app->user();
 
-        if (null === $user) {
+        if (!$this->app->isGranted('ROLE_USER')) {
             return $this->render('chat/index.twig');
         } else {
+            $user = $this->app->user();
+
             // Render chat
 
             // Chat secure data

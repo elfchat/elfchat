@@ -10,7 +10,7 @@
         {% endif %}
 
         <div class="form-group">
-            <label for="_username">{{ 'Name'|trans({}, 'users') }}</label>
+            <label for="_username">{{ 'Name'|trans({}) }}</label>
             <input type="text" class="form-control" name="_username" value="{{ last_username }}">
         </div>
 
@@ -30,17 +30,12 @@
         <a href="{{ url('register') }}" class="btn btn-lg btn-default">{{ 'Register'|trans() }}</a>
     </form>
 
-    <form class="form" action="{{ path('login_check') }}" method="POST">
+    <form class="form" action="{{ path('login_guest') }}" method="POST">
         <h1>{{ 'Guest'|trans() }}</h1>
-        {% if error is not empty %}
-            <div class="alert alert-danger">
-                {{ error|trans({}, 'security') }}
-            </div>
-        {% endif %}
 
         <div class="form-group">
-            <label for="_username">{{ 'Name'|trans({}, 'users') }}</label>
-            <input type="text" class="form-control" name="_username" value="{{ last_username }}">
+            <label for="guestname">{{ 'Name'|trans({}) }}</label>
+            <input type="text" class="form-control" name="_username" value="">
         </div>
 
         <button class="btn btn-lg btn-primary" type="submit">{{ 'Login'|trans() }}</button>

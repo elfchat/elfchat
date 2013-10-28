@@ -8,6 +8,8 @@
 namespace Chat;
 
 use Chat\EventListener\PasswordEncoderSubscriber;
+use Chat\Exception\NoUserException;
+use Chat\Repository\Manager;
 use Silicone;
 use Chat\Repository\UserRepository;
 use Doctrine\Common\Cache\Cache;
@@ -18,10 +20,14 @@ use Chat\Entity\File;
 use Chat\Entity\User;
 use Chat\EventListener\FileSubscriber;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\Forms;
 use Symfony\Component\HttpFoundation\Request;
 
 class Application extends Silicone\Application
 {
+    protected $repository;
+
     /**
      * Get root directory.
      * @return string
@@ -59,6 +65,7 @@ class Application extends Silicone\Application
 
         $app['router.resource'] = array(
             $app->getRootDir() . '/src/Chat/Controller/',
+            $app->getRootDir() . '/src/Chat/Moderator/',
             $app->getRootDir() . '/src/Admin/Controller/',
         );
 
@@ -115,14 +122,19 @@ class Application extends Silicone\Application
             ),
         );
         $app['security.role_hierarchy'] = array(
-            'ROLE_USER' => array(),
-            'ROLE_MODERATOR' => array('ROLE_USER'),
-            'ROLE_ADMIN' => array('ROLE_USER', 'ROME_MODERATOR'),
+            'ROLE_GUEST' => array(),
+            'ROLE_USER' => array('ROLE_GUEST'),
+            'ROLE_MODERATOR' => array('ROLE_USER', 'ROLE_GUEST'),
+            'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_MODERATOR'),
         );
         $app['security.access_rules'] = array(
             array('^/admin', 'ROLE_ADMIN'),
+            array('^/moderator', 'ROLE_MODERATOR'),
             array('^/profile', 'ROLE_USER'),
-            array('^/', 'IS_AUTHENTICATED_ANONYMOUSLY'), // This rule must be at the end of list, otherwise access rules will not work.
+
+            // Next rule must be at the end of list,
+            // otherwise access rules will not work.
+            array('^/', 'IS_AUTHENTICATED_ANONYMOUSLY'),
         );
 
         $app['chat.upload_path'] = realpath($this->getRootDir() . '/../upload');
@@ -131,6 +143,20 @@ class Application extends Silicone\Application
         $app['password.encoder'] = $app->share(function () use ($app) {
             return new PasswordEncoderSubscriber($app['security.encoder.digest']);
         });
+
+        // Form types and transformers.
+
+        $app['user_transformer'] = $app->share(function () use ($app) {
+            return new \Chat\Form\Transformer\UserTransformer($app['em']);
+        });
+
+        $app['user_type'] = function () use ($app) {
+            return new \Chat\Form\UserType($app['user_transformer']);
+        };
+
+        $app['chosen_type'] = function () use ($app) {
+            return new \Chat\Form\ChosenType();
+        };
     }
 
     protected function registerProviders()
@@ -141,10 +167,25 @@ class Application extends Silicone\Application
         File::setUploadPath($app['chat.upload_path']);
 
         $app['dispatcher'] = $app->extend('dispatcher',
-            function (EventDispatcherInterface $dispatcher) use($app) {
+            function (EventDispatcherInterface $dispatcher) use ($app) {
                 $dispatcher->addSubscriber(new FileSubscriber($app['chat.upload_url']));
                 return $dispatcher;
             });
+
+        // Override form factory.
+        $app['form.factory'] = $app->share(function () use ($app) {
+            return Forms::createFormFactoryBuilder()
+                ->addExtensions($app['form.extensions'])
+                ->addTypeExtensions($app['form.type.extensions'])
+                ->addTypeGuessers($app['form.type.guessers'])
+                ->addTypes(array(
+                    $app['user_type'],
+                    $app['chosen_type'],
+                ))
+                ->getFormFactory();
+        });
+
+        $this->repository = new Manager($this->entityManager());
     }
 
 
@@ -158,10 +199,17 @@ class Application extends Silicone\Application
 
     /**
      * @return User
+     * @throws Exception\NoUserException
      */
     public function user()
     {
-        return parent::user();
+        $user = parent::user();
+
+        if (null !== $user) {
+            return $user;
+        }
+
+        throw new NoUserException();
     }
 
     /**
@@ -181,11 +229,11 @@ class Application extends Silicone\Application
     }
 
     /**
-     * @return UserRepository
+     * @return Manager
      */
-    public function users()
+    public function repository()
     {
-        return $this->entityManager()->getRepository('Chat\Entity\User');
+        return $this->repository;
     }
 
     /**
@@ -194,5 +242,45 @@ class Application extends Silicone\Application
     public function cache()
     {
         return $this['doctrine.common.cache'];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAuthenticated()
+    {
+        return $this->isGranted('IS_AUTHENTICATED_FULLY');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        return $this->isGranted('ROLE_ADMIN');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isModerator()
+    {
+        return $this->isGranted('ROLE_MODERATOR');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUser()
+    {
+        return $this->isGranted('ROLE_USER');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isGuest()
+    {
+        return $this->isGranted('ROLE_GUEST');
     }
 }

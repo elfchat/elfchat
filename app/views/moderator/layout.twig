@@ -1,0 +1,56 @@
+{% extends 'base.twig' %}
+
+{% block title %}{{ 'Moderator Center'|trans() }}{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{ asset('lib/bootstrap/css/bootstrap.min.css') }}" type="text/css">
+{% endblock style %}
+
+{% block body %}
+
+    <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">{{ 'Toggle navigation'|trans() }}</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="{{ path('moderator_bans') }}">{{ 'Bans'|trans() }}</a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </nav>
+
+    <div class="container">
+        {% for message in app.session.flashBag.get('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.session.flashBag.get('error') %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.session.flashBag.get('info') %}
+            <div class="alert alert-info">{{ message }}</div>
+        {% endfor %}
+        {% block content %}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block script %}
+    {{ parent() }}
+    <script src="{{ asset('lib/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript">
+        /**
+         * Auto selecting of active menu item.
+         */
+        $(function () {
+            $('a[href^="' + window.location.pathname + '"]').parent().addClass('active');
+        });
+    </script>
+{% endblock %}

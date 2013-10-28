@@ -37,16 +37,12 @@
 
     // Application
     $(function () {
-        try {
-            window.notify = new Notify();
-            window.sound = new Sound();
-            window.tabs = new Tabs();
-            window.emotion = new Emotion();
-            window.chat = new Application();
-            window.chat.run();
-        } catch (e) {
-            notify.error(tr(e.message));
-        }
+        window.notify = new Notify();
+        window.sound = new Sound();
+        window.tabs = new Tabs();
+        window.emotion = new Emotion();
+        window.chat = new Application();
+        window.chat.run();
     });
 </script>
 
