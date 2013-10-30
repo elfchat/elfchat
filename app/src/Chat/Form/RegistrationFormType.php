@@ -8,7 +8,6 @@
 namespace Chat\Form;
 
 use Chat\EventListener\PasswordEncoderSubscriber;
-use Silex\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -25,13 +24,13 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username', null, array('label' => 'form.name'))
-            ->add('email', 'email', array('label' => 'form.email'))
+            ->add('username', 'text')
+            ->add('email', 'email')
             ->add('password', 'repeated', array(
                 'type' => 'password',
-                'first_options' => array('label' => 'form.password'),
-                'second_options' => array('label' => 'form.password_confirmation'),
-                'invalid_message' => 'user.password.mismatch',
+                'first_options' => array('label' => 'Password'),
+                'second_options' => array('label' => 'Repeat password'),
+                'invalid_message' => 'Password mismatch',
             ))
         ;
 
@@ -42,8 +41,7 @@ class RegistrationFormType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => 'Chat\Entity\User',
-            'validation_groups' => array('Registration'),
-            'translation_domain' => 'users'
+            'validation_groups' => array('registration'),
         ));
     }
 

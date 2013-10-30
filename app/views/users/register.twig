@@ -1,4 +1,5 @@
 {% extends 'users/layout.twig' %}
+{% form_theme form 'form.twig' %}
 
 {% block content %}
     <form class="form" action="{{ url('register') }}" {{ form_enctype(form) }} method="POST">

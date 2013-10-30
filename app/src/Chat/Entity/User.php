@@ -7,9 +7,9 @@
 namespace Chat\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Chat\Validator\Constraints\Unique;
 
 /**
  * @ORM\Entity(repositoryClass="Chat\Repository\UserRepository")
@@ -19,6 +19,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
  * @ORM\DiscriminatorMap({"user" = "Chat\Entity\User", "guest" = "Chat\Entity\Guest"})
+ * @Unique(column="username", groups={"registration"})
+ * @Unique(column="email", groups={"registration"})
  */
 class User implements UserInterface, ExportInterface
 {
@@ -32,14 +34,14 @@ class User implements UserInterface, ExportInterface
     /**
      * @ORM\Column
      * @Assert\NotBlank()
-     * @Assert\Length(min = "3", max = "20", groups={"Registration", "Edit"})
+     * @Assert\Length(min = "3", max = "20", groups={"registration", "edit"})
      */
     protected $username;
 
     /**
      * @ORM\Column(nullable=true)
-     * @Assert\NotBlank(groups={"Registration"})
-     * @Assert\Length(min = "4", groups={"Registration"})
+     * @Assert\NotBlank(groups={"registration"})
+     * @Assert\Length(min = "4", groups={"registration"})
      */
     protected $password;
 

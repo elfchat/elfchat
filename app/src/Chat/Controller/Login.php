@@ -9,6 +9,8 @@ namespace Chat\Controller;
 
 use Chat\Entity\Guest;
 use Chat\Entity\Message;
+use Chat\Entity\User;
+use Chat\Exception\Exception;
 use Silicone\Route;
 use Symfony\Component\HttpFoundation\Request;
 

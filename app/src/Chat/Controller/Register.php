@@ -23,22 +23,20 @@ class Register extends Controller
     {
         $form = $this->app->formType(new RegistrationFormType($this->app['password.encoder']));
 
-        if ($this->request->isMethod('POST')) {
-            $form->bind($this->request);
+        $form->handleRequest($this->request);
+        if ($form->isValid()) {
+            $user = $form->getData();
+            $this->app->entityManager()->persist($user);
+            $this->app->entityManager()->flush();
 
-            if ($form->isValid()) {
-                $user = $form->getData();
-                $this->app->entityManager()->persist($user);
-                $this->app->entityManager()->flush();
-
-                return $this->app->redirect($this->app->url('register_success'));
-            }
+            return $this->app->redirect($this->app->url('register_success'));
         }
 
-        $response =  $this->render('users/register.twig', array(
+        $response = $this->render('users/register.twig', array(
             'form' => $form->createView(),
         ));
-        $response->setSharedMaxAge(5);
+        $response->setSharedMaxAge(86400);
+
         return $response;
     }
 
