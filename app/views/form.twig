@@ -3,20 +3,10 @@
 {% block form_row %}
     <div class="form-group">
         {{ form_label(form) }}
-        <div class="col-lg-10">
-            {{ form_widget(form) }}
-            {{ form_errors(form) }}
-        </div>
+        {{ form_widget(form) }}
+        {{ form_errors(form) }}
     </div>
 {% endblock %}
-
-{% block form_widget_simple %}
-    {% spaceless %}
-        {% set type = type|default('text') %}
-        <input class="form-control"
-               type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
-    {% endspaceless %}
-{% endblock form_widget_simple %}
 
 {% block widget_attributes %}
     {% spaceless %}
@@ -37,7 +27,7 @@
             {% if label is empty %}
                 {% set label = name|humanize %}
             {% endif %}
-            <label class="col-lg-2 control-label" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|trans({}, translation_domain) }}</label>
+            <label class="control-label" {% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|trans({}, translation_domain) }}</label>
         {% endif %}
     {% endspaceless %}
 {% endblock form_label %}
