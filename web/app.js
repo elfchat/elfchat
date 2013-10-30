@@ -1013,6 +1013,9 @@ var Application = function() {
       for (var $__2 = $traceurRuntime.getIterator(window.recent), $__1; !($__1 = $__2.next()).done;) {
         var message = $__1.value;
         {
+          if (this.getUser(message.user.id) === void 0) {
+            this.addUser(message.user);
+          }
           this.addMessage(new MessageView(message));
         }
       }

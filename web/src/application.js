@@ -114,6 +114,9 @@ class Application {
 
     addRecentMessages() {
         for (var message of window.recent) {
+            if(this.getUser(message.user.id) === void 0) {
+                this.addUser(message.user);
+            }
             this.addMessage(new MessageView(message));
         }
         this.scroll.down();
