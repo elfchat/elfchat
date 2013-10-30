@@ -7,10 +7,15 @@
 
 namespace Chat\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ */
 class Guest extends User
 {
     public function __construct()
     {
-
+        $this->role = 'ROLE_GUEST';
     }
 } 

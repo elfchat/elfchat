@@ -10,15 +10,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Silicone\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="Chat\Repository\UserRepository")
  * @ORM\Table("elfchat_user", indexes={
  *     @ORM\index(name="username_idx", columns={"username"})
  * })
- * @UniqueEntity(fields="username", message="user.name.already_used", groups={"Registration"})
- * @UniqueEntity(fields="email", message="user.email.already_used", groups={"Registration"})
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="type", type="string")
+ * @ORM\DiscriminatorMap({"user" = "Chat\Entity\User", "guest" = "Chat\Entity\Guest"})
  */
 class User implements UserInterface, ExportInterface
 {
@@ -37,20 +37,20 @@ class User implements UserInterface, ExportInterface
     protected $username;
 
     /**
-     * @ORM\Column
+     * @ORM\Column(nullable=true)
      * @Assert\NotBlank(groups={"Registration"})
      * @Assert\Length(min = "4", groups={"Registration"})
      */
     protected $password;
 
     /**
-     * @ORM\Column
+     * @ORM\Column(nullable=true)
      * @Assert\Email()
      */
     protected $email;
 
     /**
-     * @ORM\Column
+     * @ORM\Column(nullable=true)
      */
     protected $salt;
 
