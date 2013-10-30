@@ -186,6 +186,13 @@ class Application extends Silicone\Application
         });
 
         $this->repository = new Manager($this->entityManager());
+
+        // Monolog
+        $app['monolog.name'] = 'ELFCHAT';
+        $app['monolog.logfile'] = $app->getLogDir() . '/error_log.txt';
+        $app['monolog.level'] = function () {
+            return \Monolog\Logger::NOTICE;
+        };
     }
 
 
