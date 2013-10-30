@@ -6,7 +6,8 @@
         [user.name]
     </h3>
     <div class="popover-side">
-        <div class="avatar" style="background-image: url('[user.avatar]')"></div>
+        <span class="avatar" data-user-id="[user.id]" style="[#user.avatar]background-image: url('[user.avatar]');[/user.avatar]"></span>
+
         {% if app.isModerator() %}
             <a class="button" href="{{ url('moderator_add_ban') }}?id=[user.id]" target="_blank">{{ 'Bun'|trans() }}</a>
         {% endif %}
