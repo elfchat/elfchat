@@ -59,8 +59,43 @@ $app['twig.path'] = array(
     $app->getRootDir() . '/views/',
 );
 
+
+
+$app['security.authentication_listener.factory.guest'] = $app->protect(function ($name, $options) use ($app) {
+    // define the authentication provider object
+    $app['security.authentication_provider.'.$name.'.guest'] = $app->share(function () use ($app) {
+        return new \Chat\Security\Authentication\GuestProvider($app['security.user_provider.default']);
+    });
+
+    // define the authentication listener object
+    $app['security.authentication_listener.'.$name.'.guest'] = $app->share(function () use ($app, $options) {
+        return new \Chat\Security\Authentication\GuestListener(
+            $app['security'],
+            $app['security.authentication_manager'],
+            $app['security.http_utils'],
+            $app['session'],
+            $options
+        );
+    });
+
+    return array(
+        // the authentication provider id
+        'security.authentication_provider.'.$name.'.guest',
+        // the authentication listener id
+        'security.authentication_listener.'.$name.'.guest',
+        // the entry point id
+        null,
+        // the position of the listener in the stack
+        'pre_auth'
+    );
+});
+
 $app['security.user_class'] = 'Chat\Entity\User';
 $app['security.firewalls'] = array(
+    'guest' => array(
+        'pattern' => '^/',
+        'guest' => true,
+    ),
     'default' => array(
         'pattern' => '^/',
         'anonymous' => true,

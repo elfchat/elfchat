@@ -8,11 +8,11 @@
 namespace Chat\Controller;
 
 use Chat\Entity\Guest;
-use Chat\Entity\Message;
-use Chat\Entity\User;
-use Chat\Exception\Exception;
 use Silicone\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
+use Symfony\Component\Security\Http\SecurityEvents;
 
 /**
  * @Route("/login")
@@ -34,11 +34,17 @@ class Login extends Controller
     /**
      * @Route("/guest", name="login_guest")
      */
-    public function guest()
+    public function guest(Request $request)
     {
-        $guest = new Guest();
-        $guest->setUsername('Guest');
+        $em = $this->app->entityManager();
 
-        return $this->app->redirect($this->app->url('chat'));
+        $guest = new Guest();
+        $guest->setUsername($this->request->request->get('_username', 'Guest'));
+        $em->persist($guest);
+        $em->flush();
+
+        $this->app->session()->set('_guest', serialize($guest));
+
+        return $this->app->redirect('login_check_guest');
     }
 }
