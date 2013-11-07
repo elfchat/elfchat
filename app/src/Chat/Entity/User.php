@@ -62,7 +62,6 @@ class User implements ExportInterface
 
     /**
      * @ORM\OneToOne(targetEntity="Chat\Entity\Avatar", cascade={"remove"}, fetch="LAZY")
-     * @ORM\JoinColumn(name="avatar_id", referencedColumnName="id", nullable=true)
      * @var Avatar
      */
     protected $avatar;
