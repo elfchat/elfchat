@@ -8,7 +8,7 @@
 namespace Admin\Controller;
 
 use Admin\Form\ConfigType;
-use Chat\Config\Writer;
+use ElfChat\Config\Writer;
 use Silicone\Controller;
 use Silicone\Route;
 

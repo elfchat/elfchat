@@ -1,12 +1,12 @@
 <?php
-/** @var $app \Chat\Application */
+/** @var $app \ElfChat\Application */
 
 $app['version'] = '6.0.0 BETA 1';
 
 $app['config_file'] = $app->getOpenDir() . '/config.php';
 
-$config = new \Chat\Config();
-$reader = new \Chat\Config\Reader($config);
+$config = new \ElfChat\Config();
+$reader = new \ElfChat\Config\Reader($config);
 $reader->read($app['config_file']);
 
 $app['config'] = function () use ($config) {
@@ -91,7 +91,7 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
 ));
 $app->register(new Silicone\Provider\TwigServiceProviderExtension());
 $app['twig'] = $app->share($app->extend('twig', function(\Twig_Environment $twig, $app) {
-    $twig->addExtension(new Chat\Twig\ViewExtension());
+    $twig->addExtension(new ElfChat\Twig\ViewExtension());
     return $twig;
 }));
 
@@ -127,10 +127,10 @@ $app['form.factory'] = $app->share(function () use ($app) {
 $app['chat.upload_path'] = realpath($this->getRootDir() . '/../upload');
 $app['chat.upload_url'] = '/upload';
 
-Chat\Entity\File::setUploadPath($app['chat.upload_path']);
+ElfChat\Entity\File::setUploadPath($app['chat.upload_path']);
 $app['dispatcher'] = $app->extend('dispatcher',
     function (Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher) use ($app) {
-        $dispatcher->addSubscriber(new Chat\EventListener\FileSubscriber($app['chat.upload_url']));
+        $dispatcher->addSubscriber(new ElfChat\EventListener\FileSubscriber($app['chat.upload_url']));
         return $dispatcher;
     });
 
@@ -139,15 +139,15 @@ $app['dispatcher'] = $app->extend('dispatcher',
  */
 
 $app['user_transformer'] = $app->share(function () use ($app) {
-    return new Chat\Form\Transformer\UserTransformer($app['em']);
+    return new ElfChat\Form\Transformer\UserTransformer($app['em']);
 });
 
 $app['user_type'] = function () use ($app) {
-    return new Chat\Form\UserType($app['user_transformer']);
+    return new ElfChat\Form\UserType($app['user_transformer']);
 };
 
 $app['chosen_type'] = function () use ($app) {
-    return new Chat\Form\ChosenType();
+    return new ElfChat\Form\ChosenType();
 };
 
 /**
@@ -155,7 +155,7 @@ $app['chosen_type'] = function () use ($app) {
  */
 
 $app['validator.unique'] = function () use($app) {
-    return new Chat\Validator\Constraints\UniqueValidator($app['em']);
+    return new ElfChat\Validator\Constraints\UniqueValidator($app['em']);
 };
 
 /**

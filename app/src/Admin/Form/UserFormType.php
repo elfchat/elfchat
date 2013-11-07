@@ -7,8 +7,8 @@
 
 namespace Admin\Form;
 
-use Chat\Entity\User;
-use Chat\EventListener\PasswordEncoderSubscriber;
+use ElfChat\Entity\User;
+use ElfChat\EventListener\PasswordEncoderSubscriber;
 use Silex\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -68,7 +68,7 @@ class UserFormType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Chat\Entity\User',
+            'data_class' => 'ElfChat\Entity\User',
             'validation_groups' => array('Edit'),
             'translation_domain' => 'admin'
         ));

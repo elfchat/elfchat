@@ -8,7 +8,7 @@
 namespace Admin\Controller;
 
 use Admin\Form\UserFormType;
-use Chat\Controller\Controller;
+use ElfChat\Controller\Controller;
 use Silicone\Route;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -45,7 +45,7 @@ class Users extends Controller
             $form->bind($this->request);
 
             if ($form->isValid()) {
-                /** @var $user \Chat\Entity\User */
+                /** @var $user \ElfChat\Entity\User */
                 $user = $form->getData();
 
                 $this->app->entityManager()->persist($user);
