@@ -14,6 +14,15 @@ class Application extends Silicone\Application
     protected $repository;
 
     /**
+     * Configure application
+     */
+    protected function configure()
+    {
+        $app = $this;
+        require_once $app->getRootDir() . '/config/config.php';
+    }
+
+    /**
      * Get root directory.
      * @return string
      */
@@ -24,26 +33,6 @@ class Application extends Silicone\Application
             $dir = dirname(dirname(__DIR__));
         }
         return $dir;
-    }
-
-    /**
-     * Configure application
-     */
-    public function configure()
-    {
-        $app = $this;
-        require_once __DIR__ . '/Resources/configuration.php';
-    }
-
-    /**
-     * Register providers
-     */
-    protected function registerProviders()
-    {
-        parent::registerProviders();
-
-        $app = $this;
-        require_once __DIR__ . '/Resources/providers.php';
     }
 
 
@@ -61,7 +50,7 @@ class Application extends Silicone\Application
      */
     public function user()
     {
-        $user = parent::user();
+        $user = $this->repository()->users()->find(1);
 
         if (null !== $user) {
             return $user;
@@ -106,12 +95,17 @@ class Application extends Silicone\Application
         return $this['doctrine.common.cache'];
     }
 
+    public function isGranted()
+    {
+        return true;
+    }
+
     /**
      * @return bool
      */
     public function isAuthenticated()
     {
-        return $this->isGranted('IS_AUTHENTICATED_FULLY');
+        // TODO: auth
     }
 
     /**
@@ -119,7 +113,7 @@ class Application extends Silicone\Application
      */
     public function isAdmin()
     {
-        return $this->isGranted('ROLE_ADMIN');
+        // TODO: auth
     }
 
     /**
@@ -127,7 +121,7 @@ class Application extends Silicone\Application
      */
     public function isModerator()
     {
-        return $this->isGranted('ROLE_MODERATOR');
+        // TODO: auth
     }
 
     /**
@@ -135,7 +129,7 @@ class Application extends Silicone\Application
      */
     public function isUser()
     {
-        return $this->isGranted('ROLE_USER');
+        // TODO: auth
     }
 
     /**
@@ -143,6 +137,6 @@ class Application extends Silicone\Application
      */
     public function isGuest()
     {
-        return $this->isGranted('ROLE_GUEST');
+        // TODO: auth
     }
 }

@@ -8,7 +8,6 @@ namespace Chat\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Chat\Validator\Constraints\Unique;
 
 /**
@@ -22,7 +21,7 @@ use Chat\Validator\Constraints\Unique;
  * @Unique(column="username", groups={"registration"})
  * @Unique(column="email", groups={"registration"})
  */
-class User implements UserInterface, ExportInterface
+class User implements ExportInterface
 {
     /**
      * @ORM\Id
@@ -63,6 +62,7 @@ class User implements UserInterface, ExportInterface
 
     /**
      * @ORM\OneToOne(targetEntity="Chat\Entity\Avatar", cascade={"remove"}, fetch="LAZY")
+     * @ORM\JoinColumn(name="avatar_id", referencedColumnName="id", nullable=true)
      * @var Avatar
      */
     protected $avatar;
