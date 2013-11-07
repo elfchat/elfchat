@@ -19,8 +19,8 @@ $app['locale'] = $config->locale;
 // Router
 $app->register(new Silicone\Provider\RouterServiceProvider());
 $app['router.resource'] = array(
-    $app->getRootDir() . '/src/Chat/Controller/',
-    $app->getRootDir() . '/src/Chat/Moderator/',
+    $app->getRootDir() . '/src/ElfChat/Controller/',
+    $app->getRootDir() . '/src/ElfChat/Moderator/',
     $app->getRootDir() . '/src/Admin/Controller/',
 );
 $app['router.cache_dir'] = $app->getCacheDir();
@@ -63,7 +63,7 @@ switch ($config->database) {
         break;
 }
 $app['doctrine.paths'] = array(
-    $app->getRootDir() . '/src/Chat/Entity',
+    $app->getRootDir() . '/src/ElfChat/Entity',
 );
 
 // Monolog
