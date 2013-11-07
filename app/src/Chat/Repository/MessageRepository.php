@@ -24,7 +24,7 @@ class MessageRepository extends EntityRepository
         SELECT m, u, a
         FROM Chat\Entity\Message m
         JOIN m.user u
-        JOIN u.avatar a
+        LEFT JOIN u.avatar a
         WHERE m.room = :room
         ORDER BY m.id DESC
         ";
