@@ -103,7 +103,7 @@ $app['translator.resource'] = $app->getRootDir() . '/lang/';
 $app->register(new Silex\Provider\ValidatorServiceProvider());
 $app->register(new Silicone\Provider\ValidatorServiceProviderExtension());
 $app['validator.unique'] = function () use ($app) {
-    return new Validator\UniqueValidator($app['em']);
+    return new ElfChat\Validator\Constraints\UniqueValidator($app['em']);
 };
 
 // Form
