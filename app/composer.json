@@ -33,7 +33,8 @@
         "doctrine/dbal": "~2.0",
 
         "kriswallsmith/buzz": "*",
-        "imagine/imagine": "*"
+        "imagine/imagine": "*",
+        "ircmaxell/password-compat": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"

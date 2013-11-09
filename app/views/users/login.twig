@@ -1,27 +1,30 @@
 {% extends 'users/layout.twig' %}
 
 {% block content %}
-    <form class="form" action="{{ path('login_check') }}" method="POST">
+    <form class="form" action="{{ path('login') }}" method="post">
+        {{ form_widget(form._token) }}
+
         <h1>{{ 'Login'|trans() }}</h1>
+
         {% if error is not empty %}
             <div class="alert alert-danger">
-                {{ error|trans({}, 'security') }}
+                {{ error|trans({}) }}
             </div>
         {% endif %}
 
         <div class="form-group">
-            <label for="_username">{{ 'Name'|trans({}) }}</label>
-            <input type="text" class="form-control" name="_username" value="{{ last_username }}">
+            <label for="username">{{ 'Name'|trans({}) }}</label>
+            {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
         </div>
 
         <div class="form-group">
-            <label for="_password">{{ 'Password'|trans() }}</label>
-            <input type="password" class="form-control" name="_password">
+            <label for="password">{{ 'Password'|trans() }}</label>
+            {{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
         </div>
 
         <div class="checkbox">
             <label>
-                <input type="checkbox" id="remember_me" name="_remember_me" checked="checked">
+                {{ form_widget(form.remember_me) }}
                 {{ 'Remember me'|trans() }}
             </label>
         </div>
@@ -30,12 +33,14 @@
         <a href="{{ url('register') }}" class="btn btn-lg btn-default">{{ 'Register'|trans() }}</a>
     </form>
 
-    <form class="form" action="{{ path('login_guest') }}" method="POST">
+    <form class="form" action="{{ path('login') }}" method="post">
+        {{ form_widget(guestForm._token) }}
+
         <h1>{{ 'Guest'|trans() }}</h1>
 
         <div class="form-group">
             <label for="guestname">{{ 'Name'|trans({}) }}</label>
-            <input type="text" class="form-control" name="_username" value="">
+            {{ form_widget(guestForm.guestname, {'attr': {'class': 'form-control'}}) }}
         </div>
 
         <button class="btn btn-lg btn-primary" type="submit">{{ 'Login'|trans() }}</button>

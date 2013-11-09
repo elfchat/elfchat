@@ -15,12 +15,12 @@ use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Symfony\Component\Security\Http\SecurityEvents;
 
 /**
- * @Route("/login")
+ * @Route("/login_old")
  */
 class Login extends Controller
 {
     /**
-     * @Route("", name="login")
+     * @Route("", name="login_old")
      */
     public function index(Request $request)
     {

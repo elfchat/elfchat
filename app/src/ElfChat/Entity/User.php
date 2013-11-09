@@ -13,12 +13,12 @@ use ElfChat\Validator\Constraints\Unique;
 /**
  * @ORM\Entity(repositoryClass="ElfChat\Repository\UserRepository")
  * @ORM\Table("elfchat_user", indexes={
- *     @ORM\index(name="username_idx", columns={"username"})
+ *     @ORM\index(name="name_idx", columns={"name"})
  * })
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
  * @ORM\DiscriminatorMap({"user" = "ElfChat\Entity\User", "guest" = "ElfChat\Entity\Guest"})
- * @Unique(column="username", groups={"registration"})
+ * @Unique(column="name", groups={"registration"})
  * @Unique(column="email", groups={"registration"})
  */
 class User implements ExportInterface
@@ -35,7 +35,7 @@ class User implements ExportInterface
      * @Assert\NotBlank()
      * @Assert\Length(min = "3", max = "20", groups={"registration", "edit"})
      */
-    protected $username;
+    protected $name;
 
     /**
      * @ORM\Column(nullable=true)
@@ -49,11 +49,6 @@ class User implements ExportInterface
      * @Assert\Email()
      */
     protected $email;
-
-    /**
-     * @ORM\Column(nullable=true)
-     */
-    protected $salt;
 
     /**
      * @ORM\Column(length=255)
@@ -86,17 +81,12 @@ class User implements ExportInterface
         $this->email = $email;
     }
 
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
     public function getName()
     {
-        return $this->getUsername();
+        return $this->name;
     }
 
-    public function setUsername($name)
+    public function setName($name)
     {
         $this->username = $name;
     }
@@ -111,11 +101,6 @@ class User implements ExportInterface
         $this->password = $password;
     }
 
-    public function getRoles()
-    {
-        return array($this->role);
-    }
-
     public function getRole()
     {
         return $this->role;
@@ -124,16 +109,6 @@ class User implements ExportInterface
     public function setRole($role)
     {
         $this->role = $role;
-    }
-
-    public function getSalt()
-    {
-        return $this->salt;
-    }
-
-    public function setSalt($salt)
-    {
-        $this->salt = $salt;
     }
 
     public function setAvatar($avatar)
@@ -149,24 +124,11 @@ class User implements ExportInterface
         return $this->avatar;
     }
 
-
-    /**
-     * Removes sensitive data from the user.
-     *
-     * This is important if, at any given point, sensitive information like
-     * the plain-text password is stored on this object.
-     *
-     * @return void
-     */
-    public function eraseCredentials()
-    {
-    }
-
     public function export()
     {
         return array(
             'id' => $this->getId(),
-            'name' => $this->getUsername(),
+            'name' => $this->getName(),
             'avatar' => (string)$this->getAvatar(),
         );
     }

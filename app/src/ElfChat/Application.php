@@ -45,6 +45,14 @@ class Application extends Silicone\Application
     }
 
     /**
+     * @return \Symfony\Component\HttpFoundation\Session\Session
+     */
+    public function session()
+    {
+        return $this['session'];
+    }
+
+    /**
      * @return \ElfChat\Entity\User
      * @throws Exception\NoUserException
      */
