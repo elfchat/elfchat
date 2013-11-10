@@ -33,7 +33,7 @@ class Authentication extends Controller
 
             if(null !== $user) {
                 if(password_verify($data['password'], $user->getPassword())) {
-                    $session->set('user', $user->getId());
+                    $session->set('user', array($user->getId(), $user->getRole()));
                 } else {
                     $error = $this->app->trans('Bad credentials');
                 }

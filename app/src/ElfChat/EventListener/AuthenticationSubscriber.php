@@ -7,6 +7,8 @@
 
 namespace ElfChat\EventListener;
 
+use Doctrine\ORM\EntityRepository;
+use ElfChat\Security\Authentication\Provider;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -14,6 +16,23 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class AuthenticationSubscriber implements EventSubscriberInterface
 {
+    protected $provider;
+
+    protected $repository;
+
+    protected $roleHierarchy;
+
+    protected $accessRules;
+
+    public function __construct(Provider $provider, EntityRepository $repository, array $roleHierarchy, array $accessRules)
+    {
+        $this->provider = $provider;
+        $this->accessRules = $accessRules;
+        $this->repository = $repository;
+        $this->roleHierarchy = $roleHierarchy;
+    }
+
+
     public static function getSubscribedEvents()
     {
         return array(
@@ -25,8 +44,16 @@ class AuthenticationSubscriber implements EventSubscriberInterface
 
     public function onKernelRequest(GetResponseEvent $event)
     {
-        //$response = new Response('SO?');
-        //$event->setResponse($response);
-        //$event->stopPropagation();
+        list($id, $role) = $event->getRequest()->getSession()->get('user', array(null, 'ROLE_GUEST'));
+
+        $this->provider->setRole($role);
+
+        if(null !== $id) {
+            $user = $this->repository->find($id);
+
+            if(null !== $user) {
+                $this->provider->setUser($user);
+            }
+        }
     }
 }

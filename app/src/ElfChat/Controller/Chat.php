@@ -11,7 +11,7 @@ use Buzz\Browser;
 use Buzz\Client\Curl;
 use ElfChat\Entity\Message;
 use ElfChat\Repository\MessageRepository;
-use ElfChat\Secure\Stringify;
+use ElfChat\Security\Stringify;
 use Silicone\Route;
 use Silicone\Translator\Translator;
 

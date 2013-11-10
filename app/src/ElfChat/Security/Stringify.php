@@ -5,7 +5,7 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Secure;
+namespace ElfChat\Security;
 
 class Stringify
 {

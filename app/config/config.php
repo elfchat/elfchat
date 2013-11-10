@@ -90,7 +90,7 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
     'twig.path' => $app->getRootDir() . '/views/',
 ));
 $app->register(new Silicone\Provider\TwigServiceProviderExtension());
-$app['twig'] = $app->share($app->extend('twig', function(\Twig_Environment $twig, $app) {
+$app['twig'] = $app->share($app->extend('twig', function (\Twig_Environment $twig, $app) {
     $twig->addExtension(new ElfChat\Twig\ViewExtension());
     return $twig;
 }));
@@ -136,11 +136,11 @@ ElfChat\Entity\File::setUploadPath($app['chat.upload_path']);
 $app['dispatcher'] = $app->extend('dispatcher',
     function (Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher) use ($app) {
 
-        // Upload base urls.
+        // Upload base urls
         $dispatcher->addSubscriber(new ElfChat\EventListener\FileSubscriber($app['chat.upload_url']));
 
         // Authentication
-        $dispatcher->addSubscriber(new ElfChat\EventListener\AuthenticationSubscriber());
+        $dispatcher->addSubscriber($app['security.subscriber']);
 
         return $dispatcher;
     });
@@ -165,9 +165,45 @@ $app['chosen_type'] = function () use ($app) {
  * Validators
  */
 
-$app['validator.unique'] = function () use($app) {
+$app['validator.unique'] = function () use ($app) {
     return new ElfChat\Validator\Constraints\UniqueValidator($app['em']);
 };
+
+/**
+ * Security
+ */
+
+$app['security.role_hierarchy'] = array(
+    'ROLE_GUEST' => array(),
+    'ROLE_USER' => array('ROLE_GUEST'),
+    'ROLE_MODERATOR' => array('ROLE_USER', 'ROLE_GUEST'),
+    'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_MODERATOR', 'ROLE_GUEST'),
+);
+$app['security.access_rules'] = array(
+    array('^/admin', 'ROLE_ADMIN'),
+    array('^/moderator', 'ROLE_MODERATOR'),
+    array('^/profile', 'ROLE_USER'),
+
+    // Next rule must be at the end of list,
+    // otherwise access rules will not work.
+    array('^/', 'IS_AUTHENTICATED_ANONYMOUSLY'),
+);
+
+$app['security.provider'] = $app->share(function () use ($app) {
+    return new ElfChat\Security\Authentication\Provider(
+        $app['security.role_hierarchy'],
+        $app['security.access_rules']
+    );
+});
+
+$app['security.subscriber'] = $app->share(function () use ($app) {
+    return new ElfChat\EventListener\AuthenticationSubscriber(
+        $app['security.provider'],
+        $app['em']->getRepository('ElfChat\Entity\User'),
+        $app['security.role_hierarchy'],
+        $app['security.access_rules']
+    );
+});
 
 /**
  * Debug

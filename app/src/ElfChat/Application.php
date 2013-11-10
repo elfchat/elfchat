@@ -58,7 +58,7 @@ class Application extends Silicone\Application
      */
     public function user()
     {
-        $user = $this->repository()->users()->find(1);
+        $user = $this['security.provider']->getUser();
 
         if (null !== $user) {
             return $user;
@@ -103,9 +103,9 @@ class Application extends Silicone\Application
         return $this['doctrine.common.cache'];
     }
 
-    public function isGranted()
+    public function isGranted($role)
     {
-        return true;
+        return $this['security.provider']->isGranted($role);
     }
 
     /**
@@ -113,7 +113,7 @@ class Application extends Silicone\Application
      */
     public function isAuthenticated()
     {
-        // TODO: auth
+        return $this->session()->has('user');
     }
 
     /**
