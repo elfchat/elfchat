@@ -201,9 +201,13 @@ $app['security.subscriber'] = $app->share(function () use ($app) {
     return new \ElfChat\Security\Authentication\Subscriber(
         $app['security.provider'],
         $app['em']->getRepository('ElfChat\Entity\User'),
-        $app['security.role_hierarchy'],
-        $app['security.access_rules']
+        $app['security.remember']
     );
+});
+
+$app['security.remember'] = $app->share(function () use($app) {
+    // TODO: Use something better when key.
+    return new \ElfChat\Security\Authentication\Remember($app->config()->key);
 });
 
 /**

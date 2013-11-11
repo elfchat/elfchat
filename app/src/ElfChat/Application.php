@@ -113,7 +113,7 @@ class Application extends Silicone\Application
      */
     public function isAuthenticated()
     {
-        return $this->session()->has('user');
+        return $this['security.provider']->isAuthenticated();
     }
 
     /**

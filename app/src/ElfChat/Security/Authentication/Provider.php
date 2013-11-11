@@ -15,6 +15,8 @@ class Provider
 
     protected $granted = array();
 
+    protected $authenticated = false;
+
     protected $roleHierarchy;
 
     protected $accessRules;
@@ -49,6 +51,16 @@ class Provider
     public function getRole()
     {
         return $this->role;
+    }
+
+    public function setAuthenticated($authenticated)
+    {
+        $this->authenticated = $authenticated;
+    }
+
+    public function isAuthenticated()
+    {
+        return $this->authenticated;
     }
 
     public function isGranted($role)

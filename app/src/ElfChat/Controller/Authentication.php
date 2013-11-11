@@ -8,7 +8,9 @@
 namespace ElfChat\Controller;
 
 use ElfChat\Entity\Guest;
+use ElfChat\Security\Authentication\Remember;
 use Silicone\Route;
+use Symfony\Component\HttpFoundation\Cookie;
 
 class Authentication extends Controller
 {
@@ -35,9 +37,19 @@ class Authentication extends Controller
 
             if(null !== $user) {
                 if(password_verify($data['password'], $user->getPassword())) {
-                    $session->set('user', array($user->getId(), $user->getRole()));
+                    $session->set('user', $saved = array($user->getId(), $user->getRole()));
 
-                    return $this->app->redirect($this->app->url('chat'));
+                    $response = $this->app->redirect($this->app->url('chat'));
+
+                    if($data['remember_me']) {
+                        $remember = $this->app['security.remember']->encode($saved);
+
+                        $response->headers->setCookie(
+                            new Cookie(Remember::REMEMBER_ME, $remember, time() + (3600 * 24 * 7))
+                        );
+                    }
+
+                    return $response;
                 }
             }
 
@@ -78,6 +90,8 @@ class Authentication extends Controller
     public function logout()
     {
         $this->app->session()->remove('user');
-        return $this->app->redirect($this->app->url('chat'));
+        $response = $this->app->redirect($this->app->url('chat'));
+        $response->headers->clearCookie(Remember::REMEMBER_ME);
+        return $response;
     }
 } 

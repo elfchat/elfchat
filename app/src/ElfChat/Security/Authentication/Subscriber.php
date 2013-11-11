@@ -21,16 +21,13 @@ class Subscriber implements EventSubscriberInterface
 
     protected $repository;
 
-    protected $roleHierarchy;
+    protected $remember;
 
-    protected $accessRules;
-
-    public function __construct(Provider $provider, EntityRepository $repository, array $roleHierarchy, array $accessRules)
+    public function __construct(Provider $provider, EntityRepository $repository, Remember $remember)
     {
         $this->provider = $provider;
-        $this->accessRules = $accessRules;
         $this->repository = $repository;
-        $this->roleHierarchy = $roleHierarchy;
+        $this->remember = $remember;
     }
 
 
@@ -46,7 +43,18 @@ class Subscriber implements EventSubscriberInterface
     public function onKernelRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
-        list($id, $role) = $request->getSession()->get('user', array(null, 'ROLE_GUEST'));
+        $session = $request->getSession();
+
+        list($id, $role) = $session->get('user', array(null, 'ROLE_GUEST'));
+
+        if(null === $id && $request->cookies->has(Remember::REMEMBER_ME)) {
+            if( $this->remember->check($request->cookies->get(Remember::REMEMBER_ME)))
+            {
+                list($id, $role) = $this->remember->getIt();
+                $session->set('user', array($id, $role));
+            }
+        }
+
         $this->provider->setRole($role);
 
         if(!$this->provider->isAllowed($request->getPathInfo())) {
@@ -58,6 +66,7 @@ class Subscriber implements EventSubscriberInterface
 
             if(null !== $user) {
                 $this->provider->setUser($user);
+                $this->provider->setAuthenticated(true);
             }
         }
     }
