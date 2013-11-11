@@ -11,7 +11,7 @@
         [time]
     </span>
     <span class="user">
-        <span class="name" data-user-name="[user.name]">[&user.name]</span>:&nbsp;
+        <span class="name" data-user-name="[user.name]">[user.name]</span>:&nbsp;
     </span>
     <span class="text">[&text]</span>
 </div>
