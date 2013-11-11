@@ -88,7 +88,7 @@ class User implements ExportInterface
 
     public function setName($name)
     {
-        $this->username = $name;
+        $this->name = $name;
     }
 
     public function getPassword()

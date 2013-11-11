@@ -87,6 +87,8 @@ class Application {
     }
 
     onMessage(event, message) {
+        // TODO: remove this in future:
+        console.log(message);
         if (!this.isUserExist(message.user.id)) {
             return;
         }

@@ -5,16 +5,17 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\EventListener;
+namespace ElfChat\Security\Authentication;
 
 use Doctrine\ORM\EntityRepository;
+use ElfChat\Exception\AccessDenied;
 use ElfChat\Security\Authentication\Provider;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class AuthenticationSubscriber implements EventSubscriberInterface
+class Subscriber implements EventSubscriberInterface
 {
     protected $provider;
 
@@ -44,9 +45,13 @@ class AuthenticationSubscriber implements EventSubscriberInterface
 
     public function onKernelRequest(GetResponseEvent $event)
     {
-        list($id, $role) = $event->getRequest()->getSession()->get('user', array(null, 'ROLE_GUEST'));
-
+        $request = $event->getRequest();
+        list($id, $role) = $request->getSession()->get('user', array(null, 'ROLE_GUEST'));
         $this->provider->setRole($role);
+
+        if(!$this->provider->isAllowed($request->getPathInfo())) {
+            throw new AccessDenied("Access denied to " . $request->getPathInfo());
+        }
 
         if(null !== $id) {
             $user = $this->repository->find($id);

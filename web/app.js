@@ -991,6 +991,7 @@ var Application = function() {
       }
     },
     onMessage: function(event, message) {
+      console.log(message);
       if (!this.isUserExist(message.user.id)) {
         return;
       }

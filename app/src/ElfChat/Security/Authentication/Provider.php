@@ -13,6 +13,8 @@ class Provider
 
     protected $role;
 
+    protected $granted = array();
+
     protected $roleHierarchy;
 
     protected $accessRules;
@@ -35,6 +37,12 @@ class Provider
 
     public function setRole($role)
     {
+        if (isset($this->roleHierarchy[$role])) {
+            $this->granted = $this->roleHierarchy[$role];
+        }
+
+        $this->granted = array_merge($this->granted, array($role));
+
         $this->role = $role;
     }
 
@@ -45,11 +53,18 @@ class Provider
 
     public function isGranted($role)
     {
-        if (isset($this->roleHierarchy[$this->role])) {
-            $granted = $this->roleHierarchy[$this->role];
-            return in_array($role, $granted);
-        } else {
-            return false;
+        return in_array($role, $this->granted);
+    }
+
+    public function isAllowed($path)
+    {
+        foreach ($this->accessRules as $rule) {
+            list($pattern, $role) = $rule;
+
+            if (preg_match("#$pattern#", $path)) {
+                return in_array($role, $this->granted);
+            }
         }
+        return false;
     }
 }

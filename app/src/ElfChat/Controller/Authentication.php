@@ -7,6 +7,7 @@
 
 namespace ElfChat\Controller;
 
+use ElfChat\Entity\Guest;
 use Silicone\Route;
 
 class Authentication extends Controller
@@ -18,6 +19,7 @@ class Authentication extends Controller
     {
         $session = $this->app->session();
         $users = $this->app->repository()->users();
+        $em = $this->app->entityManager();
 
         $form = $this->app->form()
             ->add('username')
@@ -34,10 +36,12 @@ class Authentication extends Controller
             if(null !== $user) {
                 if(password_verify($data['password'], $user->getPassword())) {
                     $session->set('user', array($user->getId(), $user->getRole()));
-                } else {
-                    $error = $this->app->trans('Bad credentials');
+
+                    return $this->app->redirect($this->app->url('chat'));
                 }
             }
+
+            $error = $this->app->trans('Bad credentials');
         }
 
         $guestForm = $this->app->form()
@@ -47,7 +51,17 @@ class Authentication extends Controller
         $guestForm->handleRequest($this->request);
 
         if($guestForm->isValid()) {
-            var_dump($guestForm->getData());
+            $data = $guestForm->getData();
+
+            $guest = new Guest();
+            $guest->setName($data['guestname']);
+
+            $em->persist($guest);
+            $em->flush($guest);
+
+            $session->set('user', array($guest->getId(), $guest->getRole()));
+
+            return $this->app->redirect($this->app->url('chat'));
         }
 
         $response = $this->render('users/login.twig', array(
@@ -59,10 +73,11 @@ class Authentication extends Controller
     }
 
     /**
-     * @Route("/logout")
+     * @Route("/logout", name="logout")
      */
     public function logout()
     {
-
+        $this->app->session()->remove('user');
+        return $this->app->redirect($this->app->url('chat'));
     }
 } 

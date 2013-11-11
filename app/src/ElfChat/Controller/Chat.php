@@ -24,7 +24,7 @@ class Chat extends Controller
     {
         $em = $this->app->entityManager();
 
-        if (!$this->app->isGranted('ROLE_USER')) {
+        if (!$this->app->isAuthenticated()) {
             return $this->render('chat/index.twig');
         } else {
             $user = $this->app->user();

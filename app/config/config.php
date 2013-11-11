@@ -179,6 +179,7 @@ $app['security.role_hierarchy'] = array(
     'ROLE_MODERATOR' => array('ROLE_USER', 'ROLE_GUEST'),
     'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_MODERATOR', 'ROLE_GUEST'),
 );
+
 $app['security.access_rules'] = array(
     array('^/admin', 'ROLE_ADMIN'),
     array('^/moderator', 'ROLE_MODERATOR'),
@@ -186,7 +187,7 @@ $app['security.access_rules'] = array(
 
     // Next rule must be at the end of list,
     // otherwise access rules will not work.
-    array('^/', 'IS_AUTHENTICATED_ANONYMOUSLY'),
+    array('^/', 'ROLE_GUEST'),
 );
 
 $app['security.provider'] = $app->share(function () use ($app) {
@@ -197,7 +198,7 @@ $app['security.provider'] = $app->share(function () use ($app) {
 });
 
 $app['security.subscriber'] = $app->share(function () use ($app) {
-    return new ElfChat\EventListener\AuthenticationSubscriber(
+    return new \ElfChat\Security\Authentication\Subscriber(
         $app['security.provider'],
         $app['em']->getRepository('ElfChat\Entity\User'),
         $app['security.role_hierarchy'],
@@ -227,11 +228,3 @@ if ($app['debug']) {
     ));
     $app->register(new Silicone\Provider\WebProfilerServiceProvider());
 }
-
-/**
- *
- */
-$app->get('/logout', function () {
-    return 'You are JPEG!';
-})->bind('logout');
-
