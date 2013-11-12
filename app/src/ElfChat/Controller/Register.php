@@ -21,21 +21,24 @@ class Register extends Controller
      */
     public function index()
     {
-        $form = $this->app->formType(new RegistrationFormType($this->app['password.encoder']));
+        $em = $this->app->entityManager();
+
+        $form = $this->app->formType(new RegistrationFormType());
 
         $form->handleRequest($this->request);
+
         if ($form->isValid()) {
             $user = $form->getData();
-            $this->app->entityManager()->persist($user);
-            $this->app->entityManager()->flush();
+            $em->persist($user);
+            $em->flush();
 
-            return $this->app->redirect($this->app->url('register_success'));
+            $this->app->session()->set('user', array($user->getId(), $user->getRole()));
+            return $this->app->redirect($this->app->url('chat'));
         }
 
         $response = $this->render('users/register.twig', array(
             'form' => $form->createView(),
         ));
-        $response->setSharedMaxAge(86400);
 
         return $response;
     }

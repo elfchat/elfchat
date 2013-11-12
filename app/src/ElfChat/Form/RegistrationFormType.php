@@ -14,17 +14,10 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class RegistrationFormType extends AbstractType
 {
-    private $passwordEncoderSubscriber;
-
-    public function __construct(PasswordEncoderSubscriber $passwordEncoderSubscriber)
-    {
-        $this->passwordEncoderSubscriber = $passwordEncoderSubscriber;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username', 'text')
+            ->add('name', 'text')
             ->add('email', 'email')
             ->add('password', 'repeated', array(
                 'type' => 'password',
@@ -34,7 +27,7 @@ class RegistrationFormType extends AbstractType
             ))
         ;
 
-        $builder->addEventSubscriber($this->passwordEncoderSubscriber);
+        $builder->addEventSubscriber(new PasswordEncoderSubscriber);
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
@@ -47,6 +40,6 @@ class RegistrationFormType extends AbstractType
 
     public function getName()
     {
-        return 'user_registration';
+        return 'registration';
     }
 }

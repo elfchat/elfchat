@@ -1,7 +1,3 @@
-user:
-  name:
-    already_used: Имя уже используется.
-  email:
-    already_used: Email уже используется
-
 Password mismatch: Введенные пароли не совпадают
+Name already used: Имя уже используется
+Email already used: Email уже используется

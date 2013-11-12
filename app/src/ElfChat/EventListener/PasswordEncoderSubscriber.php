@@ -11,17 +11,9 @@ use ElfChat\Entity\User;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 
 class PasswordEncoderSubscriber implements EventSubscriberInterface
 {
-    private $encoder;
-
-    public function __construct(PasswordEncoderInterface $encoder)
-    {
-        $this->encoder = $encoder;
-    }
-
     public static function getSubscribedEvents()
     {
         return array(
@@ -45,8 +37,6 @@ class PasswordEncoderSubscriber implements EventSubscriberInterface
             $password = $user->getPassword();
         }
 
-        $salt = uniqid(time(), true);
-        $user->setPassword($this->encoder->encodePassword($password, $salt));
-        $user->setSalt($salt);
+        $user->setPassword(password_hash($password, PASSWORD_DEFAULT));
     }
 }
