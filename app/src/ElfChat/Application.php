@@ -121,7 +121,7 @@ class Application extends Silicone\Application
      */
     public function isAdmin()
     {
-        // TODO: auth
+        return $this->isGranted('ROLE_ADMIN');
     }
 
     /**
@@ -129,7 +129,7 @@ class Application extends Silicone\Application
      */
     public function isModerator()
     {
-        // TODO: auth
+        return $this->isGranted('ROLE_MODERATOR');
     }
 
     /**
@@ -137,7 +137,7 @@ class Application extends Silicone\Application
      */
     public function isUser()
     {
-        // TODO: auth
+        return $this->isGranted('ROLE_USER');
     }
 
     /**
@@ -145,6 +145,6 @@ class Application extends Silicone\Application
      */
     public function isGuest()
     {
-        // TODO: auth
+        return $this->isGranted('ROLE_GUEST');
     }
 }
