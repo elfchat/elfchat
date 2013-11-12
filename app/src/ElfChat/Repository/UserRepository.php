@@ -36,13 +36,14 @@ class UserRepository extends EntityRepository
     }
 
     /**
-     * @param $username
+     * @param $name
      * @return User
      */
-    public function findOneByName($username)
+    public function findOneByName($name)
     {
-        return $this->findOneBy(array(
-            'name' => $username,
-        ));
+        $dql = "SELECT u FROM ElfChat\Entity\User u WHERE u.name = ?1 AND u INSTANCE OF ElfChat\Entity\User";
+        $query = $this->_em->createQuery($dql);
+        $query->setParameter(1, $name);
+        return $query->getSingleResult();
     }
 }
