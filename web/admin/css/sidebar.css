@@ -73,6 +73,7 @@
 .sidebar-toggle {
     display: none;
     float: left;
+    margin-top: 20px;
     margin-right: 10px;
 }
 

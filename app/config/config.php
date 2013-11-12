@@ -29,7 +29,7 @@ $app->register(new Silicone\Provider\RouterServiceProvider());
 $app['router.resource'] = array(
     $app->getRootDir() . '/src/ElfChat/Controller/',
     $app->getRootDir() . '/src/ElfChat/Moderator/',
-    $app->getRootDir() . '/src/Admin/Controller/',
+    $app->getRootDir() . '/src/ElfChat/Administrator/',
 );
 $app['router.cache_dir'] = $app->getCacheDir();
 

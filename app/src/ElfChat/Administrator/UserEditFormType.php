@@ -5,7 +5,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Admin\Form;
+namespace ElfChat\Administrator;
 
 use ElfChat\Entity\User;
 use ElfChat\EventListener\PasswordEncoderSubscriber;
@@ -16,34 +16,28 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class UserFormType extends AbstractType
+class UserEditFormType extends AbstractType
 {
-    private $passwordEncoderSubscriber;
-
-    public function __construct(PasswordEncoderSubscriber $passwordEncoderSubscriber)
-    {
-        $this->passwordEncoderSubscriber = $passwordEncoderSubscriber;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username', null, array('label' => 'user.name'))
-            ->add('email', 'email', array('label' => 'user.email'))
+            ->add('name', null)
+            ->add('email', 'email')
             ->add('plainPassword', 'password', array(
                 'mapped' => false,
                 'required' => false,
-                'label' => 'user.password',
+                'label' => 'Password',
             ))
             ->add('role', 'choice', array(
                 'choices' => array(
-                    'ROLE_USER' => 'user.role.user',
-                    'ROLE_MODERATOR' => 'user.role.moderator',
-                    'ROLE_ADMIN' => 'user.role.admin'
+                    'ROLE_GUEST' => 'Guest',
+                    'ROLE_USER' => 'User',
+                    'ROLE_MODERATOR' => 'Moderator',
+                    'ROLE_ADMIN' => 'Admin'
                 ),
                 'expanded' => false,
                 'multiple' => false,
-                'label' => 'user.roles'
+                'label' => 'Role'
             ))
             ->add('removeAvatar', 'checkbox', array(
                 'mapped' => false,
@@ -52,7 +46,7 @@ class UserFormType extends AbstractType
             ))
         ;
 
-        $builder->addEventSubscriber($this->passwordEncoderSubscriber);
+        $builder->addEventSubscriber(new PasswordEncoderSubscriber);
 
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
             /** @var $user User */
@@ -70,7 +64,6 @@ class UserFormType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'ElfChat\Entity\User',
             'validation_groups' => array('Edit'),
-            'translation_domain' => 'admin'
         ));
     }
 

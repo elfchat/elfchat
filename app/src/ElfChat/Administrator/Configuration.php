@@ -5,7 +5,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Admin\Controller;
+namespace ElfChat\Administrator;
 
 use Admin\Form\ConfigType;
 use ElfChat\Config\Writer;

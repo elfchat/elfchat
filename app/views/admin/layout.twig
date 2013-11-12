@@ -1,7 +1,6 @@
 {% extends 'base.twig' %}
-{% trans_default_domain 'admin' %}
 
-{% block title %}{{ 'title'|trans() }}{% endblock %}
+{% block title %}{{ 'ElfChat Admin'|trans() }}{% endblock %}
 
 {% block style %}
     <link rel="stylesheet" href="{{ asset('lib/bootstrap/css/bootstrap.min.css') }}" type="text/css">
@@ -23,26 +22,25 @@
         </div>
 
         <div class="container sidebar-content">
-            {% for message in app.session.flashBag.get('success') %}
-                <div class="alert alert-success">{{ message|trans() }}</div>
-            {% endfor %}
-            {% for message in app.session.flashBag.get('error') %}
-                <div class="alert alert-error">{{ message|trans() }}</div>
-            {% endfor %}
-            {% for message in app.session.flashBag.get('info') %}
-                <div class="alert alert-info">{{ message|trans() }}</div>
-            {% endfor %}
+            <div class="container">
 
-            <h1>
                 <a href="#" class="btn btn-default sidebar-toggle">
                     <i class="glyphicon glyphicon-th-list"></i>
                 </a>
-                {% block h1 %}
-                {% endblock %}
-            </h1>
 
-            {% block content %}
-            {% endblock %}
+                {% for message in app.session.flashBag.get('success') %}
+                    <div class="alert alert-success">{{ message|trans() }}</div>
+                {% endfor %}
+                {% for message in app.session.flashBag.get('error') %}
+                    <div class="alert alert-error">{{ message|trans() }}</div>
+                {% endfor %}
+                {% for message in app.session.flashBag.get('info') %}
+                    <div class="alert alert-info">{{ message|trans() }}</div>
+                {% endfor %}
+
+                {% block content %}
+                {% endblock %}
+            </div>
         </div>
     </div>
 {% endblock %}
