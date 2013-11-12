@@ -3,18 +3,26 @@
 
 $app['version'] = '6.0.0 BETA 1';
 
-$app['config_file'] = $app->getOpenDir() . '/config.php';
+// Configuration
 
-$config = new \ElfChat\Config();
-$reader = new \ElfChat\Config\Reader($config);
-$reader->read($app['config_file']);
+$app['config.file'] = $app->getOpenDir() . '/config.php';
+
+$configDefault = include $app->getRootDir() . '/config/default.php';
+
+$config = new ElfChat\Configuration\Configuration($configDefault);
+
+if (is_readable($app['config.file'])) {
+    $config->load($app['config.file']);
+}
 
 $app['config'] = function () use ($config) {
     return $config;
 };
 
-$app['debug'] = $config->debug;
-$app['locale'] = $config->locale;
+$app['debug'] = $config->get('debug', true);
+
+$app['locale'] = $config->get('locale', 'en');
+
 
 // Router
 $app->register(new Silicone\Provider\RouterServiceProvider());
@@ -49,19 +57,21 @@ $app['doctrine.options'] = array(
     'proxy_namespace' => 'Proxy',
     'proxy_dir' => $app->getCacheDir() . '/proxy/',
 );
-switch ($config->database) {
+
+switch ($config->get('database', 'sqlite')) {
     case 'mysql':
-        $app['doctrine.connection'] = $config->mysql;
+        $app['doctrine.connection'] = $config->get('mysql');
         break;
 
     case 'sqlite':
-        $app['doctrine.connection'] = $config->sqlite;
+        $app['doctrine.connection'] = $config->get('sqlite');
         break;
 
     case 'postgres':
-        $app['doctrine.connection'] = $config->postgres;
+        $app['doctrine.connection'] = $config->get('postgres');
         break;
 }
+
 $app['doctrine.paths'] = array(
     $app->getRootDir() . '/src/ElfChat/Entity',
 );
@@ -205,9 +215,9 @@ $app['security.subscriber'] = $app->share(function () use ($app) {
     );
 });
 
-$app['security.remember'] = $app->share(function () use($app) {
+$app['security.remember'] = $app->share(function () use ($app) {
     // TODO: Use something better when key.
-    return new \ElfChat\Security\Authentication\Remember($app->config()->key);
+    return new \ElfChat\Security\Authentication\Remember($app->config()->get('remember_me.token'));
 });
 
 /**

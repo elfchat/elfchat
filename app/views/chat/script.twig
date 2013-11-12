@@ -2,14 +2,14 @@
 <script src="{{ asset('app.js') }}"></script>
 <script src="{{ asset('emotion/catalog.js') }}"></script>
 <script src="{{ asset('emotion/list.js') }}"></script>
-<script src="{{ app.config.server }}/socket.io/socket.io.js"></script>
+<script src="{{ app.config.get('server') }}/socket.io/socket.io.js"></script>
 <script type="text/javascript">
     // Config
     {% autoescape false %}
     window.config = {
-        server: '{{ app.config.server }}',
-        namespace: '{{ app.config.domain }}',
-        domain: '{{ app.config.domain }}',
+        server: '{{ app.config.get('server') }}',
+        namespace: '{{ app.config.get('domain') }}',
+        domain: '{{ app.config.get('domain') }}',
         auth: {{ save|json_encode() }},
         api: {
             send: '{{ url('send') }}'

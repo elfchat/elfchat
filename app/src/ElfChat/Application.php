@@ -68,7 +68,7 @@ class Application extends Silicone\Application
     }
 
     /**
-     * @return Config
+     * @return \ElfChat\Configuration\Configuration
      */
     public function config()
     {

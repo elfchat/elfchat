@@ -32,7 +32,6 @@ class Chat extends Controller
             // Render chat
 
             // Chat secure data
-            $config = $this->app->config();
             $auth = array(
                 'user' => $user->export(),
             );
@@ -100,7 +99,7 @@ class Chat extends Controller
 
         // Send to node.js server.
         $browser = new Browser(new Curl());
-        $res = $browser->post($config->server . '/send', array(), array('encode' => $encode));
+        $res = $browser->post($config->get('server') . '/send', array(), array('encode' => $encode));
         $json = json_decode($res->getContent(), true);
 
         // If an error, delete message from database.
@@ -128,10 +127,10 @@ class Chat extends Controller
         $stringify = new Stringify();
 
         // Add domain.
-        $data['_domain'] = $config->domain;
+        $data['_domain'] = $config->get('domain');
 
         // Generate hash and remove key.
-        $data['_key'] = $config->key;
+        $data['_key'] = $config->get('key');
         $hash = sha1($stringify->stringify($data));
         unset($data['_key']);
 
