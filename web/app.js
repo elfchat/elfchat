@@ -43,7 +43,7 @@ $.fn.exist = function() {
   return $(this).length > 0;
 };
 function tr(message) {
-  return message;
+  return window.lang[message] ? window.lang[message]: message;
 }
 function format(message) {
   var params = arguments[1] !== (void 0) ? arguments[1]: {};

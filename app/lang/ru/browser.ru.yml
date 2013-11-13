@@ -1,13 +1,9 @@
-join: %name% входит в чат.
-leave: %name% выходит из чата.
+%name% joins the chat.: %name% входит в чат.
+%name% leaves the chat.: %name% выходит из чата.
 
-emotion:
-  emoticons: Смайлики
-  signs: Знаки
-  animals: Животные
+Error: Ошибка
+Сonnecting: Подключение...
 
-error:
-  title: Обнаружена ошибка
-  content: Код ошибки: %error%
-
-connecting: Подключение...
+Emoticons: Смайлики
+Signs: Знаки
+Animals: Животные

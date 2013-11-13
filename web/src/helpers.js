@@ -17,7 +17,7 @@ $.fn.exist = function () {
  * @returns {String}
  */
 function tr(message) {
-    return message;
+    return window.lang[message] ? window.lang[message] : message;
 }
 
 /**
