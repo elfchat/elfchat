@@ -74,7 +74,11 @@ class DotNotation
 
             while (count($keys) > 0) {
                 if (count($keys) === 1) {
-                    $at[array_shift($keys)] = $value;
+                    if (is_array($at)) {
+                        $at[array_shift($keys)] = $value;
+                    } else {
+                        throw new \RuntimeException("Can not set value at this path ($path) because is not array.");
+                    }
                 } else {
                     $key = array_shift($keys);
 
