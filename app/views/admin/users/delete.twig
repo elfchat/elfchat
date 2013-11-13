@@ -1,6 +1,5 @@
 {% extends 'admin/layout.twig' %}
-{% trans_default_domain 'admin' %}
-{% form_theme form 'admin/form_theme.twig' %}
+
 {% set title = 'Delete user "%name%"?'|trans()|replace({'%name%': user.name}) %}
 
 {% block title %}
@@ -12,10 +11,8 @@
         {{ form_widget(form._token) }}
         <fieldset>
             <legend>{{ title }}</legend>
-            <div class="form-actions">
                 {{ form_widget(form.delete) }}
-                <a href="{{ path('admin_users') }}" class="btn" type="reset">{{ 'Cancel'|trans() }}</a>
-            </div>
+                <a href="{{ path('admin_users') }}" class="btn btn-default" type="reset">{{ 'Cancel'|trans() }}</a>
         </fieldset>
     </form>
 {% endblock %}

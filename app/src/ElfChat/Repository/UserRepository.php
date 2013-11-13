@@ -15,9 +15,9 @@ class UserRepository extends EntityRepository
     /**
      * @return User[]
      */
-    public function findAll()
+    public function findAllUsers()
     {
-        $dql = "SELECT u, a FROM ElfChat\Entity\User u LEFT JOIN u.avatar a";
+        $dql = "SELECT u, a FROM ElfChat\Entity\User u LEFT JOIN u.avatar a WHERE u INSTANCE OF ElfChat\Entity\User";
         $query = $this->_em->createQuery($dql);
         return $query->getResult();
     }

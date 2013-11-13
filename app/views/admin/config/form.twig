@@ -1,56 +1,10 @@
 {% extends 'admin/layout.twig' %}
-{% form_theme form 'admin/form_theme.twig' %}
-{% trans_default_domain 'admin' %}
+{% form_theme form 'form.twig' %}
 
 {% block content %}
-    <form action="{{ url('admin_config') }}" method="post" class="form-horizontal">
-        {{ form_row(form._token) }}
-
-        <legend>{{ 'database'|trans() }}</legend>
-
-        {{ form_row(form.database) }}
-
-        <script>
-            $(function () {
-                $('#config_database').change(function () {
-                    var select = $('#config_database option:selected').attr('value');
-                    $('#databaseTabs a[href="#' + select + '"]').tab('show');
-                }).change();
-            });
-        </script>
-
-        <ul class="nav nav-tabs" id="databaseTabs">
-            <li><a href="#sqlite" data-toggle="tab">{{ 'Sqlite'|trans() }}</a></li>
-            <li><a href="#mysql" data-toggle="tab">{{ 'Mysql'|trans() }}</a></li>
-            <li><a href="#postgres" data-toggle="tab">{{ 'PostgreSQL'|trans() }}</a></li>
-        </ul>
-
-        <div class="tab-content">
-            <div class="tab-pane" id="sqlite">
-                {{ form_row(form.sqlite.user) }}
-                {{ form_row(form.sqlite.password) }}
-                {{ form_row(form.sqlite.path) }}
-            </div>
-            <div class="tab-pane active" id="mysql">
-                {{ form_row(form.mysql.host) }}
-                {{ form_row(form.mysql.user) }}
-                {{ form_row(form.mysql.password) }}
-                {{ form_row(form.mysql.dbname) }}
-            </div>
-            <div class="tab-pane" id="postgres">
-                {{ form_row(form.postgres.host) }}
-                {{ form_row(form.postgres.user) }}
-                {{ form_row(form.postgres.password) }}
-                {{ form_row(form.postgres.dbname) }}
-            </div>
-        </div>
-
-        <legend>{{ 'rest'|trans() }}</legend>
-        {{ form_rest(form) }}
-
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary">{{ 'save'|trans() }}</button>
-            <button type="reset" class="btn">{{ 'reset'|trans() }}</button>
-        </div>
+    <form action="{{ url('admin_config') }}" method="post" class="form">
+        {{ form_widget(form) }}
+        <button type="submit" class="btn btn-primary">{{ 'Save'|trans() }}</button>
+        <button type="reset" class="btn">{{ 'Reset'|trans() }}</button>
     </form>
 {% endblock %}

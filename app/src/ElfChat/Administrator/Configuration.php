@@ -7,9 +7,7 @@
 
 namespace ElfChat\Administrator;
 
-use Admin\Form\ConfigType;
-use ElfChat\Config\Writer;
-use Silicone\Controller;
+use ElfChat\Controller\Controller;
 use Silicone\Route;
 
 /**
@@ -23,20 +21,26 @@ class Configuration extends Controller
     public function index()
     {
         $config = $this->app->config();
-        $form = $this->app->formType(new ConfigType(), $config);
 
-        if ('POST' == $this->request->getMethod()) {
-            $form->bind($this->request);
+        $form = $this->app->form($config)
+            ->add('locale', 'choice', array(
+                'choices' => array(
+                    'ru' => 'Russian',
+                    'en' => 'English',
+                )
+            ))
+            ->add('remember_me:token')
+            ->getForm();
 
-            if ($form->isValid()) {
-                $config = $form->getData();
+        $form->handleRequest($this->request);
 
-                $writer = new Writer($config);
-                $writer->write($this->app['config_file']);
+        if ($form->isValid()) {
+            $config = $form->getData();
+            $config->save();
 
-                $this->app->getSession()->getFlashBag()->set('success', 'config_saved');
-            }
+            $this->app->session()->getFlashBag()->set('success', 'Configuration saved');
         }
+
 
         return $this->render('admin/config/form.twig', array(
             'form' => $form->createView(),

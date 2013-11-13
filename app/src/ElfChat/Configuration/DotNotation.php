@@ -24,6 +24,8 @@ namespace ElfChat\Configuration;
  */
 class DotNotation
 {
+    const SEPARATOR = '/[:\.]/';
+
     /**
      * @var array
      */
@@ -47,7 +49,7 @@ class DotNotation
         $array = $this->values;
 
         if (!empty($path)) {
-            $keys = explode('.', $path);
+            $keys = $this->explode($path);
             foreach ($keys as $key) {
                 if (isset($array[$key])) {
                     $array = $array[$key];
@@ -66,25 +68,26 @@ class DotNotation
      */
     public function set($path, $value)
     {
-        $link = & $this->values;
-
         if (!empty($path)) {
-            $keys = explode('.', $path);
-            foreach ($keys as $key) {
+            $at = & $this->values;
+            $keys = $this->explode($path);
 
-                if (!isset($link[$key])) {
-                    $link[$key] = array();
+            while (count($keys) > 0) {
+                if (count($keys) === 1) {
+                    $at[array_shift($keys)] = $value;
+                } else {
+                    $key = array_shift($keys);
+
+                    if (!isset($at[$key])) {
+                        $at[$key] = array();
+                    }
+
+                    $at = & $at[$key];
                 }
-
-                if (!is_array($link[$key])) {
-                    throw new \RuntimeException("Can not set value for `$key` in `$path` path because it is not array.");
-                }
-
-                $link = & $link[$key];
             }
+        } else {
+            $this->values = $value;
         }
-
-        $link = $value;
     }
 
     /**
@@ -103,7 +106,7 @@ class DotNotation
      */
     public function have($path)
     {
-        $keys = explode('.', $path);
+        $keys = $this->explode($path);
         $array = $this->values;
         foreach ($keys as $key) {
             if (isset($array[$key])) {
@@ -114,6 +117,27 @@ class DotNotation
         }
 
         return true;
+    }
+
+    /**
+     * @param array $values
+     */
+    public function setValues($values)
+    {
+        $this->values = $values;
+    }
+
+    /**
+     * @return array
+     */
+    public function getValues()
+    {
+        return $this->values;
+    }
+
+    protected function explode($path)
+    {
+        return preg_split(self::SEPARATOR, $path);
     }
 
     /**

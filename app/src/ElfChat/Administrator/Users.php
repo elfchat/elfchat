@@ -7,7 +7,7 @@
 
 namespace ElfChat\Administrator;
 
-use ElfChat\Administrator\UserEditFormType;
+use ElfChat\Administrator\Form\UserEditFormType;
 use ElfChat\Controller\Controller;
 use Silicone\Route;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -22,7 +22,7 @@ class Users extends Controller
      */
     public function index()
     {
-        $users = $this->app->repository()->users()->findAll();
+        $users = $this->app->repository()->users()->findAllUsers();
         return $this->render('admin/users/list.twig', array(
             'users' => $users,
         ));

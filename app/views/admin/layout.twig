@@ -53,7 +53,19 @@
             /**
              * Auto selecting of active menu item.
              */
-            $('a[href^="' + window.location.pathname + '"]').parent().addClass('active');
+            $('.sidebar-nav li').each(function () {
+                if($(this).hasClass('sidebar-brand')) {
+                    return;
+                }
+
+                var href = $(this).find('a').attr('href');
+                if (href) {
+                    var regex = new RegExp('^' + href, 'i');
+                    if (regex.test(window.location.pathname)) {
+                        $(this).addClass('active');
+                    }
+                }
+            });
 
             /**
              * Run bootstrap tooltip.
