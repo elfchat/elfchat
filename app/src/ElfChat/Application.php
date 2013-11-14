@@ -8,6 +8,7 @@
 namespace ElfChat;
 
 use Silicone;
+use Symfony\Component\HttpFoundation\Request;
 
 class Application extends Silicone\Application
 {
@@ -20,6 +21,20 @@ class Application extends Silicone\Application
     {
         $app = $this;
         require_once $app->getRootDir() . '/config/config.php';
+    }
+
+    /**
+     * Main run method with HTTP Cache.
+     *
+     * @param Request $request
+     */
+    public function run(Request $request = null)
+    {
+        if ($this['debug']) {
+            parent::run($request);
+        } else {
+            $this['http_cache']->run($request);
+        }
     }
 
     /**
