@@ -60,7 +60,7 @@ function Notify() {
     return $.notification({
       title: tr('Error'),
       content: error,
-      icon: 'icon-info-sign',
+      icon: 'fa fa-info',
       error: true
     });
   };
@@ -68,7 +68,7 @@ function Notify() {
     return $.notification({
       title: tr('Info'),
       content: text,
-      icon: 'icon-html5'
+      icon: 'fa fa-info'
     });
   };
   var connecting = null;
@@ -79,7 +79,7 @@ function Notify() {
       }
       return connecting = $.notification({
         content: tr('Connecting'),
-        icon: 'icon-spinner icon-spin'
+        icon: 'fa fa-spinner fa-spin'
       });
     },
     stop: function() {

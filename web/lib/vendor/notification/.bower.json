@@ -6,11 +6,11 @@
     "**/*.txt"
   ],
   "homepage": "https://github.com/elfet/notification",
-  "_release": "f0919c5df2",
+  "_release": "00700b1b3e",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "f0919c5df2baaa1a53a7fb9ecaea2df5416f5f94"
+    "commit": "00700b1b3ea1dd5547a044167603030fee305507"
   },
   "_source": "git://github.com/elfet/notification.git",
   "_target": "*",

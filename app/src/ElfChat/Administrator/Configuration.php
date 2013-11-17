@@ -30,6 +30,7 @@ class Configuration extends Controller
                 )
             ))
             ->add('remember_me:token')
+            ->add('')
             ->getForm();
 
         $form->handleRequest($this->request);
