@@ -4,12 +4,16 @@ app     = express()
 server  = require('http').createServer(app)
 io      = require('socket.io').listen(server)
 crypto  = require('crypto')
-mongo   = require('mongojs');
+r       = require('rethinkdb')
 
 ###
   Global variables
 ###
-db = mongo.connect(config.database, ['keys']);
+connection = null
+r.connect config.database, (err, conn) ->
+  throw err if err
+  connection = conn
+
 log = io.log
 
 ###
