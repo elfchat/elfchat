@@ -13,7 +13,6 @@
         <div class="sidebar">
             <ul class="sidebar-nav">
                 <li class="sidebar-brand"><a href="{{ path('admin') }}">{{ 'ElfChat Admin'|trans() }}</a></li>
-                <li><a href="{{ path('admin_dashboard') }}">{{ 'Home'|trans() }}</a></li>
                 <li><a href="{{ path('admin_config') }}">{{ 'Configuration'|trans() }}</a></li>
                 <li><a href="{{ path('admin_users') }}">{{ 'Users'|trans() }}</a></li>
                 <li><a href="#">{{ 'Themes'|trans() }}</a></li>
@@ -54,10 +53,6 @@
              * Auto selecting of active menu item.
              */
             $('.sidebar-nav li').each(function () {
-                if($(this).hasClass('sidebar-brand')) {
-                    return;
-                }
-
                 var href = $(this).find('a').attr('href');
                 if (href) {
                     var regex = new RegExp('^' + href, 'i');

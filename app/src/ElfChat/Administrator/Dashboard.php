@@ -16,7 +16,7 @@ use Silicone\Route;
 class Dashboard extends Controller
 {
     /**
-     * @Route("/dashboard", name="admin_dashboard")
+     * @Route("/home", name="admin")
      */
     public function index()
     {
@@ -24,10 +24,10 @@ class Dashboard extends Controller
     }
 
     /**
-     * @Route("", name="admin")
+     * @Route("")
      */
     public function admin()
     {
-        return $this->app->redirect($this->app->url('admin_dashboard'));
+        return $this->app->redirect($this->app->url('admin'));
     }
 }
