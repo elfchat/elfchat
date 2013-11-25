@@ -49,6 +49,25 @@ $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 
 // Doctrine Common
 $app->register(new Silicone\Provider\DoctrineCommonServiceProvider());
+$app['doctrine.common.cache'] = $app->share(function () use ($app) {
+    if (true === $app['debug']) {
+        return new \Doctrine\Common\Cache\ArrayCache();
+    }
+
+    switch ($app->config()->get('cache')) {
+
+        case 'filesystem':
+            return new \Doctrine\Common\Cache\FilesystemCache($app->getCacheDir() . '/doctrine');
+            break;
+
+        default:
+            if (extension_loaded('apc')) {
+                return new \Doctrine\Common\Cache\ApcCache();
+            } else {
+                return new \Doctrine\Common\Cache\FilesystemCache($app->getCacheDir() . '/doctrine');
+            }
+    }
+});
 
 // Doctrine ORM
 $app->register(new Silicone\Provider\DoctrineOrmServiceProvider());

@@ -1,6 +1,7 @@
 <?php
 return array(
     'debug' => false,
+    'cache' => 'filesystem',
     'locale' => 'ru',
 
     'domain' => 'chat.dev',
