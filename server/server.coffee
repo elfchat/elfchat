@@ -14,6 +14,7 @@ r.connect config.database, (err, conn) ->
   throw err if err
   connection = conn
 
+# Log
 log = io.log
 
 ###
@@ -221,7 +222,7 @@ class Doc
     @domain    = i.domain    ? 'nodomain'
     @namespace = i.namespace ? '/' + @domain
     @key       = i.key       ? ''
-    @maxOnline = i.maxOnline ? 5
+    @maximum = i.maximum ? 5
 
 ###
   data may contain next:
@@ -237,9 +238,9 @@ check = (data, callback) ->
   userHash = data._hash
   delete data._hash
 
-  db.keys.findOne domain: data._domain, (error, json) ->
+  getKeyForDomain data._domain, (json) ->
     # Check if we find key
-    if json is null or error isnt null
+    if json is null
       return callback 'key not found', null, null
 
     # Create doc
@@ -260,3 +261,17 @@ check = (data, callback) ->
       callback null, data, doc
     else
       callback 'hash not match', null, null
+
+
+###
+  Load keys function
+###
+getKeyForDomain = (domain, callback) ->
+  r.db('elfchat').table('keys').getAll(domain, {index: 'domain'}).run connection, (err, cursor) ->
+    throw err if err
+    cursor.toArray (err, json) ->
+      throw err if err
+      if json.length is 0
+        callback null
+      else
+        callback json[0]
