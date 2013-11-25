@@ -27,10 +27,14 @@ class Configuration extends Controller
                 'choices' => array(
                     'ru' => 'Russian',
                     'en' => 'English',
-                )
+                ),
+                'label' => 'Language',
             ))
             ->add('remember_me:token')
-            ->add('')
+            ->add('mysql:host', 'text', array('label' => 'Host'))
+            ->add('mysql:user', 'text', array('label' => 'Database user'))
+            ->add('mysql:password', 'text', array('label' => 'Password', 'required' => false))
+            ->add('mysql:dbname', 'text', array('label' => 'Database name'))
             ->getForm();
 
         $form->handleRequest($this->request);
