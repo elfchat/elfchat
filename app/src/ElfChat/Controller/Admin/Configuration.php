@@ -5,9 +5,9 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Administrator;
+namespace ElfChat\Controller\Admin;
 
-use ElfChat\Controller\Controller;
+use ElfChat\Controller;
 use Silicone\Route;
 
 /**

@@ -5,9 +5,9 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Moderator;
+namespace ElfChat\Controller\Admin;
 
-use ElfChat\Controller\Controller;
+use ElfChat\Controller;
 use ElfChat\Entity\Ban;
 use ElfChat\Entity\User;
 use ElfChat\Form\BanType;

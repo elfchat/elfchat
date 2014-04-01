@@ -9,7 +9,7 @@ $app['config.file'] = $app->getOpenDir() . '/config.php';
 
 $configDefault = include $app->getRootDir() . '/config/default.php';
 
-$config = new ElfChat\Configuration\Configuration($configDefault);
+$config = new ElfChat\Config\Config($configDefault);
 
 if (is_readable($app['config.file'])) {
     $config->load($app['config.file']);
@@ -27,9 +27,8 @@ $app['locale'] = $config->get('locale', 'en');
 // Router
 $app->register(new Silicone\Provider\RouterServiceProvider());
 $app['router.resource'] = array(
-    $app->getRootDir() . '/src/ElfChat/Controller/',
-    $app->getRootDir() . '/src/ElfChat/Moderator/',
-    $app->getRootDir() . '/src/ElfChat/Administrator/',
+    $app->getRootDir() . '/src/ElfChat/Controller/Chat/',
+    $app->getRootDir() . '/src/ElfChat/Controller/Admin/',
 );
 $app['router.cache_dir'] = $app->getCacheDir();
 
@@ -260,4 +259,7 @@ if ($app['debug']) {
         'profiler.mount_prefix' => '/_profiler',
     ));
     $app->register(new Silicone\Provider\WebProfilerServiceProvider());
+
+    // Whoops
+    $app->register(new Whoops\Provider\Silex\WhoopsServiceProvider);
 }

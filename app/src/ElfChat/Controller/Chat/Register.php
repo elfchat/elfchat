@@ -5,8 +5,9 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Controller;
+namespace ElfChat\Controller\Chat;
 
+use ElfChat\Controller;
 use Silicone\Route;
 use ElfChat\Entity\User;
 use ElfChat\Form\RegistrationFormType;

@@ -34,7 +34,8 @@
 
         "kriswallsmith/buzz": "*",
         "imagine/imagine": "*",
-        "ircmaxell/password-compat": "*"
+        "ircmaxell/password-compat": "*",
+        "filp/whoops": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"

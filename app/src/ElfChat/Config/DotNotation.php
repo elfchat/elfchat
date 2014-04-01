@@ -5,7 +5,7 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Configuration;
+namespace ElfChat\Config;
 
 /**
  * Dot notation for access multidimensional arrays.

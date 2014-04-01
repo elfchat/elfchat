@@ -5,8 +5,9 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Controller;
+namespace ElfChat\Controller\Chat;
 
+use ElfChat\Controller;
 use ElfChat\Entity\Guest;
 use ElfChat\Security\Authentication\Remember;
 use Silicone\Route;

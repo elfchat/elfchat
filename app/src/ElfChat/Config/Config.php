@@ -5,9 +5,9 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Configuration;
+namespace ElfChat\Config;
 
-class Configuration extends DotNotation
+class Config extends DotNotation
 {
     private $file;
 

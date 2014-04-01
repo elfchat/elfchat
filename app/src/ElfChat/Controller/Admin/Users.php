@@ -5,10 +5,10 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Administrator;
+namespace ElfChat\Controller\Admin;
 
-use ElfChat\Administrator\Form\UserEditFormType;
-use ElfChat\Controller\Controller;
+use ElfChat\Form\UserEditFormType;
+use ElfChat\Controller;
 use Silicone\Route;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

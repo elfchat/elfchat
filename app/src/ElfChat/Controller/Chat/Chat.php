@@ -5,10 +5,11 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Controller;
+namespace ElfChat\Controller\Chat;
 
 use Buzz\Browser;
 use Buzz\Client\Curl;
+use ElfChat\Controller;
 use ElfChat\Entity\Message;
 use ElfChat\Repository\MessageRepository;
 use ElfChat\Security\Stringify;

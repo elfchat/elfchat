@@ -5,22 +5,18 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Controller;
+namespace ElfChat;
 
 use ElfChat\Application;
 use Silicone\Controller as BaseController;
 
+/**
+ * Class Controller
+ */
 class Controller extends BaseController
 {
     /**
      * @var Application
      */
     protected $app;
-
-    public function __construct(Application $app)
-    {
-        parent::__construct($app);
-    }
-
-
-}
+} 

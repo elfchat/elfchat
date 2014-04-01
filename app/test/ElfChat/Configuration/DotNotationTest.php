@@ -5,7 +5,7 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Configuration;
+namespace ElfChat\Config;
 
 class DotNotationTest extends \PHPUnit_Framework_TestCase
 {

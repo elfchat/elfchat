@@ -2,7 +2,7 @@
 return array(
     'debug' => false,
     'cache' => 'filesystem',
-    'locale' => 'ru',
+    'locale' => 'en',
 
     'domain' => 'chat.dev',
     'server' => 'http://macbook.local:8080',

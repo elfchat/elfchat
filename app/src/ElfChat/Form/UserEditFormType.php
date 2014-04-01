@@ -5,7 +5,7 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Administrator\Form;
+namespace ElfChat\Form;
 
 use ElfChat\Entity\User;
 use ElfChat\EventListener\PasswordEncoderSubscriber;
