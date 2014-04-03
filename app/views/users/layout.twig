@@ -1,14 +1,12 @@
 {% extends 'base.twig' %}
 
 {% block style %}
-    <link rel="stylesheet" href="{{ asset('lib/bootstrap/css/bootstrap.min.css') }}" type="text/css">
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('css/users.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/common/form.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/users/layout.css') }}">
 {% endblock style %}
 
 {% block body %}
-    <div class="container">
-        {% block content %}
-        {% endblock %}
-    </div>
+    {% block content %}
+    {% endblock %}
 {% endblock %}

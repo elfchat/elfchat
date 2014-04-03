@@ -54,6 +54,7 @@ form ul.errors {
     display: inline-block;
     color: #e40000;
     margin-left: 15px;
+    margin-bottom: 15px;
 }
 
 form fieldset {
