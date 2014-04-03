@@ -9,7 +9,6 @@ namespace ElfChat\Controller\Admin;
 
 use ElfChat\Controller;
 use Silicone\Route;
-use Symfony\Component\Validator\Constraints\Range;
 
 /**
  * @Route("/admin/config")
@@ -40,9 +39,6 @@ class Configuration extends Controller
             ->add('domain')
             ->add('server')
             ->add('key')
-            ->add('test', 'text', ['label' => 'Test it!', 'constraints' => [
-                new Range(['max' => 10, 'min' => 0, 'minMessage' => 'To low...'])
-            ]])
             ->getForm();
 
         $form->handleRequest($this->request);
