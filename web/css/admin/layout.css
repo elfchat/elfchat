@@ -1,0 +1,148 @@
+.navbar {
+    color: rgb(85, 85, 85);
+    background-color: rgb(238, 238, 238);
+    border-bottom: solid 4px rgb(226, 226, 226);
+    font-size: 14px;
+}
+
+.navbar a {
+    display: inline-block;
+    text-decoration: none;
+    margin-left: 25px;
+    margin-right: 25px;
+    line-height: 50px;
+    color: #8c8c8c;
+}
+
+.navbar a.brand {
+    font-size: 18px;
+}
+
+.navbar a.active {
+    color: #000;
+}
+
+.navbar a:hover {
+    color: #000;
+}
+
+.content {
+    padding: 15px;
+}
+
+/* Alert */
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert h4 {
+    margin-top: 0;
+    color: inherit;
+}
+
+.alert .alert-link {
+    font-weight: bold;
+}
+
+.alert > p,
+.alert > ul {
+    margin-bottom: 0;
+}
+
+.alert > p + p {
+    margin-top: 5px;
+}
+
+.alert-dismissable {
+    padding-right: 35px;
+}
+
+.alert-dismissable .close {
+    position: relative;
+    top: -2px;
+    right: -21px;
+    color: inherit;
+}
+
+.alert-success {
+    background-color: #28b62c;
+    border-color: #24a528;
+    color: #ffffff;
+}
+
+.alert-success hr {
+    border-top-color: #209023;
+}
+
+.alert-success .alert-link {
+    color: #e6e6e6;
+}
+
+.alert-info {
+    background-color: #75caeb;
+    border-color: #40b5e3;
+    color: #ffffff;
+}
+
+.alert-info hr {
+    border-top-color: #29ade0;
+}
+
+.alert-info .alert-link {
+    color: #e6e6e6;
+}
+
+.alert-warning {
+    background-color: #ff851b;
+    border-color: #ff7701;
+    color: #ffffff;
+}
+
+.alert-warning hr {
+    border-top-color: #e76b00;
+}
+
+.alert-warning .alert-link {
+    color: #e6e6e6;
+}
+
+.alert-danger {
+    background-color: #ff4136;
+    border-color: #ff1103;
+    color: #ffffff;
+}
+
+.alert-danger hr {
+    border-top-color: #e90d00;
+}
+
+.alert-danger .alert-link {
+    color: #e6e6e6;
+}
+
+.alert {
+    border-width: 0 1px 4px 1px;
+}
+
+.alert a,
+.alert .alert-link {
+    font-weight: normal;
+    color: #fff;
+    text-decoration: underline;
+}
+
+.alert .close {
+    color: #fff;
+    text-decoration: none;
+    opacity: 0.4;
+}
+
+.alert .close:hover,
+.alert .close:focus {
+    color: #fff;
+    opacity: 1;
+}

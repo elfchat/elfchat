@@ -1,6 +1,7 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -10,4 +11,12 @@ body {
 
 img {
     border: none;
+}
+
+.pull-right {
+    float: right;
+}
+
+.pull-left {
+    float: left;
 }

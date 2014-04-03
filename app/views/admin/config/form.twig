@@ -1,10 +1,11 @@
 {% extends 'admin/layout.twig' %}
-{% form_theme form 'form.twig' %}
 
 {% block content %}
     <form action="{{ url('admin_config') }}" method="post" class="form">
         {{ form_widget(form) }}
-        <button type="submit" class="btn btn-primary">{{ 'Save'|trans() }}</button>
-        <button type="reset" class="btn">{{ 'Reset'|trans() }}</button>
+        <div class="actions">
+            <button type="submit" class="primary">{{ 'Save'|trans() }}</button>
+            <button type="reset">{{ 'Reset'|trans() }}</button>
+        </div>
     </form>
 {% endblock %}

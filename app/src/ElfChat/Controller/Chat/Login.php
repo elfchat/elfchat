@@ -13,7 +13,7 @@ use ElfChat\Security\Authentication\Remember;
 use Silicone\Route;
 use Symfony\Component\HttpFoundation\Cookie;
 
-class Authentication extends Controller
+class Login extends Controller
 {
     /**
      * @Route("/login", name="login")

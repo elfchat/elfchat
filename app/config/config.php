@@ -116,6 +116,7 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
         'auto_reload' => true,
     ),
     'twig.path' => $app->getRootDir() . '/views/',
+    'twig.form.templates' => array('form_layout.twig'),
 ));
 $app->register(new Silicone\Provider\TwigServiceProviderExtension());
 $app['twig'] = $app->share($app->extend('twig', function (\Twig_Environment $twig, $app) {

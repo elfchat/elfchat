@@ -3,78 +3,53 @@
 {% block title %}{{ 'ElfChat Admin'|trans() }}{% endblock %}
 
 {% block style %}
-    <link rel="stylesheet" href="{{ asset('lib/bootstrap/css/bootstrap.min.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ asset('admin/css/sidebar.css') }}" type="text/css">
     {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/common/form.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin/layout.css') }}" type="text/css">
 {% endblock style %}
 
 {% block body %}
-    <div class="sidebar-wrapper">
-        <div class="sidebar">
-            <ul class="sidebar-nav">
-                <li class="sidebar-brand"><a href="{{ path('admin') }}">{{ 'ElfChat Admin'|trans() }}</a></li>
-                <li><a href="{{ path('admin_config') }}">{{ 'Configuration'|trans() }}</a></li>
-                <li><a href="{{ path('admin_users') }}">{{ 'Users'|trans() }}</a></li>
-                <li><a href="#">{{ 'Themes'|trans() }}</a></li>
-                <li><a href="#">{{ 'Plugins'|trans() }}</a></li>
-            </ul>
-        </div>
+    <div class="navbar">
+        <a class="brand" href="{{ path('admin') }}">{{ 'ElfChat'|trans() }}</a>
+        <a href="{{ path('admin_config') }}">{{ 'Configuration'|trans() }}</a>
+        <a href="{{ path('admin_users') }}">{{ 'Users'|trans() }}</a>
+        <a href="#">{{ 'Themes'|trans() }}</a>
+        <a href="#">{{ 'Plugins'|trans() }}</a>
 
-        <div class="sidebar-content">
-            <div class="container">
+        <a class="pull-right" href="{{ path('logout') }}">{{ 'Exit'|trans() }}</a>
+    </div>
 
-                <a href="#" class="btn btn-default sidebar-toggle">
-                    <i class="glyphicon glyphicon-th-list"></i>
-                </a>
+    <div class="content">
+        {% for message in app.session.flashBag.get('success') %}
+            <div class="alert alert-success">{{ message|trans() }}</div>
+        {% endfor %}
+        {% for message in app.session.flashBag.get('error') %}
+            <div class="alert alert-error">{{ message|trans() }}</div>
+        {% endfor %}
+        {% for message in app.session.flashBag.get('info') %}
+            <div class="alert alert-info">{{ message|trans() }}</div>
+        {% endfor %}
 
-                {% for message in app.session.flashBag.get('success') %}
-                    <div class="alert alert-success">{{ message|trans() }}</div>
-                {% endfor %}
-                {% for message in app.session.flashBag.get('error') %}
-                    <div class="alert alert-error">{{ message|trans() }}</div>
-                {% endfor %}
-                {% for message in app.session.flashBag.get('info') %}
-                    <div class="alert alert-info">{{ message|trans() }}</div>
-                {% endfor %}
-
-                {% block content %}
-                {% endblock %}
-            </div>
-        </div>
+        {% block content %}
+        {% endblock %}
     </div>
 {% endblock %}
 
 {% block script %}
     {{ parent() }}
-    <script src="{{ asset('lib/bootstrap/js/bootstrap.min.js') }}"></script>
     <script type="text/javascript">
         $(function () {
             /**
              * Auto selecting of active menu item.
              */
-            $('.sidebar-nav li').each(function () {
-                var href = $(this).find('a').attr('href');
+            $('.navbar a').each(function () {
+                var href = $(this).attr('href');
                 if (href) {
                     var regex = new RegExp('^' + href, 'i');
                     if (regex.test(window.location.pathname)) {
                         $(this).addClass('active');
                     }
                 }
-            });
-
-            /**
-             * Run bootstrap tooltip.
-             */
-            $("*[data-original-title]").tooltip({
-                html: true
-            });
-
-            /**
-             * Show hide menu.
-             */
-            $(".sidebar-toggle").click(function (e) {
-                e.preventDefault();
-                $(".sidebar-wrapper").toggleClass("active");
             });
         });
     </script>
