@@ -1,8 +1,8 @@
 /*!
- *  howler.js v1.1.14
+ *  howler.js v1.1.18
  *  howlerjs.com
  *
- *  (c) 2013, James Simpson of GoldFire Studios
+ *  (c) 2013-2014, James Simpson of GoldFire Studios
  *  goldfirestudios.com
  *
  *  MIT License
@@ -16,20 +16,28 @@
   var ctx = null,
     usingWebAudio = true,
     noAudio = false;
-  if (typeof AudioContext !== 'undefined') {
-    ctx = new AudioContext();
-  } else if (typeof webkitAudioContext !== 'undefined') {
-    ctx = new webkitAudioContext();
-  } else if (typeof Audio !== 'undefined') {
+  try {
+    if (typeof AudioContext !== 'undefined') {
+      ctx = new AudioContext();
+    } else if (typeof webkitAudioContext !== 'undefined') {
+      ctx = new webkitAudioContext();
+    } else {
+      usingWebAudio = false;
+    }
+  } catch(e) {
     usingWebAudio = false;
-    try {
-      new Audio();
-    } catch(e) {
+  }
+
+  if (!usingWebAudio) {
+    if (typeof Audio !== 'undefined') {
+      try {
+        new Audio();
+      } catch(e) {
+        noAudio = true;
+      }
+    } else {
       noAudio = true;
     }
-  } else {
-    usingWebAudio = false;
-    noAudio = true;
   }
 
   // create a master gain node
@@ -44,6 +52,7 @@
     this._volume = 1;
     this._muted = false;
     this.usingWebAudio = usingWebAudio;
+    this.noAudio = noAudio;
     this._howls = [];
   };
   HowlerGlobal.prototype = {
@@ -58,7 +67,7 @@
       // make sure volume is a number
       vol = parseFloat(vol);
 
-      if (vol && vol >= 0 && vol <= 1) {
+      if (vol >= 0 && vol <= 1) {
         self._volume = vol;
 
         if (usingWebAudio) {
@@ -139,6 +148,7 @@
       ogg: !!audioTest.canPlayType('audio/ogg; codecs="vorbis"').replace(/^no$/, ''),
       wav: !!audioTest.canPlayType('audio/wav; codecs="1"').replace(/^no$/, ''),
       m4a: !!(audioTest.canPlayType('audio/x-m4a;') || audioTest.canPlayType('audio/aac;')).replace(/^no$/, ''),
+      mp4: !!(audioTest.canPlayType('audio/x-mp4;') || audioTest.canPlayType('audio/aac;')).replace(/^no$/, ''),
       weba: !!audioTest.canPlayType('audio/webm; codecs="vorbis"').replace(/^no$/, '')
     };
   }
@@ -157,7 +167,7 @@
     self._sprite = o.sprite || {};
     self._src = o.src || '';
     self._pos3d = o.pos3d || [0, 0, -0.5];
-    self._volume = o.volume || 1;
+    self._volume = o.volume !== undefined ? o.volume : 1;
     self._urls = o.urls || [];
     self._rate = o.rate || 1;
 
@@ -203,7 +213,7 @@
       }
 
       // loop through source URLs and pick the first one that is compatible
-      for (var i=0; i<self._urls.length; i++) {        
+      for (var i=0; i<self._urls.length; i++) {
         var ext, urlItem;
 
         if (self._format) {
@@ -240,6 +250,16 @@
         loadBuffer(self, url);
       } else {
         var newNode = new Audio();
+
+        // listen for errors with HTML5 audio (http://dev.w3.org/html5/spec-author-view/spec.html#mediaerror)
+        newNode.addEventListener('error', function () {
+          if (newNode.error && newNode.error.code === 4) {
+            HowlerGlobal.noAudio = true;
+          }
+
+          self.on('loaderror', {type: newNode.error.code});
+        }, false);
+
         self._audioNode.push(newNode);
 
         // setup the new audio node
@@ -247,14 +267,15 @@
         newNode._pos = 0;
         newNode.preload = 'auto';
         newNode.volume = (Howler._muted) ? 0 : self._volume * Howler.volume();
-       
+
         // add this sound to the cache
         cache[url] = self;
 
         // setup the event listener to start playing the sound
         // as soon as it has buffered enough
         var listener = function() {
-          self._duration = newNode.duration;
+          // round up the duration when using HTML5 Audio to account for the lower precision
+          self._duration = Math.ceil(newNode.duration * 10) / 10;
 
           // setup a sprite if none is defined
           if (Object.getOwnPropertyNames(self._sprite).length === 0) {
@@ -364,6 +385,7 @@
             // set web audio node to paused at end
             if (self._webAudio && !loop) {
               self._nodeById(data.id).paused = true;
+              self._nodeById(data.id)._pos = 0;
             }
 
             // end the track if it is HTML audio and a sprite
@@ -402,7 +424,7 @@
           if (node.readyState === 4) {
             node.id = soundId;
             node.currentTime = pos;
-            node.muted = Howler._muted;
+            node.muted = Howler._muted || node.muted;
             node.volume = self._volume * Howler.volume();
             setTimeout(function() { node.play(); }, 0);
           } else {
@@ -463,7 +485,7 @@
 
         if (self._webAudio) {
           // make sure the sound has been created
-          if (!activeNode.bufferSource) {
+          if (!activeNode.bufferSource || activeNode.paused) {
             return self;
           }
 
@@ -510,7 +532,7 @@
 
         if (self._webAudio) {
           // make sure the sound has been created
-          if (!activeNode.bufferSource) {
+          if (!activeNode.bufferSource || activeNode.paused) {
             return self;
           }
 
@@ -552,7 +574,7 @@
         if (self._webAudio) {
           activeNode.gain.value = 0;
         } else {
-          activeNode.volume = 0;
+          activeNode.muted = true;
         }
       }
 
@@ -581,7 +603,7 @@
         if (self._webAudio) {
           activeNode.gain.value = self._volume;
         } else {
-          activeNode.volume = self._volume;
+          activeNode.muted = false;
         }
       }
 
@@ -687,23 +709,14 @@
 
       var activeNode = (id) ? self._nodeById(id) : self._activeNode();
       if (activeNode) {
-        if (self._webAudio) {
-          if (pos >= 0) {
-            activeNode._pos = pos;
-            self.pause(id).play(activeNode._sprite, id);
+        if (pos >= 0) {
+          self.pause(id);
+          activeNode._pos = pos;
+          self.play(activeNode._sprite, id);
 
-            return self;
-          } else {
-            return activeNode._pos + (ctx.currentTime - self._playStart);
-          }
+          return self;
         } else {
-          if (pos >= 0) {
-            activeNode.currentTime = pos;
-
-            return self;
-          } else {
-            return activeNode.currentTime;
-          }
+          return self._webAudio ? activeNode._pos + (ctx.currentTime - self._playStart) : activeNode.currentTime;
         }
       } else if (pos >= 0) {
         return self;
@@ -1002,7 +1015,7 @@
       var self = this,
         events = self['_on' + event];
 
-      if (typeof fn === "function") {
+      if (typeof fn === 'function') {
         events.push(fn);
       } else {
         for (var i=0; i<events.length; i++) {
@@ -1049,7 +1062,10 @@
       // stop playing any active nodes
       var nodes = self._audioNode;
       for (var i=0; i<self._audioNode.length; i++) {
-        self.stop(nodes[i].id);
+        // stop the sound if it is currently playing
+        if (!nodes[i].paused) {
+          self.stop(nodes[i].id);
+        }
 
         if (!self._webAudio) {
            // remove the source if using HTML5 Audio
@@ -1062,7 +1078,7 @@
 
       // remove the reference in the global Howler object
       var index = Howler._howls.indexOf(self);
-      if (index) {
+      if (index !== null && index >= 0) {
         Howler._howls.splice(index, 1);
       }
 
@@ -1096,12 +1112,18 @@
         xhr.responseType = 'arraybuffer';
         xhr.onload = function() {
           // decode the buffer into an audio source
-          ctx.decodeAudioData(xhr.response, function(buffer) {
-            if (buffer) {
-              cache[url] = buffer;
-              loadSound(obj, buffer);
+          ctx.decodeAudioData(
+            xhr.response,
+            function(buffer) {
+              if (buffer) {
+                cache[url] = buffer;
+                loadSound(obj, buffer);
+              }
+            },
+            function(err) {
+              obj.on('loaderror');
             }
-          });
+          );
         };
         xhr.onerror = function() {
           // if there is an error, switch the sound to HTML Audio
@@ -1181,9 +1203,17 @@
       };
     });
   }
-  
+
+  /**
+   * Add support for CommonJS libraries such as browserify.
+   */
+  if (typeof exports !== 'undefined') {
+    exports.Howler = Howler;
+    exports.Howl = Howl;
+  }
+
   // define globally in case AMD is not available or available but not used
   window.Howler = Howler;
   window.Howl = Howl;
-  
+
 })();

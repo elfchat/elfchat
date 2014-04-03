@@ -1,4 +1,4 @@
-<script src="{{ asset('lib/vendors.js') }}"></script>
+<script src="{{ asset('lib/vendors') }}"></script>
 <script src="{{ asset('app.js') }}"></script>
 <script src="{{ asset('emotion/catalog.js') }}"></script>
 <script src="{{ asset('emotion/list.js') }}"></script>
@@ -48,7 +48,6 @@
 
 {# Views #}
 {% autoescape false %}
-{{ view('chat/tab/room.view') }}
 {{ view('chat/tab/user.view') }}
 {{ view('chat/board/log.view') }}
 {{ view('chat/board/message.view') }}

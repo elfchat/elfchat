@@ -1,9 +1,0 @@
-{
-    "name": "notification",
-    "version": "1.0.0",
-    "main": "notification.js",
-    "ignore": [
-        ".jshintrc",
-        "**/*.txt"
-    ]
-}

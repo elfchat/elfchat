@@ -10,14 +10,11 @@ class Application {
         this.users = {};
         this.filters = [];
         this.dom = {
-            board: $('#board'),
-            chat: {
-                main: $('#chat-main')
-            },
+            chat: $('#chat'),
             textarea: $('#message'),
             body: $('body')
         };
-        this.scroll = new Scroll(this.dom.board);
+        this.scroll = new Scroll(this.dom.chat);
         this.sound = new Sound();
         this.bind();
         this.addFilters();
@@ -169,10 +166,8 @@ class Application {
         }
     }
 
-    addMessage(messageView, room = 'main') {
-        var chat = this.getChatRoom(room);
-        chat.append(messageView.render());
-        window.tabs.increaseCounter(room);
+    addMessage(messageView) {
+        this.dom.chat.append(messageView.render());
         this.scroll.down();
     }
 
@@ -186,15 +181,6 @@ class Application {
 
     addUser(user) {
         this.users[user.id] = user;
-    }
-
-    getChatRoom(room) {
-        if (!this.dom.chat[room]) {
-            this.dom.board.append(new ChatBoardView(room).render());
-            this.dom.chat[room] = $('#chat-' + room);
-        }
-
-        return this.dom.chat[room];
     }
 
     onUsernameClick(event) {

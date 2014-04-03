@@ -30,22 +30,8 @@ class View {
     }
 }
 
-class TabView extends View {
-    constructor(id, title = '', active = false, count = 0) {
-        this.id = id;
-        this.title = title;
-        this.active = active;
-        this.count = count;
-    }
 
-    render() {
-        return template('chat/tab/room')({
-            tab: this
-        });
-    }
-}
-
-class UserTabView extends TabView {
+class UserView extends View {
     constructor(user) {
         super('user-' + user.id);
         this.user = user;
@@ -59,7 +45,7 @@ class UserTabView extends TabView {
 class MessageView extends View {
     constructor(message, user = null) {
         this.id = message.id;
-        this.time = moment(message.datetime).format('hh:mm:ss');
+        this.time = moment(message.datetime).format('HH:mm:ss');
         this.text = this.filter(this.escape(message.text));
         this.room = message.room;
 

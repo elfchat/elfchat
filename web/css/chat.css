@@ -1,4 +1,7 @@
-/* Box */
+* {
+    margin: 0;
+    padding: 0;
+}
 
 html, body {
     margin: 0;
@@ -6,6 +9,8 @@ html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    font-size: 14px;
+    font-family: Verdana, Helvetica, sans-serif;
 }
 
 .box {
@@ -26,17 +31,16 @@ header {
     width: auto;
     height: 50px;
     line-height: 50px;
-    background: #acacac;
-    color: #ffffff;
+    background-color: #fcfcfc;
+    color: #181818;
     vertical-align: middle;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-bottom: solid 1px #e1e1e1;
 }
 
 header .buttons {
     float: right;
-}
-
-header .buttons > div {
-    cursor: pointer;
 }
 
 /* Name */
@@ -56,11 +60,14 @@ header .buttons > div {
     height: 32px;
     font-size: 32px;
     background-size: contain;
+    background-repeat: no-repeat;
+    border-radius: 3px;
 }
 
-/* Tabs */
+/* User list */
 
-.tabs {
+aside {
+    box-sizing: border-box;
     position: absolute;
     top: 50px; /* header height */
     left: 0;
@@ -68,65 +75,48 @@ header .buttons > div {
     width: 300px;
     overflow-x: hidden;
     overflow-y: auto;
-    background: #D1D7E2;
+    background-color: #fff;
+    border-right: solid 1px #e1e1e1;
 }
 
-.tabs .tab {
+aside .user {
     height: 40px;
     line-height: 40px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border-bottom: solid 1px #e1e1e1;
 }
 
-.tabs .user {
-    position: relative;
-}
-
-.tabs .active {
-    background: #fff;
-}
-
-.tabs .user .avatar {
+aside .user .avatar {
     display: inline-block;
     vertical-align: middle;
 }
 
-.tabs .user .name {
+aside .user .name {
     display: inline-block;
     height: 40px;
     line-height: 40px;
 }
 
-.tabs .badges {
-    float: right;
-}
+/* Chats */
 
-.tabs .count {
-    display: inline-block;
-}
-
-/* Board of chats */
-
-.board {
+.chat {
     position: absolute;
     top: 50px; /* header height */
     left: 300px; /* users width */
     right: 0;
-    bottom: 70px; /* footer height */
+    bottom: 110px; /* footer height */
     overflow-x: hidden;
     overflow-y: scroll;
     background: #ffffff;
 }
 
-.board .chat {
-
-}
-
-.chat .avatar {
-    display: table-cell;
-}
-
-.chat .time {
-    display: table-cell;
-    text-decoration: none;
+.chat > div {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-bottom: solid 1px #f7f7f7;
 }
 
 .chat .user {
@@ -134,16 +124,30 @@ header .buttons > div {
     white-space: nowrap;
 }
 
-.chat .name {
+.chat .avatar {
+    display: table-cell;
+    float: left;
+    margin-right: 5px;
+}
 
+.chat .time {
+    display: table-cell;
+    text-decoration: none;
+    float: right;
+    font-size: 10px;
+    color: #898989;
+}
+
+.chat .name {
+    font-size: 14px;
 }
 
 .chat .text {
-    display: table-cell;
+    display: block;
+    margin-left: 37px; /* Avatar margin. */
     white-space: pre-wrap;
+    font-size: 14px;
 }
-
-/* Images */
 
 .chat img.external {
     max-width: 300px;
@@ -151,85 +155,62 @@ header .buttons > div {
 }
 
 /* Emotions */
+
 .emotion {
     width: 24px;
     height: 24px;
     vertical-align: middle;
 }
 
-/* Profiles */
-
-.profile {
-}
-
-.profile .avatar {
-    width: 64px;
-    height: 64px;
-    box-shadow: 0 2px 2px rgba(0,0,0,0.2);
-    background-color: #2c2c2c;
-}
-
-.profile .popover-side {
-    float: left;
-    width: 64px;
-    margin: 5px;
-    margin-top: -30px;
-}
-
-.profile .popover-title {
-    padding-left: 80px;
-    font-weight: bold;
-}
-
-.profile .popover-content {
-    padding-left: 80px;
-}
-
-.profile .popover-side button {
-    display: block;
-    width: 100%;
-    margin-top: 5px;
-}
-
 /* Controls */
 
 footer {
     display: block;
+    box-sizing: border-box;
     position: absolute;
     left: 300px; /* users width */
     right: 0;
     bottom: 0;
-    height: 70px;
-    background: #d8d8d8;
-}
-
-footer .controls {
-    margin: 15px;
-    display: flex;
-    flex-direction: row;
+    background-color: #fff;
+    border-top: solid 1px #e1e1e1;
+    padding: 10px;
 }
 
 footer textarea {
-    flex: 1 1 auto;
+    box-sizing: border-box;
     width: 100%;
     height: 42px;
-    max-height: 42px;
     padding: 10px;
-    box-sizing: border-box;
-    resize: none;
+
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 18px;
+    outline: none;
+
+    border-radius: 10px;
+    border: solid 1px #a2dff4;
+}
+
+footer textarea:focus {
+    border-color: #9ecaed;
+    box-shadow: 0 0 10px #9ecaed;
 }
 
 footer .buttons {
-    flex: 0 1 auto;
+    padding-bottom: 10px;
 }
 
-footer .buttons > div {
-    cursor: pointer;
+footer .buttons .send {
+    float: right;
 }
 
 /*
  * Popovers
  */
+
+#emotions {
+    max-width: 276px;
+}
 
 #emotions .left {
     cursor: pointer;
@@ -270,6 +251,34 @@ footer .buttons > div {
     max-height: 24px;
 }
 
+/* Profiles */
+
+.profile {
+}
+
+.profile .avatar {
+    width: 64px;
+    height: 64px;
+    box-shadow: 0 2px 2px rgba(0,0,0,0.2);
+    border-radius: 4px;
+    background-color: #2c2c2c;
+}
+
+.profile .popover-side {
+    float: left;
+    margin: 5px;
+    margin-top: -30px;
+}
+
+.profile .popover-title {
+    padding-left: 80px;
+    font-weight: bold;
+}
+
+.profile .popover-content {
+    padding-left: 80px;
+}
+
 /*
  * Copyright
  */
@@ -280,7 +289,6 @@ footer .buttons > div {
     left: 5px;
     color: #9b9b9b;
     font-size: 10px;
-    font-weight: bold;
 }
 
 .copyright:first-letter {
@@ -290,29 +298,4 @@ footer .buttons > div {
 .copyright a {
     color: #9b9b9b;
     font-size: 10px;
-}
-
-/*
- * Buttons
- */
-
-.button,
-button {
-    display: inline-block;
-    width: 100%;
-    text-align: center;
-    background: #ffffff;
-    border: solid 1px #a2a2a2;
-    color: #696969;
-    border-radius: 5px;
-    font-family: 'Open Sans', Arial, sans-serif;
-    font-size: 14px;
-    font-weight: normal;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.button:hover {
-    color: #696969;
-    text-decoration: none;
 }

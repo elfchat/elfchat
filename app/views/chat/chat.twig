@@ -2,12 +2,9 @@
 
 {% block style %}
     {{ parent() }}
-    <link rel="stylesheet" type="text/css" href="{{ asset('lib/vendor/font-awesome/css/font-awesome.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('lib/vendor/notification/notification.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/font/stylesheet.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/chat.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/theme.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/popover.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/button.css') }}">
 {% endblock style %}
 
 {% block body %}
@@ -15,33 +12,32 @@
         <header>
             ElfChat
             <div class="buttons">
-                <div data-popover="settings" class="fa fa-cog fa-lg"></div>
+                <button data-popover="settings">{{ 'Settings'|trans() }}</button>
             </div>
         </header>
 
-        <div class="tabs" id="tabs">
-            <div id="rooms">
-            </div>
-            <div id="users">
-            </div>
-        </div>
+        <aside id="users">
+        </aside>
 
-        <div id="board" class="board">
-            <div class="chat" id="chat-main"></div>
-        </div>
+        <div class="chat" id="chat"></div>
 
         <footer>
-            <div class="controls">
-                <textarea id="message"></textarea>
+            <div class="buttons">
+                <button data-popover="emotions">{{ 'Emotions'|trans() }}</button>
 
-                <div class="buttons">
-                    <div data-popover="emotions" class="fa fa-smile-o emotions"></div>
+                <div class="send">
+                    <button class="primary" data-action="send">{{ 'Send'|trans() }}</button>
+                    {{ 'to'|trans() }}
+                    <button data-action="send">{{ 'Elfet '|trans() }}</button>
                 </div>
             </div>
+
+            <textarea id="message"></textarea>
         </footer>
-        <div class="copyright">
-            &copy; 2013 <a href="http://elfchat.net" target="_blank">ElfChat</a> {{ app.version }}
-        </div>
+    </div>
+
+    <div class="copyright">
+        &copy; 2014 <a href="http://elfchat.net" target="_blank">ElfChat</a> {{ app.version }}
     </div>
 {% endblock body %}
 

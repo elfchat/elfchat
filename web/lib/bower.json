@@ -5,15 +5,12 @@
         "jquery": "~2.0",
         "jquery.scrollto": "https://raw.github.com/flesler/jquery.scrollTo/master/jquery.scrollTo.min.js",
         "jquery.hotkeys": "git://github.com/jeresig/jquery.hotkeys.git",
-        "prefix-free": "https://github.com/LeaVerou/prefixfree/raw/gh-pages/prefixfree.min.js",
-        "mustache": "*",
+        "mustache": "0.6.0",
+        "handlebars": "*",
         "insert": "*",
-        "notification": "*",
-        "font-awesome": "*",
         "jcrop": "*",
         "moment": "*",
-        "howler": "*",
-        "typeahead.js": "*"
+        "howler": "*"
     },
     "ignore": [
         "**/.*",

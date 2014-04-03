@@ -1,8 +1,8 @@
 <div class="tab">
     <h3 class="popover-title">
-        <i class="left fa fa-chevron-left"></i>
+        <i class="left">&DoubleLeftArrow;</i>
         [title]
-        <i class="right fa fa-chevron-right"></i>
+        <i class="right">&DoubleRightArrow;</i>
     </h3>
 
     <div class="popover-content">

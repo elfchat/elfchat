@@ -1,0 +1,59 @@
+button {
+    -webkit-appearance: button;
+    -webkit-user-select: none;
+    outline: none;
+    display: inline-block;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+button[disabled] {
+    cursor: default;
+}
+
+button {
+    box-sizing: border-box;
+    color: rgb(85, 85, 85);
+
+    background-color: rgb(238, 238, 238);
+
+    border-radius: 4px;
+    border-bottom: solid 4px rgb(226, 226, 226);
+    border-left: solid 1px rgb(226, 226, 226);
+    border-right: solid 1px rgb(226, 226, 226);
+    border-top: solid 0px rgb(226, 226, 226);
+
+    font-size: 12px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: bold;
+    height: 30px;
+    line-height: 17px;
+
+    padding-bottom: 4px;
+    padding-left: 7px;
+    padding-right: 7px;
+    padding-top: 4px;
+
+    text-align: center;
+    text-decoration: none solid rgb(255, 255, 255);
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+button:hover {
+    position: relative;
+    top: 2px;
+    border-bottom-width: 2px;
+}
+
+button.primary {
+    color: rgb(255, 255, 255);
+    background-color: rgb(40, 182, 44);
+    border-bottom-color: rgb(35, 161, 39);
+    border-left-color: rgb(35, 161, 39);
+    border-right-color: rgb(35, 161, 39);
+    border-top-color: rgb(35, 161, 39);
+}

@@ -102,7 +102,7 @@ The behavior of the section is determined by the value of the key.
 
 #### False Values or Empty Lists
 
-If the `person` key does not exist, or exists and has a value of `null`, `undefined`, or `false`, or is an empty list, the block will not be rendered.
+If the `person` key exists and has a value of `null`, `undefined`, or `false`, or is an empty list, the block will not be rendered.
 
 View:
 
@@ -306,32 +306,6 @@ Here we have a list with three items. The first item uses the default tag style,
 According to [ctemplates](http://google-ctemplate.googlecode.com/svn/trunk/doc/howto.html), this "is useful for languages like TeX, where double-braces may occur in the text and are awkward to use for markup."
 
 Custom delimiters may not contain whitespace or the equals sign.
-
-### Compiled Templates
-
-Mustache templates can be compiled into JavaScript functions using `Mustache.compile` for improved rendering performance.
-
-If you have template views that are rendered multiple times, compiling your template into a JavaScript function will minimise the amount of work required for each re-render.
-
-Pre-compiled templates can also be generated server-side, for delivery to the browser as ready to use JavaScript functions, further reducing the amount of client side processing required for initialising templates.
-
-**Mustache.compile**
-
-Use `Mustache.compile` to compile standard Mustache string templates into reusable Mustache template functions.
-
-    var compiledTemplate = Mustache.compile(stringTemplate);
-
-The function returned from `Mustache.compile` can then be called directly, passing in the template data as an argument (with an object of partials as an optional second parameter), to generate the final output.
-
-    var templateOutput = compiledTemplate(templateData);
-
-**Mustache.compilePartial**
-
-Template partials can also be compiled using the `Mustache.compilePartial` function. The first parameter of this function, is the name of the partial as it appears within parent templates.
-
-    Mustache.compilePartial('partial-name', stringTemplate);
-
-Compiled partials are then available to both `Mustache.render` and `Mustache.compile`.
 
 ## Plugins for JavaScript Libraries
 

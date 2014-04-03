@@ -1,4 +1,1231 @@
-//! moment.js
+// Copyright 2012 Traceur Authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * The traceur runtime.
+ */
+(function(global) {
+  'use strict';
+
+  if (global.$traceurRuntime) {
+      // Prevents from being executed multiple times.
+      return;
+  }
+
+  var $create = Object.create;
+  var $defineProperty = Object.defineProperty;
+  var $freeze = Object.freeze;
+  var $getOwnPropertyNames = Object.getOwnPropertyNames;
+  var $getPrototypeOf = Object.getPrototypeOf;
+  var $hasOwnProperty = Object.prototype.hasOwnProperty;
+  var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+
+  function nonEnum(value) {
+    return {
+      configurable: true,
+      enumerable: false,
+      value: value,
+      writable: true
+    };
+  }
+
+  var method = nonEnum;
+
+  function polyfillString(String) {
+    // Harmony String Extras
+    // http://wiki.ecmascript.org/doku.php?id=harmony:string_extras
+    Object.defineProperties(String.prototype, {
+      startsWith: method(function(s) {
+       return this.lastIndexOf(s, 0) === 0;
+      }),
+      endsWith: method(function(s) {
+        var t = String(s);
+        var l = this.length - t.length;
+        return l >= 0 && this.indexOf(t, l) === l;
+      }),
+      contains: method(function(s) {
+        return this.indexOf(s) !== -1;
+      }),
+      toArray: method(function() {
+        return this.split('');
+      })
+    });
+
+    // 15.5.3.4 String.raw ( callSite, ...substitutions)
+    $defineProperty(String, 'raw', {
+      value: function(callsite) {
+        var raw = callsite.raw;
+        var len = raw.length >>> 0;  // ToUint
+        if (len === 0)
+          return '';
+        var s = '';
+        var i = 0;
+        while (true) {
+          s += raw[i];
+          if (i + 1 === len)
+            return s;
+          s += arguments[++i];
+        }
+      },
+      configurable: true,
+      enumerable: false,
+      writable: true
+    });
+  }
+
+  var counter = 0;
+
+  /**
+   * Generates a new unique string.
+   * @return {string}
+   */
+  function newUniqueString() {
+    return '__$' + Math.floor(Math.random() * 1e9) + '$' + ++counter + '$__';
+  }
+
+  var nameRe = /^__\$(?:\d+)\$(?:\d+)\$__$/;
+
+  var internalStringValueName = newUniqueString();
+
+  /**
+   * Creates a new private name object.
+   * @param {string=} string Optional string used for toString.
+   * @constructor
+   */
+  function Name(string) {
+    if (!string)
+      string = newUniqueString();
+    $defineProperty(this, internalStringValueName, {value: newUniqueString()});
+
+    function toString() {
+      return string;
+    }
+    $freeze(toString);
+    $freeze(toString.prototype);
+    var toStringDescr = method(toString);
+    $defineProperty(this, 'toString', toStringDescr);
+
+    this.public = $freeze($create(null, {
+      toString: method($freeze(function toString() {
+        return string;
+      }))
+    }));
+    $freeze(this.public.toString.prototype);
+
+    $freeze(this);
+  };
+  $freeze(Name);
+  $freeze(Name.prototype);
+
+  function assertName(val) {
+    if (!NameModule.isName(val))
+      throw new TypeError(val + ' is not a Name');
+    return val;
+  }
+
+  // Private name.
+
+  // Collection getters and setters
+  var elementDeleteName = new Name();
+  var elementGetName = new Name();
+  var elementSetName = new Name();
+
+  // HACK: We should use runtime/modules/std/name.js or something like that.
+  var NameModule = $freeze({
+    Name: function(str) {
+      return new Name(str);
+    },
+    isName: function(x) {
+      return x instanceof Name;
+    },
+    elementGet: elementGetName,
+    elementSet: elementSetName,
+    elementDelete: elementDeleteName
+  });
+
+  var filter = Array.prototype.filter.call.bind(Array.prototype.filter);
+
+  // Override getOwnPropertyNames to filter out private name keys.
+  function getOwnPropertyNames(object) {
+    return filter($getOwnPropertyNames(object), function(str) {
+      return !nameRe.test(str);
+    });
+  }
+
+  // Override Object.prototpe.hasOwnProperty to always return false for
+  // private names.
+  function hasOwnProperty(name) {
+    if (NameModule.isName(name) || nameRe.test(name))
+      return false;
+    return $hasOwnProperty.call(this, name);
+  }
+
+  function elementDelete(object, name) {
+    if (traceur.options.trapMemberLookup &&
+        hasPrivateNameProperty(object, elementDeleteName)) {
+      return getProperty(object, elementDeleteName).call(object, name);
+    }
+    return deleteProperty(object, name);
+  }
+
+  function elementGet(object, name) {
+    if (traceur.options.trapMemberLookup &&
+        hasPrivateNameProperty(object, elementGetName)) {
+      return getProperty(object, elementGetName).call(object, name);
+    }
+    return getProperty(object, name);
+  }
+
+  function elementHas(object, name) {
+    // Should we allow trapping this too?
+    return has(object, name);
+  }
+
+  function elementSet(object, name, value) {
+    if (traceur.options.trapMemberLookup &&
+        hasPrivateNameProperty(object, elementSetName)) {
+      getProperty(object, elementSetName).call(object, name, value);
+    } else {
+      setProperty(object, name, value);
+    }
+    return value;
+  }
+
+  function assertNotName(s) {
+    if (nameRe.test(s))
+      throw Error('Invalid access to private name');
+  }
+
+  function deleteProperty(object, name) {
+    if (NameModule.isName(name))
+      return delete object[name[internalStringValueName]];
+    if (nameRe.test(name))
+      return true;
+    return delete object[name];
+  }
+
+  function getProperty(object, name) {
+    if (NameModule.isName(name))
+      return object[name[internalStringValueName]];
+    if (nameRe.test(name))
+      return undefined;
+    return object[name];
+  }
+
+  function hasPrivateNameProperty(object, name) {
+    return name[internalStringValueName] in Object(object);
+  }
+
+  function has(object, name) {
+    if (NameModule.isName(name) || nameRe.test(name))
+      return false;
+    return name in Object(object);
+  }
+
+  // This is a bit simplistic.
+  // http://wiki.ecmascript.org/doku.php?id=strawman:refactoring_put#object._get_set_property_built-ins
+  function setProperty(object, name, value) {
+    if (NameModule.isName(name)) {
+      var descriptor = $getPropertyDescriptor(object,
+                                              [name[internalStringValueName]]);
+      if (descriptor)
+        object[name[internalStringValueName]] = value;
+      else
+        $defineProperty(object, name[internalStringValueName], nonEnum(value));
+    } else {
+      assertNotName(name);
+      object[name] = value;
+    }
+  }
+
+  function defineProperty(object, name, descriptor) {
+    if (NameModule.isName(name)) {
+      // Private names should never be enumerable.
+      if (descriptor.enumerable) {
+        descriptor = Object.create(descriptor, {
+          enumerable: {value: false}
+        });
+      }
+      $defineProperty(object, name[internalStringValueName], descriptor);
+    } else {
+      assertNotName(name);
+      $defineProperty(object, name, descriptor);
+    }
+  }
+
+  function $getPropertyDescriptor(obj, name) {
+    while (obj !== null) {
+      var result = $getOwnPropertyDescriptor(obj, name);
+      if (result)
+        return result;
+      obj = $getPrototypeOf(obj);
+    }
+    return undefined;
+  }
+
+  function getPropertyDescriptor(obj, name) {
+    if (NameModule.isName(name))
+      return undefined;
+    assertNotName(name);
+    return $getPropertyDescriptor(obj, name);
+  }
+
+  function polyfillObject(Object) {
+    $defineProperty(Object, 'defineProperty', {value: defineProperty});
+    $defineProperty(Object, 'deleteProperty', method(deleteProperty));
+    $defineProperty(Object, 'getOwnPropertyNames',
+                    {value: getOwnPropertyNames});
+    $defineProperty(Object, 'getProperty', method(getProperty));
+    $defineProperty(Object, 'getPropertyDescriptor',
+                    method(getPropertyDescriptor));
+    $defineProperty(Object, 'has', method(has));
+    $defineProperty(Object, 'setProperty', method(setProperty));
+    $defineProperty(Object.prototype, 'hasOwnProperty',
+                    {value: hasOwnProperty});
+
+    // Object.is
+
+    // Unlike === this returns true for (NaN, NaN) and false for (0, -0).
+    function is(left, right) {
+      if (left === right)
+        return left !== 0 || 1 / left === 1 / right;
+      return left !== left && right !== right;
+    }
+
+    $defineProperty(Object, 'is', method(is));
+
+    // Object.assign (19.1.3.1)
+    function assign(target, source) {
+      var props = $getOwnPropertyNames(source);
+      var p, length = props.length;
+      for (p = 0; p < length; p++) {
+        target[props[p]] = source[props[p]];
+      }
+      return target;
+    }
+
+    $defineProperty(Object, 'assign', method(assign));
+
+    // Object.mixin (19.1.3.15)
+    function mixin(target, source) {
+      var props = $getOwnPropertyNames(source);
+      var p, descriptor, length = props.length;
+      for (p = 0; p < length; p++) {
+        descriptor = $getOwnPropertyDescriptor(source, props[p]);
+        $defineProperty(target, props[p], descriptor);
+      }
+      return target;
+    }
+
+    $defineProperty(Object, 'mixin', method(mixin));
+  }
+
+  // Iterators.
+  var iteratorName = new Name('iterator');
+
+  var IterModule = {
+    get iterator() {
+      return iteratorName;
+    },
+    // TODO: Implement the rest of @iter and move it to a different file that
+    // gets compiled.
+  };
+
+  function getIterator(collection) {
+    return getProperty(collection, iteratorName).call(collection);
+  }
+
+  function returnThis() {
+    return this;
+  }
+
+  function addIterator(object) {
+    // Generator instances are iterable.
+    setProperty(object, iteratorName, returnThis);
+    return object;
+  }
+
+  function polyfillArray(Array) {
+    // Make arrays iterable.
+    defineProperty(Array.prototype, IterModule.iterator, method(function() {
+      var index = 0;
+      var array = this;
+      return {
+        next: function() {
+          if (index < array.length) {
+            return {value: array[index++], done: false};
+          }
+          return {value: undefined, done: true};
+        }
+      };
+    }));
+  }
+
+  /**
+   * @param {Function} canceller
+   * @constructor
+   */
+  function Deferred(canceller) {
+    this.canceller_ = canceller;
+    this.listeners_ = [];
+  }
+
+  function notify(self) {
+    while (self.listeners_.length > 0) {
+      var current = self.listeners_.shift();
+      var currentResult = undefined;
+      try {
+        try {
+          if (self.result_[1]) {
+            if (current.errback)
+              currentResult = current.errback.call(undefined, self.result_[0]);
+          } else {
+            if (current.callback)
+              currentResult = current.callback.call(undefined, self.result_[0]);
+          }
+          current.deferred.callback(currentResult);
+        } catch (err) {
+          current.deferred.errback(err);
+        }
+      } catch (unused) {}
+    }
+  }
+
+  function fire(self, value, isError) {
+    if (self.fired_)
+      throw new Error('already fired');
+
+    self.fired_ = true;
+    self.result_ = [value, isError];
+    notify(self);
+  }
+
+  Deferred.prototype = {
+    constructor: Deferred,
+
+    fired_: false,
+    result_: undefined,
+
+    createPromise: function() {
+      return {then: this.then.bind(this), cancel: this.cancel.bind(this)};
+    },
+
+    callback: function(value) {
+      fire(this, value, false);
+    },
+
+    errback: function(err) {
+      fire(this, err, true);
+    },
+
+    then: function(callback, errback) {
+      var result = new Deferred(this.cancel.bind(this));
+      this.listeners_.push({
+        deferred: result,
+        callback: callback,
+        errback: errback
+      });
+      if (this.fired_)
+        notify(this);
+      return result.createPromise();
+    },
+
+    cancel: function() {
+      if (this.fired_)
+        throw new Error('already finished');
+      var result;
+      if (this.canceller_) {
+        result = this.canceller_(this);
+        if (!result instanceof Error)
+          result = new Error(result);
+      } else {
+        result = new Error('cancelled');
+      }
+      if (!this.fired_) {
+        this.result_ = [result, true];
+        notify(this);
+      }
+    }
+  };
+
+  var modules = {
+    get '@name'() {
+      return NameModule;
+    },
+    get '@iter'() {
+      return IterModule;
+    }
+  };
+
+  // This gets overridden in @traceur/modules to be more correct.
+  var System = {
+    get: function(name) {
+      return modules[name] || null;
+    },
+    set: function(name, object) {
+      modules[name] = object;      
+    }
+  };
+
+  function setupGlobals(global) {
+    polyfillString(global.String);
+    polyfillObject(global.Object);
+    polyfillArray(global.Array);
+    global.System = System;
+    // TODO(arv): Don't export this.
+    global.Deferred = Deferred;
+  }
+
+  setupGlobals(global);
+
+  // Return the runtime namespace.
+  var runtime = {
+    Deferred: Deferred,
+    addIterator: addIterator,
+    assertName: assertName,
+    createName: NameModule.Name,
+    deleteProperty: deleteProperty,
+    elementDelete: elementDelete,
+    elementGet: elementGet,
+    elementHas: elementHas,
+    elementSet: elementSet,
+    getIterator: getIterator,
+    getProperty: getProperty,
+    setProperty: setProperty,
+    setupGlobals: setupGlobals,
+    has: has,
+  };
+
+  // This file is sometimes used without traceur.js.
+  global.$traceurRuntime = runtime;
+
+})(typeof global !== 'undefined' ? global : this);
+/*!
+ * mustache.js - Logic-less {{mustache}} templates with JavaScript
+ * http://github.com/janl/mustache.js
+ */
+
+/*global define: false*/
+
+var Mustache;
+
+(function (exports) {
+  if (typeof module !== "undefined" && typeof module.exports !== "undefined") {
+    module.exports = exports; // CommonJS
+  } else if (typeof define === "function") {
+    define(exports); // AMD
+  } else {
+    Mustache = exports; // <script>
+  }
+}((function () {
+  var exports = {};
+
+  exports.name = "mustache.js";
+  exports.version = "0.6.0";
+  exports.tags = ["{{", "}}"];
+
+  exports.parse = parse;
+  exports.clearCache = clearCache;
+  exports.compile = compile;
+  exports.compilePartial = compilePartial;
+  exports.render = render;
+
+  exports.Scanner = Scanner;
+  exports.Context = Context;
+  exports.Renderer = Renderer;
+
+  // This is here for backwards compatibility with 0.4.x.
+  exports.to_html = function (template, view, partials, send) {
+    var result = render(template, view, partials);
+
+    if (typeof send === "function") {
+      send(result);
+    } else {
+      return result;
+    }
+  };
+
+  var whiteRe = /\s*/;
+  var spaceRe = /\s+/;
+  var nonSpaceRe = /\S/;
+  var eqRe = /\s*=/;
+  var curlyRe = /\s*\}/;
+  var tagRe = /#|\^|\/|>|\{|&|=|!/;
+
+  // Workaround for https://issues.apache.org/jira/browse/COUCHDB-577
+  // See https://github.com/janl/mustache.js/issues/189
+  function testRe(re, string) {
+    return RegExp.prototype.test.call(re, string);
+  }
+
+  function isWhitespace(string) {
+    return !testRe(nonSpaceRe, string);
+  }
+
+  var isArray = Array.isArray || function (obj) {
+    return Object.prototype.toString.call(obj) === "[object Array]";
+  };
+
+  // OSWASP Guidelines: Escape all non alphanumeric characters in ASCII space.
+  var jsCharsRe = /[\x00-\x2F\x3A-\x40\x5B-\x60\x7B-\xFF\u2028\u2029]/gm;
+
+  function quote(text) {
+    var escaped = text.replace(jsCharsRe, function (c) {
+      return "\\u" + ('0000' + c.charCodeAt(0).toString(16)).slice(-4);
+    });
+
+    return '"' + escaped + '"';
+  }
+
+  function escapeRe(string) {
+    return string.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
+  }
+
+  var entityMap = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': '&quot;',
+    "'": '&#39;',
+    "/": '&#x2F;'
+  };
+
+  function escapeHtml(string) {
+    return String(string).replace(/[&<>"'\/]/g, function (s) {
+      return entityMap[s];
+    });
+  }
+
+  // Export the escaping function so that the user may override it.
+  // See https://github.com/janl/mustache.js/issues/244
+  exports.escape = escapeHtml;
+
+  function Scanner(string) {
+    this.string = string;
+    this.tail = string;
+    this.pos = 0;
+  }
+
+  /**
+   * Returns `true` if the tail is empty (end of string).
+   */
+  Scanner.prototype.eos = function () {
+    return this.tail === "";
+  };
+
+  /**
+   * Tries to match the given regular expression at the current position.
+   * Returns the matched text if it can match, the empty string otherwise.
+   */
+  Scanner.prototype.scan = function (re) {
+    var match = this.tail.match(re);
+
+    if (match && match.index === 0) {
+      this.tail = this.tail.substring(match[0].length);
+      this.pos += match[0].length;
+      return match[0];
+    }
+
+    return "";
+  };
+
+  /**
+   * Skips all text until the given regular expression can be matched. Returns
+   * the skipped string, which is the entire tail if no match can be made.
+   */
+  Scanner.prototype.scanUntil = function (re) {
+    var match, pos = this.tail.search(re);
+
+    switch (pos) {
+    case -1:
+      match = this.tail;
+      this.pos += this.tail.length;
+      this.tail = "";
+      break;
+    case 0:
+      match = "";
+      break;
+    default:
+      match = this.tail.substring(0, pos);
+      this.tail = this.tail.substring(pos);
+      this.pos += pos;
+    }
+
+    return match;
+  };
+
+  function Context(view, parent) {
+    this.view = view;
+    this.parent = parent;
+    this.clearCache();
+  }
+
+  Context.make = function (view) {
+    return (view instanceof Context) ? view : new Context(view);
+  };
+
+  Context.prototype.clearCache = function () {
+    this._cache = {};
+  };
+
+  Context.prototype.push = function (view) {
+    return new Context(view, this);
+  };
+
+  Context.prototype.lookup = function (name) {
+    var value = this._cache[name];
+
+    if (!value) {
+      if (name === ".") {
+        value = this.view;
+      } else {
+        var context = this;
+
+        while (context) {
+          if (name.indexOf(".") > 0) {
+            var names = name.split("."), i = 0;
+
+            value = context.view;
+
+            while (value && i < names.length) {
+              value = value[names[i++]];
+            }
+          } else {
+            value = context.view[name];
+          }
+
+          if (value != null) {
+            break;
+          }
+
+          context = context.parent;
+        }
+      }
+
+      this._cache[name] = value;
+    }
+
+    if (typeof value === "function") {
+      value = value.call(this.view);
+    }
+
+    return value;
+  };
+
+  function Renderer() {
+    this.clearCache();
+  }
+
+  Renderer.prototype.clearCache = function () {
+    this._cache = {};
+    this._partialCache = {};
+  };
+
+  Renderer.prototype.compile = function (tokens, tags) {
+    if (typeof tokens === "string") {
+      tokens = parse(tokens, tags);
+    }
+
+    var fn = compileTokens(tokens),
+        self = this;
+
+    return function (view) {
+      return fn(Context.make(view), self);
+    };
+  };
+
+  Renderer.prototype.compilePartial = function (name, tokens, tags) {
+    this._partialCache[name] = this.compile(tokens, tags);
+    return this._partialCache[name];
+  };
+
+  Renderer.prototype.render = function (template, view) {
+    var fn = this._cache[template];
+
+    if (!fn) {
+      fn = this.compile(template);
+      this._cache[template] = fn;
+    }
+
+    return fn(view);
+  };
+
+  Renderer.prototype._section = function (name, context, callback) {
+    var value = context.lookup(name);
+
+    switch (typeof value) {
+    case "object":
+      if (isArray(value)) {
+        var buffer = "";
+
+        for (var i = 0, len = value.length; i < len; ++i) {
+          buffer += callback(context.push(value[i]), this);
+        }
+
+        return buffer;
+      }
+
+      return value ? callback(context.push(value), this) : "";
+    case "function":
+      // TODO: The text should be passed to the callback plain, not rendered.
+      var sectionText = callback(context, this),
+          self = this;
+
+      var scopedRender = function (template) {
+        return self.render(template, context);
+      };
+
+      return value.call(context.view, sectionText, scopedRender) || "";
+    default:
+      if (value) {
+        return callback(context, this);
+      }
+    }
+
+    return "";
+  };
+
+  Renderer.prototype._inverted = function (name, context, callback) {
+    var value = context.lookup(name);
+
+    // Use JavaScript's definition of falsy. Include empty arrays.
+    // See https://github.com/janl/mustache.js/issues/186
+    if (!value || (isArray(value) && value.length === 0)) {
+      return callback(context, this);
+    }
+
+    return "";
+  };
+
+  Renderer.prototype._partial = function (name, context) {
+    var fn = this._partialCache[name];
+
+    if (fn) {
+      return fn(context);
+    }
+
+    return "";
+  };
+
+  Renderer.prototype._name = function (name, context, escape) {
+    var value = context.lookup(name);
+
+    if (typeof value === "function") {
+      value = value.call(context.view);
+    }
+
+    var string = (value == null) ? "" : String(value);
+
+    if (escape) {
+      return exports.escape(string);
+    }
+
+    return string;
+  };
+
+  /**
+   * Low-level function that compiles the given `tokens` into a
+   * function that accepts two arguments: a Context and a
+   * Renderer. Returns the body of the function as a string if
+   * `returnBody` is true.
+   */
+  function compileTokens(tokens, returnBody) {
+    var body = ['""'];
+    var token, method, escape;
+
+    for (var i = 0, len = tokens.length; i < len; ++i) {
+      token = tokens[i];
+
+      switch (token.type) {
+      case "#":
+      case "^":
+        method = (token.type === "#") ? "_section" : "_inverted";
+        body.push("r." + method + "(" + quote(token.value) + ", c, function (c, r) {\n" +
+          "  " + compileTokens(token.tokens, true) + "\n" +
+          "})");
+        break;
+      case "{":
+      case "&":
+      case "name":
+        escape = token.type === "name" ? "true" : "false";
+        body.push("r._name(" + quote(token.value) + ", c, " + escape + ")");
+        break;
+      case ">":
+        body.push("r._partial(" + quote(token.value) + ", c)");
+        break;
+      case "text":
+        body.push(quote(token.value));
+        break;
+      }
+    }
+
+    // Convert to a string body.
+    body = "return " + body.join(" + ") + ";";
+
+    // Good for debugging.
+    // console.log(body);
+
+    if (returnBody) {
+      return body;
+    }
+
+    // For great evil!
+    return new Function("c, r", body);
+  }
+
+  function escapeTags(tags) {
+    if (tags.length !== 2) {
+      throw new Error("Invalid tags: " + tags.join(" "));
+    }
+
+    return [
+      new RegExp(escapeRe(tags[0]) + "\\s*"),
+      new RegExp("\\s*" + escapeRe(tags[1]))
+    ];
+  }
+
+  /**
+   * Forms the given linear array of `tokens` into a nested tree structure
+   * where tokens that represent a section have a "tokens" array property
+   * that contains all tokens that are in that section.
+   */
+  function nestTokens(tokens) {
+    var tree = [];
+    var collector = tree;
+    var sections = [];
+    var token, section;
+
+    for (var i = 0; i < tokens.length; ++i) {
+      token = tokens[i];
+
+      switch (token.type) {
+      case "#":
+      case "^":
+        token.tokens = [];
+        sections.push(token);
+        collector.push(token);
+        collector = token.tokens;
+        break;
+      case "/":
+        if (sections.length === 0) {
+          throw new Error("Unopened section: " + token.value);
+        }
+
+        section = sections.pop();
+
+        if (section.value !== token.value) {
+          throw new Error("Unclosed section: " + section.value);
+        }
+
+        if (sections.length > 0) {
+          collector = sections[sections.length - 1].tokens;
+        } else {
+          collector = tree;
+        }
+        break;
+      default:
+        collector.push(token);
+      }
+    }
+
+    // Make sure there were no open sections when we're done.
+    section = sections.pop();
+
+    if (section) {
+      throw new Error("Unclosed section: " + section.value);
+    }
+
+    return tree;
+  }
+
+  /**
+   * Combines the values of consecutive text tokens in the given `tokens` array
+   * to a single token.
+   */
+  function squashTokens(tokens) {
+    var lastToken;
+
+    for (var i = 0; i < tokens.length; ++i) {
+      var token = tokens[i];
+
+      if (lastToken && lastToken.type === "text" && token.type === "text") {
+        lastToken.value += token.value;
+        tokens.splice(i--, 1); // Remove this token from the array.
+      } else {
+        lastToken = token;
+      }
+    }
+  }
+
+  /**
+   * Breaks up the given `template` string into a tree of token objects. If
+   * `tags` is given here it must be an array with two string values: the
+   * opening and closing tags used in the template (e.g. ["<%", "%>"]). Of
+   * course, the default is to use mustaches (i.e. Mustache.tags).
+   */
+  function parse(template, tags) {
+    tags = tags || exports.tags;
+
+    var tagRes = escapeTags(tags);
+    var scanner = new Scanner(template);
+
+    var tokens = [],      // Buffer to hold the tokens
+        spaces = [],      // Indices of whitespace tokens on the current line
+        hasTag = false,   // Is there a {{tag}} on the current line?
+        nonSpace = false; // Is there a non-space char on the current line?
+
+    // Strips all whitespace tokens array for the current line
+    // if there was a {{#tag}} on it and otherwise only space.
+    var stripSpace = function () {
+      if (hasTag && !nonSpace) {
+        while (spaces.length) {
+          tokens.splice(spaces.pop(), 1);
+        }
+      } else {
+        spaces = [];
+      }
+
+      hasTag = false;
+      nonSpace = false;
+    };
+
+    var type, value, chr;
+
+    while (!scanner.eos()) {
+      value = scanner.scanUntil(tagRes[0]);
+
+      if (value) {
+        for (var i = 0, len = value.length; i < len; ++i) {
+          chr = value.charAt(i);
+
+          if (isWhitespace(chr)) {
+            spaces.push(tokens.length);
+          } else {
+            nonSpace = true;
+          }
+
+          tokens.push({type: "text", value: chr});
+
+          if (chr === "\n") {
+            stripSpace(); // Check for whitespace on the current line.
+          }
+        }
+      }
+
+      // Match the opening tag.
+      if (!scanner.scan(tagRes[0])) {
+        break;
+      }
+
+      hasTag = true;
+      type = scanner.scan(tagRe) || "name";
+
+      // Skip any whitespace between tag and value.
+      scanner.scan(whiteRe);
+
+      // Extract the tag value.
+      if (type === "=") {
+        value = scanner.scanUntil(eqRe);
+        scanner.scan(eqRe);
+        scanner.scanUntil(tagRes[1]);
+      } else if (type === "{") {
+        var closeRe = new RegExp("\\s*" + escapeRe("}" + tags[1]));
+        value = scanner.scanUntil(closeRe);
+        scanner.scan(curlyRe);
+        scanner.scanUntil(tagRes[1]);
+      } else {
+        value = scanner.scanUntil(tagRes[1]);
+      }
+
+      // Match the closing tag.
+      if (!scanner.scan(tagRes[1])) {
+        throw new Error("Unclosed tag at " + scanner.pos);
+      }
+
+      tokens.push({type: type, value: value});
+
+      if (type === "name" || type === "{" || type === "&") {
+        nonSpace = true;
+      }
+
+      // Set the tags for the next time around.
+      if (type === "=") {
+        tags = value.split(spaceRe);
+        tagRes = escapeTags(tags);
+      }
+    }
+
+    squashTokens(tokens);
+
+    return nestTokens(tokens);
+  }
+
+  // The high-level clearCache, compile, compilePartial, and render functions
+  // use this default renderer.
+  var _renderer = new Renderer();
+
+  /**
+   * Clears all cached templates and partials.
+   */
+  function clearCache() {
+    _renderer.clearCache();
+  }
+
+  /**
+   * High-level API for compiling the given `tokens` down to a reusable
+   * function. If `tokens` is a string it will be parsed using the given `tags`
+   * before it is compiled.
+   */
+  function compile(tokens, tags) {
+    return _renderer.compile(tokens, tags);
+  }
+
+  /**
+   * High-level API for compiling the `tokens` for the partial with the given
+   * `name` down to a reusable function. If `tokens` is a string it will be
+   * parsed using the given `tags` before it is compiled.
+   */
+  function compilePartial(name, tokens, tags) {
+    return _renderer.compilePartial(name, tokens, tags);
+  }
+
+  /**
+   * High-level API for rendering the `template` using the given `view`. The
+   * optional `partials` object may be given here for convenience, but note that
+   * it will cause all partials to be re-compiled, thus hurting performance. Of
+   * course, this only matters if you're going to render the same template more
+   * than once. If so, it is best to call `compilePartial` before calling this
+   * function and to leave the `partials` argument blank.
+   */
+  function render(template, view, partials) {
+    if (partials) {
+      for (var name in partials) {
+        compilePartial(name, partials[name]);
+      }
+    }
+
+    return _renderer.render(template, view);
+  }
+
+  return exports;
+}())));
+/**
+ * Copyright (c) 2007-2014 Ariel Flesler - aflesler<a>gmail<d>com | http://flesler.blogspot.com
+ * Licensed under MIT
+ * @author Ariel Flesler
+ * @version 1.4.11
+ */
+;(function(a){if(typeof define==='function'&&define.amd){define(['jquery'],a)}else{a(jQuery)}}(function($){var j=$.scrollTo=function(a,b,c){return $(window).scrollTo(a,b,c)};j.defaults={axis:'xy',duration:parseFloat($.fn.jquery)>=1.3?0:1,limit:true};j.window=function(a){return $(window)._scrollable()};$.fn._scrollable=function(){return this.map(function(){var a=this,isWin=!a.nodeName||$.inArray(a.nodeName.toLowerCase(),['iframe','#document','html','body'])!=-1;if(!isWin)return a;var b=(a.contentWindow||a).document||a.ownerDocument||a;return/webkit/i.test(navigator.userAgent)||b.compatMode=='BackCompat'?b.body:b.documentElement})};$.fn.scrollTo=function(f,g,h){if(typeof g=='object'){h=g;g=0}if(typeof h=='function')h={onAfter:h};if(f=='max')f=9e9;h=$.extend({},j.defaults,h);g=g||h.duration;h.queue=h.queue&&h.axis.length>1;if(h.queue)g/=2;h.offset=both(h.offset);h.over=both(h.over);return this._scrollable().each(function(){if(f==null)return;var d=this,$elem=$(d),targ=f,toff,attr={},win=$elem.is('html,body');switch(typeof targ){case'number':case'string':if(/^([+-]=?)?\d+(\.\d+)?(px|%)?$/.test(targ)){targ=both(targ);break}targ=$(targ,this);if(!targ.length)return;case'object':if(targ.is||targ.style)toff=(targ=$(targ)).offset()}var e=$.isFunction(h.offset)&&h.offset(d,targ)||h.offset;$.each(h.axis.split(''),function(i,a){var b=a=='x'?'Left':'Top',pos=b.toLowerCase(),key='scroll'+b,old=d[key],max=j.max(d,a);if(toff){attr[key]=toff[pos]+(win?0:old-$elem.offset()[pos]);if(h.margin){attr[key]-=parseInt(targ.css('margin'+b))||0;attr[key]-=parseInt(targ.css('border'+b+'Width'))||0}attr[key]+=e[pos]||0;if(h.over[pos])attr[key]+=targ[a=='x'?'width':'height']()*h.over[pos]}else{var c=targ[pos];attr[key]=c.slice&&c.slice(-1)=='%'?parseFloat(c)/100*max:c}if(h.limit&&/^\d+$/.test(attr[key]))attr[key]=attr[key]<=0?0:Math.min(attr[key],max);if(!i&&h.queue){if(old!=attr[key])animate(h.onAfterFirst);delete attr[key]}});animate(h.onAfter);function animate(a){$elem.animate(attr,g,h.easing,a&&function(){a.call(this,targ,h)})}}).end()};j.max=function(a,b){var c=b=='x'?'Width':'Height',scroll='scroll'+c;if(!$(a).is('html,body'))return a[scroll]-$(a)[c.toLowerCase()]();var d='client'+c,html=a.ownerDocument.documentElement,body=a.ownerDocument.body;return Math.max(html[scroll],body[scroll])-Math.min(html[d],body[d])};function both(a){return $.isFunction(a)||typeof a=='object'?a:{top:a,left:a}};return j}));
+/*
+ * jQuery Hotkeys Plugin
+ * Copyright 2010, John Resig
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ *
+ * Based upon the plugin by Tzury Bar Yochay:
+ * http://github.com/tzuryby/hotkeys
+ *
+ * Original idea by:
+ * Binny V A, http://www.openjs.com/scripts/events/keyboard_shortcuts/
+*/
+
+(function(jQuery){
+	
+	jQuery.hotkeys = {
+		version: "0.8",
+
+		specialKeys: {
+			8: "backspace", 9: "tab", 13: "return", 16: "shift", 17: "ctrl", 18: "alt", 19: "pause",
+			20: "capslock", 27: "esc", 32: "space", 33: "pageup", 34: "pagedown", 35: "end", 36: "home",
+			37: "left", 38: "up", 39: "right", 40: "down", 45: "insert", 46: "del", 
+			96: "0", 97: "1", 98: "2", 99: "3", 100: "4", 101: "5", 102: "6", 103: "7",
+			104: "8", 105: "9", 106: "*", 107: "+", 109: "-", 110: ".", 111 : "/", 
+			112: "f1", 113: "f2", 114: "f3", 115: "f4", 116: "f5", 117: "f6", 118: "f7", 119: "f8", 
+			120: "f9", 121: "f10", 122: "f11", 123: "f12", 144: "numlock", 145: "scroll", 191: "/", 224: "meta"
+		},
+	
+		shiftNums: {
+			"`": "~", "1": "!", "2": "@", "3": "#", "4": "$", "5": "%", "6": "^", "7": "&", 
+			"8": "*", "9": "(", "0": ")", "-": "_", "=": "+", ";": ": ", "'": "\"", ",": "<", 
+			".": ">",  "/": "?",  "\\": "|"
+		}
+	};
+
+	function keyHandler( handleObj ) {
+		// Only care when a possible input has been specified
+		if ( typeof handleObj.data !== "string" ) {
+			return;
+		}
+		
+		var origHandler = handleObj.handler,
+			keys = handleObj.data.toLowerCase().split(" ");
+	
+		handleObj.handler = function( event ) {
+			// Don't fire in text-accepting inputs that we didn't directly bind to
+			if ( this !== event.target && (/textarea|select/i.test( event.target.nodeName ) ||
+				 event.target.type === "text") ) {
+				return;
+			}
+			
+			// Keypress represents characters, not special keys
+			var special = event.type !== "keypress" && jQuery.hotkeys.specialKeys[ event.which ],
+				character = String.fromCharCode( event.which ).toLowerCase(),
+				key, modif = "", possible = {};
+
+			// check combinations (alt|ctrl|shift+anything)
+			if ( event.altKey && special !== "alt" ) {
+				modif += "alt+";
+			}
+
+			if ( event.ctrlKey && special !== "ctrl" ) {
+				modif += "ctrl+";
+			}
+			
+			// TODO: Need to make sure this works consistently across platforms
+			if ( event.metaKey && !event.ctrlKey && special !== "meta" ) {
+				modif += "meta+";
+			}
+
+			if ( event.shiftKey && special !== "shift" ) {
+				modif += "shift+";
+			}
+
+			if ( special ) {
+				possible[ modif + special ] = true;
+
+			} else {
+				possible[ modif + character ] = true;
+				possible[ modif + jQuery.hotkeys.shiftNums[ character ] ] = true;
+
+				// "$" can be triggered as "Shift+4" or "Shift+$" or just "$"
+				if ( modif === "shift+" ) {
+					possible[ jQuery.hotkeys.shiftNums[ character ] ] = true;
+				}
+			}
+
+			for ( var i = 0, l = keys.length; i < l; i++ ) {
+				if ( possible[ keys[i] ] ) {
+					return origHandler.apply( this, arguments );
+				}
+			}
+		};
+	}
+
+	jQuery.each([ "keydown", "keyup", "keypress" ], function() {
+		jQuery.event.special[ this ] = { add: keyHandler };
+	});
+
+})( jQuery );//! moment.js
 //! version : 2.5.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
@@ -2398,3 +3625,40 @@
         makeGlobal();
     }
 }).call(this);
+jQuery.fn.extend({
+    insertAtCaret: function(myValue){
+        return this.each(function(i) {
+            if (document.selection) {
+                //For browsers like Internet Explorer
+                this.focus();
+                sel = document.selection.createRange();
+                sel.text = myValue;
+                this.focus();
+            }
+            else if (this.selectionStart || this.selectionStart == '0') {
+                //For browsers like Firefox and Webkit based
+                var startPos = this.selectionStart;
+                var endPos = this.selectionEnd;
+                var scrollTop = this.scrollTop;
+                this.value = this.value.substring(0, startPos)+myValue+this.value.substring(endPos,this.value.length);
+                this.focus();
+                this.selectionStart = startPos + myValue.length;
+                this.selectionEnd = startPos + myValue.length;
+                this.scrollTop = scrollTop;
+            } else {
+                this.value += myValue;
+                this.focus();
+            }
+        })
+    }
+});
+/*!
+ *  howler.js v1.1.18
+ *  howlerjs.com
+ *
+ *  (c) 2013-2014, James Simpson of GoldFire Studios
+ *  goldfirestudios.com
+ *
+ *  MIT License
+ */
+!function(){var e={},t=null,n=!0,r=!1;try{"undefined"!=typeof AudioContext?t=new AudioContext:"undefined"!=typeof webkitAudioContext?t=new webkitAudioContext:n=!1}catch(i){n=!1}if(!n)if("undefined"!=typeof Audio)try{new Audio}catch(i){r=!0}else r=!0;if(n){var s=void 0===t.createGain?t.createGainNode():t.createGain();s.gain.value=1,s.connect(t.destination)}var o=function(){this._volume=1,this._muted=!1,this.usingWebAudio=n,this.noAudio=r,this._howls=[]};o.prototype={volume:function(e){var t=this;if(e=parseFloat(e),e>=0&&1>=e){t._volume=e,n&&(s.gain.value=e);for(var r in t._howls)if(t._howls.hasOwnProperty(r)&&t._howls[r]._webAudio===!1)for(var i=0;i<t._howls[r]._audioNode.length;i++)t._howls[r]._audioNode[i].volume=t._howls[r]._volume*t._volume;return t}return n?s.gain.value:t._volume},mute:function(){return this._setMuted(!0),this},unmute:function(){return this._setMuted(!1),this},_setMuted:function(e){var t=this;t._muted=e,n&&(s.gain.value=e?0:t._volume);for(var r in t._howls)if(t._howls.hasOwnProperty(r)&&t._howls[r]._webAudio===!1)for(var i=0;i<t._howls[r]._audioNode.length;i++)t._howls[r]._audioNode[i].muted=e}};var u=new o,a=null;if(!r){a=new Audio;var f={mp3:!!a.canPlayType("audio/mpeg;").replace(/^no$/,""),opus:!!a.canPlayType('audio/ogg; codecs="opus"').replace(/^no$/,""),ogg:!!a.canPlayType('audio/ogg; codecs="vorbis"').replace(/^no$/,""),wav:!!a.canPlayType('audio/wav; codecs="1"').replace(/^no$/,""),m4a:!!(a.canPlayType("audio/x-m4a;")||a.canPlayType("audio/aac;")).replace(/^no$/,""),mp4:!!(a.canPlayType("audio/x-mp4;")||a.canPlayType("audio/aac;")).replace(/^no$/,""),weba:!!a.canPlayType('audio/webm; codecs="vorbis"').replace(/^no$/,"")}}var l=function(e){var t=this;t._autoplay=e.autoplay||!1,t._buffer=e.buffer||!1,t._duration=e.duration||0,t._format=e.format||null,t._loop=e.loop||!1,t._loaded=!1,t._sprite=e.sprite||{},t._src=e.src||"",t._pos3d=e.pos3d||[0,0,-.5],t._volume=void 0!==e.volume?e.volume:1,t._urls=e.urls||[],t._rate=e.rate||1,t._onload=[e.onload||function(){}],t._onloaderror=[e.onloaderror||function(){}],t._onend=[e.onend||function(){}],t._onpause=[e.onpause||function(){}],t._onplay=[e.onplay||function(){}],t._onendTimer=[],t._webAudio=n&&!t._buffer,t._audioNode=[],t._webAudio&&t._setupAudioNode(),u._howls.push(t),t.load()};if(l.prototype={load:function(){var t=this,n=null;if(r)return t.on("loaderror"),void 0;for(var i=0;i<t._urls.length;i++){var s,a;if(t._format)s=t._format;else{if(a=t._urls[i].toLowerCase().split("?")[0],s=a.match(/.+\.([^?]+)(\?|$)/),s=s&&s.length>=2?s:a.match(/data\:audio\/([^?]+);/),!s)return t.on("loaderror"),void 0;s=s[1]}if(f[s]){n=t._urls[i];break}}if(!n)return t.on("loaderror"),void 0;if(t._src=n,t._webAudio)c(t,n);else{var l=new Audio;l.addEventListener("error",function(){l.error&&4===l.error.code&&(o.noAudio=!0),t.on("loaderror",{type:l.error.code})},!1),t._audioNode.push(l),l.src=n,l._pos=0,l.preload="auto",l.volume=u._muted?0:t._volume*u.volume(),e[n]=t;var h=function(){t._duration=Math.ceil(10*l.duration)/10,0===Object.getOwnPropertyNames(t._sprite).length&&(t._sprite={_default:[0,1e3*t._duration]}),t._loaded||(t._loaded=!0,t.on("load")),t._autoplay&&t.play(),l.removeEventListener("canplaythrough",h,!1)};l.addEventListener("canplaythrough",h,!1),l.load()}return t},urls:function(e){var t=this;return e?(t.stop(),t._urls="string"==typeof e?[e]:e,t._loaded=!1,t.load(),t):t._urls},play:function(e,n){var r=this;return"function"==typeof e&&(n=e),e&&"function"!=typeof e||(e="_default"),r._loaded?r._sprite[e]?(r._inactiveNode(function(i){i._sprite=e;var s,o=i._pos>0?i._pos:r._sprite[e][0]/1e3,a=r._sprite[e][1]/1e3-i._pos,f=!(!r._loop&&!r._sprite[e][2]),l="string"==typeof n?n:Math.round(Date.now()*Math.random())+"";if(function(){var t={id:l,sprite:e,loop:f};s=setTimeout(function(){!r._webAudio&&f&&r.stop(t.id,t.timer).play(e,t.id),r._webAudio&&!f&&(r._nodeById(t.id).paused=!0,r._nodeById(t.id)._pos=0),r._webAudio||f||r.stop(t.id,t.timer),r.on("end",l)},1e3*a),r._onendTimer.push(s),t.timer=r._onendTimer[r._onendTimer.length-1]}(),r._webAudio){var c=r._sprite[e][0]/1e3,h=r._sprite[e][1]/1e3;i.id=l,i.paused=!1,p(r,[f,c,h],l),r._playStart=t.currentTime,i.gain.value=r._volume,void 0===i.bufferSource.start?i.bufferSource.noteGrainOn(0,o,a):i.bufferSource.start(0,o,a)}else{if(4!==i.readyState)return r._clearEndTimer(s),function(){var t=r,s=e,o=n,u=i,a=function(){t.play(s,o),u.removeEventListener("canplaythrough",a,!1)};u.addEventListener("canplaythrough",a,!1)}(),r;i.id=l,i.currentTime=o,i.muted=u._muted||i.muted,i.volume=r._volume*u.volume(),setTimeout(function(){i.play()},0)}return r.on("play"),"function"==typeof n&&n(l),r}),r):("function"==typeof n&&n(),r):(r.on("load",function(){r.play(e,n)}),r)},pause:function(e,t){var n=this;if(!n._loaded)return n.on("play",function(){n.pause(e)}),n;n._clearEndTimer(t||0);var r=e?n._nodeById(e):n._activeNode();if(r)if(r._pos=n.pos(null,e),n._webAudio){if(!r.bufferSource||r.paused)return n;r.paused=!0,void 0===r.bufferSource.stop?r.bufferSource.noteOff(0):r.bufferSource.stop(0)}else r.pause();return n.on("pause"),n},stop:function(e,t){var n=this;if(!n._loaded)return n.on("play",function(){n.stop(e)}),n;n._clearEndTimer(t||0);var r=e?n._nodeById(e):n._activeNode();if(r)if(r._pos=0,n._webAudio){if(!r.bufferSource||r.paused)return n;r.paused=!0,void 0===r.bufferSource.stop?r.bufferSource.noteOff(0):r.bufferSource.stop(0)}else r.pause(),r.currentTime=0;return n},mute:function(e){var t=this;if(!t._loaded)return t.on("play",function(){t.mute(e)}),t;var n=e?t._nodeById(e):t._activeNode();return n&&(t._webAudio?n.gain.value=0:n.muted=!0),t},unmute:function(e){var t=this;if(!t._loaded)return t.on("play",function(){t.unmute(e)}),t;var n=e?t._nodeById(e):t._activeNode();return n&&(t._webAudio?n.gain.value=t._volume:n.muted=!1),t},volume:function(e,t){var n=this;if(e=parseFloat(e),e>=0&&1>=e){if(n._volume=e,!n._loaded)return n.on("play",function(){n.volume(e,t)}),n;var r=t?n._nodeById(t):n._activeNode();return r&&(n._webAudio?r.gain.value=e:r.volume=e*u.volume()),n}return n._volume},loop:function(e){var t=this;return"boolean"==typeof e?(t._loop=e,t):t._loop},sprite:function(e){var t=this;return"object"==typeof e?(t._sprite=e,t):t._sprite},pos:function(e,n){var r=this;if(!r._loaded)return r.on("load",function(){r.pos(e)}),"number"==typeof e?r:r._pos||0;e=parseFloat(e);var i=n?r._nodeById(n):r._activeNode();if(i)return e>=0?(r.pause(n),i._pos=e,r.play(i._sprite,n),r):r._webAudio?i._pos+(t.currentTime-r._playStart):i.currentTime;if(e>=0)return r;for(var s=0;s<r._audioNode.length;s++)if(r._audioNode[s].paused&&4===r._audioNode[s].readyState)return r._webAudio?r._audioNode[s]._pos:r._audioNode[s].currentTime},pos3d:function(e,t,n,r){var i=this;if(t=void 0!==t&&t?t:0,n=void 0!==n&&n?n:-.5,!i._loaded)return i.on("play",function(){i.pos3d(e,t,n,r)}),i;if(!(e>=0||0>e))return i._pos3d;if(i._webAudio){var s=r?i._nodeById(r):i._activeNode();s&&(i._pos3d=[e,t,n],s.panner.setPosition(e,t,n))}return i},fade:function(e,t,n,r,i){var s=this,o=Math.abs(e-t),u=e>t?"down":"up",a=o/.01,f=n/a;if(!s._loaded)return s.on("load",function(){s.fade(e,t,n,r,i)}),s;s.volume(e,i);for(var l=1;a>=l;l++)!function(){var e=s._volume+("up"===u?.01:-.01)*l,n=Math.round(1e3*e)/1e3,o=t;setTimeout(function(){s.volume(n,i),n===o&&r&&r()},f*l)}()},fadeIn:function(e,t,n){return this.volume(0).play().fade(0,e,t,n)},fadeOut:function(e,t,n,r){var i=this;return i.fade(i._volume,e,t,function(){n&&n(),i.pause(r),i.on("end")},r)},_nodeById:function(e){for(var t=this,n=t._audioNode[0],r=0;r<t._audioNode.length;r++)if(t._audioNode[r].id===e){n=t._audioNode[r];break}return n},_activeNode:function(){for(var e=this,t=null,n=0;n<e._audioNode.length;n++)if(!e._audioNode[n].paused){t=e._audioNode[n];break}return e._drainPool(),t},_inactiveNode:function(e){for(var t=this,n=null,r=0;r<t._audioNode.length;r++)if(t._audioNode[r].paused&&4===t._audioNode[r].readyState){e(t._audioNode[r]),n=!0;break}if(t._drainPool(),!n){var i;t._webAudio?(i=t._setupAudioNode(),e(i)):(t.load(),i=t._audioNode[t._audioNode.length-1],i.addEventListener("loadedmetadata",function(){e(i)}))}},_drainPool:function(){var e,t=this,n=0;for(e=0;e<t._audioNode.length;e++)t._audioNode[e].paused&&n++;for(e=t._audioNode.length-1;e>=0&&!(5>=n);e--)t._audioNode[e].paused&&(t._webAudio&&t._audioNode[e].disconnect(0),n--,t._audioNode.splice(e,1))},_clearEndTimer:function(e){var t=this,n=t._onendTimer.indexOf(e);n=n>=0?n:0,t._onendTimer[n]&&(clearTimeout(t._onendTimer[n]),t._onendTimer.splice(n,1))},_setupAudioNode:function(){var e=this,n=e._audioNode,r=e._audioNode.length;return n[r]=void 0===t.createGain?t.createGainNode():t.createGain(),n[r].gain.value=e._volume,n[r].paused=!0,n[r]._pos=0,n[r].readyState=4,n[r].connect(s),n[r].panner=t.createPanner(),n[r].panner.setPosition(e._pos3d[0],e._pos3d[1],e._pos3d[2]),n[r].panner.connect(n[r]),n[r]},on:function(e,t){var n=this,r=n["_on"+e];if("function"==typeof t)r.push(t);else for(var i=0;i<r.length;i++)t?r[i].call(n,t):r[i].call(n);return n},off:function(e,t){for(var n=this,r=n["_on"+e],i=""+t,s=0;s<r.length;s++)if(i===""+r[s]){r.splice(s,1);break}return n},unload:function(){for(var t=this,n=t._audioNode,r=0;r<t._audioNode.length;r++)n[r].paused||t.stop(n[r].id),t._webAudio?n[r].disconnect(0):n[r].src="";var i=u._howls.indexOf(t);null!==i&&i>=0&&u._howls.splice(i,1),delete e[t._src],t=null}},n)var c=function(n,r){if(r in e)n._duration=e[r].duration,h(n);else{var i=new XMLHttpRequest;i.open("GET",r,!0),i.responseType="arraybuffer",i.onload=function(){t.decodeAudioData(i.response,function(t){t&&(e[r]=t,h(n,t))},function(){n.on("loaderror")})},i.onerror=function(){n._webAudio&&(n._buffer=!0,n._webAudio=!1,n._audioNode=[],delete n._gainNode,n.load())};try{i.send()}catch(s){i.onerror()}}},h=function(e,t){e._duration=t?t.duration:e._duration,0===Object.getOwnPropertyNames(e._sprite).length&&(e._sprite={_default:[0,1e3*e._duration]}),e._loaded||(e._loaded=!0,e.on("load")),e._autoplay&&e.play()},p=function(n,r,i){var s=n._nodeById(i);s.bufferSource=t.createBufferSource(),s.bufferSource.buffer=e[n._src],s.bufferSource.connect(s.panner),s.bufferSource.loop=r[0],r[0]&&(s.bufferSource.loopStart=r[1],s.bufferSource.loopEnd=r[1]+r[2]),s.bufferSource.playbackRate.value=n._rate};"function"==typeof define&&define.amd&&define(function(){return{Howler:u,Howl:l}}),"undefined"!=typeof exports&&(exports.Howler=u,exports.Howl=l),window.Howler=u,window.Howl=l}();

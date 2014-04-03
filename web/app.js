@@ -11,6 +11,16 @@ var $__getDescriptors = function(object) {
   ctor.prototype = object;
   Object.defineProperties(ctor, $__getDescriptors(staticObject));
   return ctor;
+}, $__superDescriptor = function(proto, name) {
+  if (!proto) throw new TypeError('super is null');
+  return Object.getPropertyDescriptor(proto, name);
+}, $__superCall = function(self, proto, name, args) {
+  var descriptor = $__superDescriptor(proto, name);
+  if (descriptor) {
+    if ('value'in descriptor) return descriptor.value.apply(self, args);
+    if (descriptor.get) return descriptor.get.call(self).apply(self, args);
+  }
+  throw new TypeError("Object has no method '" + name + "'.");
 }, $__getProtoParent = function(superClass) {
   if (typeof superClass === 'function') {
     var prototype = superClass.prototype;
@@ -27,16 +37,6 @@ var $__getDescriptors = function(object) {
   ctor.prototype = Object.create(protoParent, descriptors);
   Object.defineProperties(ctor, $__getDescriptors(staticObject));
   return ctor;
-}, $__superDescriptor = function(proto, name) {
-  if (!proto) throw new TypeError('super is null');
-  return Object.getPropertyDescriptor(proto, name);
-}, $__superCall = function(self, proto, name, args) {
-  var descriptor = $__superDescriptor(proto, name);
-  if (descriptor) {
-    if ('value'in descriptor) return descriptor.value.apply(self, args);
-    if (descriptor.get) return descriptor.get.call(self).apply(self, args);
-  }
-  throw new TypeError("Object has no method '" + name + "'.");
 };
 Mustache.tags = ['[', ']'];
 $.fn.exist = function() {
@@ -56,35 +56,12 @@ function format(message) {
 }
 ;
 function Notify() {
-  this.error = function(error) {
-    return $.notification({
-      title: tr('Error'),
-      content: error,
-      icon: 'fa fa-info',
-      error: true
-    });
-  };
-  this.alert = function(text) {
-    return $.notification({
-      title: tr('Info'),
-      content: text,
-      icon: 'fa fa-info'
-    });
-  };
+  this.error = function(error) {};
+  this.alert = function(text) {};
   var connecting = null;
   this.connecting = {
-    start: function() {
-      if (connecting != null) {
-        connecting.hide();
-      }
-      return connecting = $.notification({
-        content: tr('Connecting'),
-        icon: 'fa fa-spinner fa-spin'
-      });
-    },
-    stop: function() {
-      return connecting.remove();
-    }
+    start: function() {},
+    stop: function() {}
   };
 }
 var Sound = function() {
@@ -153,29 +130,10 @@ var View = function() {
   }, {});
   return $View;
 }();
-var TabView = function($__super) {
+var UserView = function($__super) {
   'use strict';
   var $__proto = $__getProtoParent($__super);
-  var $TabView = ($__createClass)({
-    constructor: function(id) {
-      var title = arguments[1] !== (void 0) ? arguments[1]: '';
-      var active = arguments[2] !== (void 0) ? arguments[2]: false;
-      var count = arguments[3] !== (void 0) ? arguments[3]: 0;
-      this.id = id;
-      this.title = title;
-      this.active = active;
-      this.count = count;
-    },
-    render: function() {
-      return template('chat/tab/room')({tab: this});
-    }
-  }, {}, $__proto, $__super, true);
-  return $TabView;
-}(View);
-var UserTabView = function($__super) {
-  'use strict';
-  var $__proto = $__getProtoParent($__super);
-  var $UserTabView = ($__createClass)({
+  var $UserView = ($__createClass)({
     constructor: function(user) {
       $__superCall(this, $__proto, "constructor", ['user-' + user.id]);
       this.user = user;
@@ -187,8 +145,8 @@ var UserTabView = function($__super) {
       });
     }
   }, {}, $__proto, $__super, true);
-  return $UserTabView;
-}(TabView);
+  return $UserView;
+}(View);
 var MessageView = function($__super) {
   'use strict';
   var $__proto = $__getProtoParent($__super);
@@ -196,7 +154,7 @@ var MessageView = function($__super) {
     constructor: function(message) {
       var user = arguments[1] !== (void 0) ? arguments[1]: null;
       this.id = message.id;
-      this.time = moment(message.datetime).format('hh:mm:ss');
+      this.time = moment(message.datetime).format('HH:mm:ss');
       this.text = this.filter(this.escape(message.text));
       this.room = message.room;
       if (user === null) {
@@ -422,25 +380,16 @@ var Tabs = function() {
   'use strict';
   var $Tabs = ($__createClassNoExtends)({
     constructor: function() {
-      var tabs = $('#tabs');
       this.dom = {
-        rooms: tabs.find('#rooms'),
-        users: tabs.find('#users'),
-        getUserTab: function(user) {
-          return $('#tab-user-' + user.id);
+        users: $('#users'),
+        getUser: function(user) {
+          return $('#user-' + user.id);
         }
       };
-      this.select = {tabs: '#tabs .tab'};
-      this.current = 'tab-main';
       this.bind();
-      this.addMainRoom();
     },
     bind: function() {
       $(window).on('synchronize', $.proxy(this.onSynchronize, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('user_update', $.proxy(this.onUserUpdate, this));
-      $(document).on('click', this.select.tabs, $.proxy(this.onTabClick, this));
-    },
-    addMainRoom: function() {
-      this.dom.rooms.append(new TabView('main', tr('Main'), true, 0).render());
     },
     onSynchronize: function(event) {
       for (var users = [], $__3 = 1; $__3 < arguments.length; $__3++) users[$__3 - 1] = arguments[$__3];
@@ -448,53 +397,32 @@ var Tabs = function() {
       for (var $__2 = $traceurRuntime.getIterator(users), $__1; !($__1 = $__2.next()).done;) {
         var user = $__1.value;
         {
-          this.dom.users.append(new UserTabView(user).render());
+          this.dom.users.append(new UserView(user).render());
         }
       }
     },
     onUserJoin: function(event, user) {
-      if (!this.isUserTab(user)) {
-        this.dom.users.append(new UserTabView(user).render());
+      var tab = this.dom.getUser(user);
+      var view = new UserView(user);
+      if (tab.exist()) {
+        tab.remove();
       }
+      this.dom.users.append(view.render());
     },
     onUserLeave: function(event, user) {
-      if (this.isUserTab(user)) {
-        $('#tab-user-' + user.id).remove();
+      var tab = this.dom.getUser(user);
+      if (tad.exist()) {
+        tab.remove();
       }
     },
     onUserUpdate: function(event, user) {
-      var tab = new UserTab(user);
-      if (this.isUserTab(user)) {
-        $('#tab-user-' + user.id).replaceWith(tab.render());
+      var tab = this.dom.getUser(user);
+      var view = new UserView(user);
+      if (tab.exist()) {
+        tab.replaceWith(view.render());
       } else {
-        this.dom.users.append(tab.render());
+        this.dom.users.append(view.render());
       }
-    },
-    increaseCounter: function(room) {
-      var tab = $('[data-room="' + room + '"]');
-      if (tab.exist() && !tab.hasClass('active')) {
-        var count = tab.find('.count');
-        var val = parseInt(count.text()) || 0;
-        count.text(val + 1).show();
-      }
-    },
-    isUserTab: function(user) {
-      return $('#tab-user-' + user.id).exist();
-    },
-    onTabClick: function(event) {
-      this.selectTab($(event.currentTarget));
-    },
-    selectTab: function(tab) {
-      var old = $('#' + this.current);
-      old.removeClass('active');
-      this.current = tab.attr('id');
-      tab.addClass('active');
-      tab.find('.count').text('0').hide();
-      window.chat.getChatRoom(window.room).hide();
-      window.room = tab.attr('data-room');
-      window.chat.getChatRoom(window.room).show();
-      window.chat.scroll.instantlyDown();
-      window.chat.dom.textarea.focus();
     }
   }, {});
   return $Tabs;
@@ -506,7 +434,7 @@ var Emotion = function() {
       this.dom = {
         popover: $('#emotions'),
         content: $('#emotions .content'),
-        button: $('footer .emotions'),
+        button: $('button[data-popover="emotions"]'),
         textarea: $('footer textarea')
       };
       this.currentTab = 0;
@@ -942,12 +870,11 @@ var Application = function() {
       this.users = {};
       this.filters = [];
       this.dom = {
-        board: $('#board'),
-        chat: {main: $('#chat-main')},
+        chat: $('#chat'),
         textarea: $('#message'),
         body: $('body')
       };
-      this.scroll = new Scroll(this.dom.board);
+      this.scroll = new Scroll(this.dom.chat);
       this.sound = new Sound();
       this.bind();
       this.addFilters();
@@ -1055,10 +982,7 @@ var Application = function() {
       }
     },
     addMessage: function(messageView) {
-      var room = arguments[1] !== (void 0) ? arguments[1]: 'main';
-      var chat = this.getChatRoom(room);
-      chat.append(messageView.render());
-      window.tabs.increaseCounter(room);
+      this.dom.chat.append(messageView.render());
       this.scroll.down();
     },
     getUser: function(id) {
@@ -1069,13 +993,6 @@ var Application = function() {
     },
     addUser: function(user) {
       this.users[user.id] = user;
-    },
-    getChatRoom: function(room) {
-      if (!this.dom.chat[room]) {
-        this.dom.board.append(new ChatBoardView(room).render());
-        this.dom.chat[room] = $('#chat-' + room);
-      }
-      return this.dom.chat[room];
     },
     onUsernameClick: function(event) {
       var name = $(event.target).attr('data-user-name');

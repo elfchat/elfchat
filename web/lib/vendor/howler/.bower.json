@@ -1,12 +1,12 @@
 {
   "name": "howler",
   "homepage": "https://github.com/goldfire/howler.js",
-  "version": "1.1.14",
-  "_release": "1.1.14",
+  "version": "1.1.18",
+  "_release": "1.1.18",
   "_resolution": {
     "type": "version",
-    "tag": "v1.1.14",
-    "commit": "7333af9b9936e3c82a42244b7186b10183e6353a"
+    "tag": "v1.1.18",
+    "commit": "f3f6135c4eff743a2a9140c0199ba5d474789ea0"
   },
   "_source": "git://github.com/goldfire/howler.js.git",
   "_target": "*",

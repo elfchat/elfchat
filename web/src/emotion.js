@@ -9,7 +9,7 @@ class Emotion {
         this.dom = {
             popover: $('#emotions'),
             content: $('#emotions .content'),
-            button: $('footer .emotions'),
+            button: $('button[data-popover="emotions"]'),
             textarea: $('footer textarea')
         };
         this.currentTab = 0;
