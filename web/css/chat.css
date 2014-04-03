@@ -39,18 +39,6 @@ header .buttons {
     font-size: 16px;
 }
 
-/* Avatar */
-
-.avatar {
-    display: inline-block;
-    width: 32px;
-    height: 32px;
-    font-size: 32px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    border-radius: 3px;
-}
-
 /* User list */
 
 aside {

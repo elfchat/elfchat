@@ -1,7 +1,8 @@
 {
     "autoload": {
-        "psr-0": {
-            "": "src/"
+        "psr-4": {
+            "ElfChat\\": "src/",
+            "ElfChat\\Controller\\": "controller/"
         }
     },
     "config": {

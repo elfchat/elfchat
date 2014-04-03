@@ -45,7 +45,7 @@ class Application extends Silicone\Application
     {
         static $dir;
         if (empty($dir)) {
-            $dir = dirname(dirname(__DIR__));
+            $dir = dirname(__DIR__);
         }
         return $dir;
     }

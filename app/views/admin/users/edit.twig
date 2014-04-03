@@ -1,17 +1,15 @@
 {% extends 'admin/layout.twig' %}
-{% form_theme form 'form.twig' %}
 
 {% set title = 'Edit user %name%'|trans()|replace({'%name%': user.name}) %}
 
-{% block title %}
-    {{ title }} - {{ parent() }}
-{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <h1>{{ title }}</h1>
     <form class="form" action="" {{ form_enctype(form) }} method="post">
         {{ form_widget(form) }}
-        <button class="btn btn-primary" type="submit">{{ 'Save'|trans() }}</button>
-        <a href="{{ path('admin_users') }}" class="btn" type="reset">{{ 'Cancel'|trans() }}</a>
+        <div class="actions">
+            <button class="primary" type="submit">{{ 'Save'|trans() }}</button>
+            <a class="button" href="{{ path('admin_users') }}">{{ 'Cancel'|trans() }}</a>
+        </div>
     </form>
 {% endblock %}

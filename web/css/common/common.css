@@ -20,3 +20,16 @@ img {
 .pull-left {
     float: left;
 }
+
+/* Avatar */
+
+.avatar {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    font-size: 32px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    border-radius: 3px;
+}

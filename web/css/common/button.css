@@ -1,6 +1,5 @@
 button,
 .button {
-    -webkit-appearance: button;
     -webkit-user-select: none;
     outline: none;
     display: inline-block;
@@ -51,4 +50,14 @@ button.primary,
     border-left-color: rgb(35, 161, 39);
     border-right-color: rgb(35, 161, 39);
     border-top-color: rgb(35, 161, 39);
+}
+
+button.danger,
+.button.danger {
+    color: rgb(255, 255, 255);
+    background-color: rgb(255, 65, 54);
+    border-bottom-color: rgb(255, 41, 28);
+    border-left-color: rgb(255, 41, 28);
+    border-right-color: rgb(255, 41, 28);
+    border-top-color: rgb(255, 41, 28);
 }

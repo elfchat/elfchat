@@ -20,6 +20,7 @@ form input[type="checkbox"] {
 
 input[type="text"],
 input[type="password"],
+input[type="email"],
 select {
     display: inline-block;
     width: 300px;
@@ -37,7 +38,8 @@ select {
 }
 
 input[type="text"]:focus,
-input[type="password"]:focus {
+input[type="password"]:focus,
+input[type="email"]:focus {
     border-color: rgba(82, 168, 236, .8);
     outline: 0;
     box-shadow: 0 0 8px rgba(82, 168, 236, .6);
@@ -48,8 +50,18 @@ form .actions {
 }
 
 form ul.errors {
-    list-style: none;
+    list-style: circle inside;
     display: inline-block;
     color: #e40000;
     margin-left: 15px;
+}
+
+form fieldset {
+    border: none;
+    margin: 15px;
+}
+
+form legend {
+    font-size: 18px;
+    margin-bottom: 15px;
 }

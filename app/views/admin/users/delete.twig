@@ -2,17 +2,15 @@
 
 {% set title = 'Delete user "%name%"?'|trans()|replace({'%name%': user.name}) %}
 
-{% block title %}
-    {{ title }} - {{ parent() }}
-{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
     <form class="form-horizontal" action="" {{ form_enctype(form) }} method="post">
         {{ form_widget(form._token) }}
         <fieldset>
             <legend>{{ title }}</legend>
-                {{ form_widget(form.delete) }}
-                <a href="{{ path('admin_users') }}" class="btn btn-default" type="reset">{{ 'Cancel'|trans() }}</a>
+            {{ form_widget(form.delete, {'attr': {'class': 'danger'}}) }}
+            <a href="{{ path('admin_users') }}" class="button">{{ 'Cancel'|trans() }}</a>
         </fieldset>
     </form>
 {% endblock %}

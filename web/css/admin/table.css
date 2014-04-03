@@ -1,0 +1,16 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+table thead {
+    border-bottom: solid 2px #d3d3d3;
+}
+
+table th,
+table td {
+    text-align: left;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
