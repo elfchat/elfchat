@@ -1,0 +1,13 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-size: 14px;
+    font-family: Verdana, Helvetica, sans-serif;
+}
+
+img {
+    border: none;
+}

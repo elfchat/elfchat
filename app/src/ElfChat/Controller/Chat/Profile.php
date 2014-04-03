@@ -43,7 +43,7 @@ class Profile extends Controller
         }
 
 
-        return $this->render('profile/avatar.twig', array(
+        return $this->render('profile/avatar/change.twig', array(
             'form' => $form->createView(),
         ));
     }

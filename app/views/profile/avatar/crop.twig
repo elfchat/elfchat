@@ -1,9 +1,10 @@
 {% extends 'profile/layout.twig' %}
-{% trans_default_domain 'profile' %}
+
+{% block title %}{{ 'Crop avatar'|trans() }}{% endblock %}
 
 {% block style %}
     {{ parent() }}
-    <link rel="stylesheet" type="text/css" href="{{ asset('lib/vendor/jcrop/css/jquery.Jcrop.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('lib/jcrop/jquery.Jcrop.min.css') }}">
     <style type="text/css">
         .avatarBox {
             display: inline-block;
@@ -40,12 +41,12 @@
             <img id="preview" src="{{ app.user.avatar }}">
         </div>
     </div>
-    <button id="crop" class="btn btn-large btn-success">{{ 'button.crop'|trans() }}</button>
+    <button id="crop" class="primary">{{ 'Crop'|trans() }}</button>
 {% endblock %}
 
 {% block script %}
     {{ parent() }}
-    <script src="{{ asset('lib/vendor/jcrop/js/jquery.Jcrop.min.js') }}"></script>
+    <script src="{{ asset('lib/jcrop/jquery.Jcrop.min.js') }}"></script>
     <script>
         $(function () {
             var avatar = $('#avatar');
@@ -98,7 +99,6 @@
                 });
             });
         });
-
 
     </script>
 {% endblock %}

@@ -3,7 +3,11 @@
 <head>
     <title>{% block title %}ElfChat{% endblock %}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    {% block style %}{% endblock %}
+    {% block style %}
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/common.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/popover.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/button.css') }}">
+    {% endblock %}
     <script src="{{ asset('lib/vendor/jquery/jquery.min.js') }}"></script>
 </head>
 <body>
