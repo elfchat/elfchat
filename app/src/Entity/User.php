@@ -21,7 +21,7 @@ use ElfChat\Validator\Constraints\Unique;
  * @Unique(column="name", groups={"registration"})
  * @Unique(column="email", groups={"registration"})
  */
-class User implements ExportInterface
+class User
 {
     /**
      * @ORM\Id

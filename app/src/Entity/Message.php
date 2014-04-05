@@ -18,7 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="ElfChat\Repository\MessageRepository")
  * @ORM\Table("elfchat_message")
  */
-class Message implements ExportInterface
+class Message
 {
     /**
      * @ORM\Id

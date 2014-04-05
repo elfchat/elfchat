@@ -108,6 +108,16 @@ $app->register(new Silex\Provider\SessionServiceProvider(), array(
         'name' => 'ELFCHAT',
     )
 ));
+$app['session.storage.handler'] = $app->share(function () use ($app) {
+    return new ElfChat\Session\DbalSessionHandler(
+        $app->entityManager()->getConnection(),
+        array(
+            'db_table' => 'elfchat_session',
+            'db_id_col' => 'id',
+            'db_data_col' => 'data',
+            'db_time_col' => 'time',
+        ));
+});
 
 // Twig
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
