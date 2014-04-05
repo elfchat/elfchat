@@ -10,27 +10,26 @@ use Ratchet\Http\HttpServer;
 use Ratchet\Server\IoServer;
 use Ratchet\Session\SessionProvider;
 use Ratchet\WebSocket\WsServer;
-use Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler;
 
+// We need to configure application to use common parts.
 $app = new ElfChat\Application();
 $app->boot();
 
-$chat = 1;
-$sessionHandler = new PdoSessionHandler($app->entityManager()->getConnection(), array(
-    'db_table' => 'elfchat_session'
-));
+$config = $app->config();
+$chatServer = new ElfChat\Server();
 
+// Configure Ratchet server with Http, WebSocket and Session support.
 $server = IoServer::factory(
     new HttpServer(
         new WsServer(
             new SessionProvider(
-                $chat,
-                $sessionHandler
+                $chatServer,
+                $app['session.storage.handler']
             )
         )
     ),
-    $config['server']['port'],
-    $config['server']['host']
+    $config->get('server.port', 1337),
+    $config->get('server.host', '127.0.0.1')
 );
 
 $server->run();

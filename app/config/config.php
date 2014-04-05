@@ -264,13 +264,15 @@ if ($app['debug']) {
         $console->add(new Silicone\Console\CacheClearCommand($app));
     });
 
-    // WebProfiler
-    $app->register(new Silex\Provider\WebProfilerServiceProvider(), array(
-        'profiler.cache_dir' => $app->getCacheDir() . '/profiler',
-        'profiler.mount_prefix' => '/_profiler',
-    ));
-    $app->register(new Silicone\Provider\WebProfilerServiceProvider());
+    if (php_sapi_name() !== 'cli') {
+        // WebProfiler
+        $app->register(new Silex\Provider\WebProfilerServiceProvider(), array(
+            'profiler.cache_dir' => $app->getCacheDir() . '/profiler',
+            'profiler.mount_prefix' => '/_profiler',
+        ));
+        $app->register(new Silicone\Provider\WebProfilerServiceProvider());
 
-    // Whoops
-    $app->register(new Whoops\Provider\Silex\WhoopsServiceProvider);
+        // Whoops
+        $app->register(new Whoops\Provider\Silex\WhoopsServiceProvider);
+    }
 }
