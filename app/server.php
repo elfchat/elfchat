@@ -20,7 +20,7 @@ $app->boot();
 $config = $app->config();
 $host = $config->get('server.host', 'macbook.local');
 $port = $config->get('server.port', 1337);
-$address = '0.0.0.0';
+$address = '0.0.0.0'; // 0.0.0.0 means receive connections from any
 
 $chat = new ElfChat\Server($app);
 $wsServer = new WsServer(
