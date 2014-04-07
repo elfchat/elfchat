@@ -143,10 +143,9 @@ class RestrictionFilter extends Filter {
 
 
 class UriFilter extends Filter {
-    constructor(init) {
+    constructor() {
         var _ref, _ref1, _ref2;
 
-        this.chat = (_ref = init.chat) != null ? _ref : $(window);
         this.imageable = (_ref1 = init.imageable) != null ? _ref1 : true;
         this.imageCount = 0;
         this.maxImages = (_ref2 = init.maxImages) != null ? _ref2 : 3;
@@ -175,7 +174,8 @@ class UriFilter extends Filter {
                     var height;
 
                     height = $('#' + id).height();
-                    return _this.chat.scrollTo('+=' + height);
+
+                    window.scroll.down();
                 })(id, uri);
             };
         }

@@ -176,6 +176,154 @@ var Scroll = function Scroll(div) {
     return this.div.scrollTo('100%', 0);
   }
 }, {});
+var popovers = {};
+var Popover = function Popover(id) {
+  "use strict";
+  var button = arguments[1] !== (void 0) ? arguments[1] : null;
+  var box = arguments[2] !== (void 0) ? arguments[2] : '.box';
+  var _this = this;
+  this.id = id;
+  this.box = $(box);
+  this.margin = 10;
+  this.onTop = 'top';
+  this.onBottom = 'bottom';
+  this.onLeft = 'left';
+  this.onRight = 'right';
+  this.autohide = false;
+  if (button !== null) {
+    this.on(button);
+  }
+  $(window).resize(function() {
+    return _this.reposition();
+  });
+  $('body').mouseup((function(event) {
+    if (_this.autohide && _this.getPopover().has(event.target).length === 0) {
+      _this.hide();
+    }
+  }));
+};
+var $Popover = Popover;
+($traceurRuntime.createClass)(Popover, {
+  on: function(button) {
+    "use strict";
+    var _this = this;
+    this.button = $(button);
+    this.button.mousedown((function(event) {
+      _this.autohide = false;
+    }));
+    return this;
+  },
+  reposition: function() {
+    "use strict";
+    var arrow,
+        arrowPosition,
+        boxSize,
+        buttonOffset,
+        buttonSize,
+        offset,
+        over,
+        popover,
+        popoverPosition,
+        popoverSize;
+    arrow = this.getArrow();
+    popover = this.getPopover();
+    boxSize = {
+      width: this.box.width(),
+      height: this.box.height()
+    };
+    buttonOffset = this.button.offset();
+    buttonSize = {
+      width: this.button.outerWidth(),
+      height: this.button.outerHeight()
+    };
+    popoverSize = {
+      width: popover.outerWidth(),
+      height: popover.outerHeight()
+    };
+    if (popover.hasClass(this.onLeft) || popover.hasClass(this.onRight)) {
+      if (popover.hasClass(this.onLeft)) {
+        popoverPosition = {
+          top: buttonOffset.top - (popoverSize.height / 2) + (buttonSize.height / 2),
+          left: buttonOffset.left - popoverSize.width
+        };
+      } else {
+        popoverPosition = {
+          top: buttonOffset.top - (popoverSize.height / 2) + (buttonSize.height / 2),
+          left: buttonOffset.left + buttonSize.width
+        };
+      }
+      arrowPosition = {top: popoverSize.height / 2};
+      if ((over = popoverPosition.top + popoverSize.height) > boxSize.height) {
+        offset = over - boxSize.height + this.margin;
+        popoverPosition.top -= offset;
+        arrowPosition.top += offset;
+      }
+      if ((over = popoverPosition.top) < 0) {
+        offset = -over + this.margin;
+        popoverPosition.top += offset;
+        arrowPosition.top -= offset;
+      }
+    } else {
+      popoverPosition = {
+        top: buttonSize.height + buttonOffset.top,
+        left: buttonOffset.left - (popoverSize.width / 2) + (buttonSize.width / 2)
+      };
+      arrowPosition = {left: popoverSize.width / 2};
+      if (popoverPosition.top + popoverSize.height > boxSize.height || popover.hasClass(this.onTop)) {
+        popoverPosition.top = buttonOffset.top - popoverSize.height;
+      }
+      if ((over = popoverPosition.left + popoverSize.width) > boxSize.width) {
+        offset = over - boxSize.width + this.margin;
+        popoverPosition.left -= offset;
+        arrowPosition.left += offset;
+      }
+      if ((over = popoverPosition.left) < 0) {
+        offset = -over + this.margin;
+        popoverPosition.left += offset;
+        arrowPosition.left -= offset;
+      }
+    }
+    popover.css(popoverPosition);
+    arrow.css(arrowPosition);
+  },
+  show: function() {
+    "use strict";
+    this.reposition();
+    this.getPopover().show();
+    return this.autohide = true;
+  },
+  hide: function() {
+    "use strict";
+    return this.getPopover().hide();
+  },
+  toggle: function() {
+    "use strict";
+    this.reposition();
+    this.getPopover().toggle();
+    return this.autohide = true;
+  },
+  getPopover: function() {
+    "use strict";
+    return $('#' + this.id);
+  },
+  getArrow: function() {
+    "use strict";
+    return this.getPopover().find('.arrow');
+  }
+}, {
+  create: function(id, button) {
+    "use strict";
+    if (popovers[id]) {
+      return popovers[id].on(button);
+    } else {
+      return popovers[id] = new $Popover(id, button);
+    }
+  },
+  get: function(id) {
+    "use strict";
+    return popovers[id];
+  }
+});
 var templates = {};
 function template(name) {
   if (!templates[name]) {
@@ -231,9 +379,9 @@ var MessageView = function MessageView(message) {
   },
   filter: function(text) {
     "use strict";
-    for (var $__6 = window.chat.filters[Symbol.iterator](),
-        $__7; !($__7 = $__6.next()).done; ) {
-      var filter = $__7.value;
+    for (var $__7 = window.chat.filters[Symbol.iterator](),
+        $__8; !($__8 = $__7.next()).done; ) {
+      var filter = $__8.value;
       {
         text = filter.filter(text);
       }
@@ -291,118 +439,6 @@ var EmotionImageView = function EmotionImageView(src) {
     "use strict";
     return template('chat/emotion/image')(this);
   }}, {}, View);
-var Server = function Server(server, namespace) {
-  "use strict";
-  this.server = server;
-  this.namespace = namespace;
-};
-($traceurRuntime.createClass)(Server, {
-  send: function(text) {
-    "use strict";
-    var room = arguments[1] !== (void 0) ? arguments[1] : 'main';
-    if (text === '') {
-      return;
-    }
-    $.post(window.config.api.send, {
-      text: text,
-      room: room
-    }, null, 'json').done((function(res) {
-      if (res.error !== false) {
-        $(window).trigger('error', res.error);
-      }
-    }));
-  },
-  connect: function() {
-    "use strict";
-    this.socket = io.connect(this.server + '/' + this.namespace, {query: 'namespace=' + this.namespace});
-    this.bindSocket();
-    this.socketLog();
-  },
-  login: function(auth) {
-    "use strict";
-    this.socket.emit('login', auth);
-  },
-  join: function(room) {
-    "use strict";
-    this.socket.emit('join', room);
-  },
-  bindSocket: function() {
-    "use strict";
-    this.socket.on('connect', (function() {
-      $(window).trigger('connect');
-    }));
-    this.socket.on('disconnect', (function() {
-      $(window).trigger('disconnect');
-    }));
-    this.socket.on('reconnect', (function() {
-      $(window).trigger('reconnect');
-    }));
-    this.socket.on('synchronize', (function(users) {
-      $(window).trigger('synchronize', users);
-    }));
-    this.socket.on('login_success', (function() {
-      $(window).trigger('login_success');
-    }));
-    this.socket.on('user_join', (function(user) {
-      $(window).trigger('user_join', user);
-    }));
-    this.socket.on('user_leave', (function(user) {
-      $(window).trigger('user_leave', user);
-    }));
-    this.socket.on('message', (function(message) {
-      $(window).trigger('message', message);
-    }));
-    this.socket.on('error', (function(error) {
-      $(window).trigger('error', error);
-    }));
-  },
-  socketLog: function() {
-    "use strict";
-    var socket = this.socket;
-    socket.on('connect', function() {
-      return console.log('connect');
-    });
-    socket.on('reconnect', function() {
-      return console.log('reconnect');
-    });
-    socket.on('connecting', function() {
-      return console.log('connecting');
-    });
-    socket.on('reconnecting', function() {
-      return console.log('reconnecting');
-    });
-    socket.on('connect_failed', function() {
-      return console.log('connect failed');
-    });
-    socket.on('reconnect_failed', function() {
-      return console.log('reconnect failed');
-    });
-    socket.on('close', function() {
-      return console.log('close');
-    });
-    socket.on('disconnect', function() {
-      return console.log('disconnect');
-    });
-    socket.on('login_success', function() {
-      return console.log('login_success');
-    });
-    socket.on('synchronize', function() {
-      return console.log('synchronize');
-    });
-    socket.on('user_join', (function(user) {
-      console.log('user_join ' + user.name);
-    }));
-    socket.on('user_leave', (function(user) {
-      console.log('user_leave ' + user.name);
-    }));
-    socket.on('message', (function(m) {
-      console.log('message ' + m.room);
-    }));
-    socket.on('error', (function(code) {
-      console.log('error ' + code);
-    }));
-  }
-}, {});
 var Users = function Users() {
   "use strict";
   this.dom = {
@@ -718,12 +754,11 @@ var RestrictionFilter = function RestrictionFilter() {
     });
     return html;
   }}, {}, Filter);
-var UriFilter = function UriFilter(init) {
+var UriFilter = function UriFilter() {
   "use strict";
   var _ref,
       _ref1,
       _ref2;
-  this.chat = (_ref = init.chat) != null ? _ref : $(window);
   this.imageable = (_ref1 = init.imageable) != null ? _ref1 : true;
   this.imageCount = 0;
   this.maxImages = (_ref2 = init.maxImages) != null ? _ref2 : 3;
@@ -755,7 +790,7 @@ var UriFilter = function UriFilter(init) {
         return (function(id, uri) {
           var height;
           height = $('#' + id).height();
-          return _this.chat.scrollTo('+=' + height);
+          window.scroll.down();
         })(id, uri);
       };
     }
@@ -791,154 +826,6 @@ var EmotionFilter = function EmotionFilter(list) {
     text = text.replace(/'/g, '&apos;');
     return text;
   }}, {}, Filter);
-var popovers = {};
-var Popover = function Popover(id) {
-  "use strict";
-  var button = arguments[1] !== (void 0) ? arguments[1] : null;
-  var box = arguments[2] !== (void 0) ? arguments[2] : '.box';
-  var _this = this;
-  this.id = id;
-  this.box = $(box);
-  this.margin = 10;
-  this.onTop = 'top';
-  this.onBottom = 'bottom';
-  this.onLeft = 'left';
-  this.onRight = 'right';
-  this.autohide = false;
-  if (button !== null) {
-    this.on(button);
-  }
-  $(window).resize(function() {
-    return _this.reposition();
-  });
-  $('body').mouseup((function(event) {
-    if (_this.autohide && _this.getPopover().has(event.target).length === 0) {
-      _this.hide();
-    }
-  }));
-};
-var $Popover = Popover;
-($traceurRuntime.createClass)(Popover, {
-  on: function(button) {
-    "use strict";
-    var _this = this;
-    this.button = $(button);
-    this.button.mousedown((function(event) {
-      _this.autohide = false;
-    }));
-    return this;
-  },
-  reposition: function() {
-    "use strict";
-    var arrow,
-        arrowPosition,
-        boxSize,
-        buttonOffset,
-        buttonSize,
-        offset,
-        over,
-        popover,
-        popoverPosition,
-        popoverSize;
-    arrow = this.getArrow();
-    popover = this.getPopover();
-    boxSize = {
-      width: this.box.width(),
-      height: this.box.height()
-    };
-    buttonOffset = this.button.offset();
-    buttonSize = {
-      width: this.button.outerWidth(),
-      height: this.button.outerHeight()
-    };
-    popoverSize = {
-      width: popover.outerWidth(),
-      height: popover.outerHeight()
-    };
-    if (popover.hasClass(this.onLeft) || popover.hasClass(this.onRight)) {
-      if (popover.hasClass(this.onLeft)) {
-        popoverPosition = {
-          top: buttonOffset.top - (popoverSize.height / 2) + (buttonSize.height / 2),
-          left: buttonOffset.left - popoverSize.width
-        };
-      } else {
-        popoverPosition = {
-          top: buttonOffset.top - (popoverSize.height / 2) + (buttonSize.height / 2),
-          left: buttonOffset.left + buttonSize.width
-        };
-      }
-      arrowPosition = {top: popoverSize.height / 2};
-      if ((over = popoverPosition.top + popoverSize.height) > boxSize.height) {
-        offset = over - boxSize.height + this.margin;
-        popoverPosition.top -= offset;
-        arrowPosition.top += offset;
-      }
-      if ((over = popoverPosition.top) < 0) {
-        offset = -over + this.margin;
-        popoverPosition.top += offset;
-        arrowPosition.top -= offset;
-      }
-    } else {
-      popoverPosition = {
-        top: buttonSize.height + buttonOffset.top,
-        left: buttonOffset.left - (popoverSize.width / 2) + (buttonSize.width / 2)
-      };
-      arrowPosition = {left: popoverSize.width / 2};
-      if (popoverPosition.top + popoverSize.height > boxSize.height || popover.hasClass(this.onTop)) {
-        popoverPosition.top = buttonOffset.top - popoverSize.height;
-      }
-      if ((over = popoverPosition.left + popoverSize.width) > boxSize.width) {
-        offset = over - boxSize.width + this.margin;
-        popoverPosition.left -= offset;
-        arrowPosition.left += offset;
-      }
-      if ((over = popoverPosition.left) < 0) {
-        offset = -over + this.margin;
-        popoverPosition.left += offset;
-        arrowPosition.left -= offset;
-      }
-    }
-    popover.css(popoverPosition);
-    arrow.css(arrowPosition);
-  },
-  show: function() {
-    "use strict";
-    this.reposition();
-    this.getPopover().show();
-    return this.autohide = true;
-  },
-  hide: function() {
-    "use strict";
-    return this.getPopover().hide();
-  },
-  toggle: function() {
-    "use strict";
-    this.reposition();
-    this.getPopover().toggle();
-    return this.autohide = true;
-  },
-  getPopover: function() {
-    "use strict";
-    return $('#' + this.id);
-  },
-  getArrow: function() {
-    "use strict";
-    return this.getPopover().find('.arrow');
-  }
-}, {
-  create: function(id, button) {
-    "use strict";
-    if (popovers[id]) {
-      return popovers[id].on(button);
-    } else {
-      return popovers[id] = new $Popover(id, button);
-    }
-  },
-  get: function(id) {
-    "use strict";
-    return popovers[id];
-  }
-});
 var Application = function Application(server) {
   "use strict";
   this.server = server;
@@ -985,9 +872,9 @@ var Application = function Application(server) {
   },
   addRecentMessages: function() {
     "use strict";
-    for (var $__21 = window.recent[Symbol.iterator](),
-        $__22; !($__22 = $__21.next()).done; ) {
-      var message = $__22.value;
+    for (var $__20 = window.recent[Symbol.iterator](),
+        $__21; !($__21 = $__20.next()).done; ) {
+      var message = $__21.value;
       {
         this.addMessage(message);
       }

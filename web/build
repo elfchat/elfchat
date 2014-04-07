@@ -9,7 +9,7 @@ lib/vendor/mustache/mustache.js \
 lib/vendor/jquery.scrollto/index.js \
 lib/vendor/jquery.hotkeys/jquery.hotkeys.js \
 lib/vendor/moment/moment.js \
-lib/vendor/insert/insert.js \
+lib/insert-at-caret/insert.js \
 lib/vendor/howler/howler.min.js \
 > lib/vendors.js
 
@@ -17,17 +17,16 @@ lib/vendor/howler/howler.min.js \
 # java -jar lib/yuicompressor-2.4.8.jar --type js --nomunge --disable-optimizations -o lib/vendors.js lib/vendors.js
 
 /usr/local/bin/traceur --sourcemap --out app.js \
---script src/config.js \
---script src/helpers.js \
---script src/server/AbstractServer.js \
---script src/server/WebSocketServer.js \
---script src/notify.js \
---script src/sound.js \
---script src/scroll.js \
+--script src/Config.js \
+--script src/Helpers.js \
+--script src/Server/AbstractServer.js \
+--script src/Server/WebSocketServer.js \
+--script src/Notify.js \
+--script src/Sound.js \
+--script src/Scroll.js \
+--script src/Popover.js \
 --script src/Views.js \
---script src/server.js \
 --script src/Users.js \
---script src/emotion.js \
---script src/filters.js \
---script src/popover.js \
+--script src/Emotion.js \
+--script src/Filters.js \
 --script src/Application.js
