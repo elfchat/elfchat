@@ -146,9 +146,9 @@ class UriFilter extends Filter {
     constructor() {
         var _ref, _ref1, _ref2;
 
-        this.imageable = (_ref1 = init.imageable) != null ? _ref1 : true;
+        this.imageable = true;
         this.imageCount = 0;
-        this.maxImages = (_ref2 = init.maxImages) != null ? _ref2 : 3;
+        this.maxImages = 3;
         this.regex = /(https?):\/\/((?:[a-z0-9.-]|%[0-9A-F]{2}){3,})(?::(\d+))?((?:\/(?:[a-z0-9-._~!$&'()*+,;=:@]|%[0-9A-F]{2})*)*)(?:\?((?:[a-z0-9-._~!$&'()*+,;=:\/?@]|%[0-9A-F]{2})*))?(?:#((?:[a-z0-9-._~!$&'()*+,;=:\/?@]|%[0-9A-F]{2})*))?/ig;
     }
 

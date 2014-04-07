@@ -759,9 +759,9 @@ var UriFilter = function UriFilter() {
   var _ref,
       _ref1,
       _ref2;
-  this.imageable = (_ref1 = init.imageable) != null ? _ref1 : true;
+  this.imageable = true;
   this.imageCount = 0;
-  this.maxImages = (_ref2 = init.maxImages) != null ? _ref2 : 3;
+  this.maxImages = 3;
   this.regex = /(https?):\/\/((?:[a-z0-9.-]|%[0-9A-F]{2}){3,})(?::(\d+))?((?:\/(?:[a-z0-9-._~!$&'()*+,;=:@]|%[0-9A-F]{2})*)*)(?:\?((?:[a-z0-9-._~!$&'()*+,;=:\/?@]|%[0-9A-F]{2})*))?(?:#((?:[a-z0-9-._~!$&'()*+,;=:\/?@]|%[0-9A-F]{2})*))?/ig;
 };
 ($traceurRuntime.createClass)(UriFilter, {
@@ -838,7 +838,7 @@ var Application = function Application(server) {
   $(window).on('connect', $.proxy(this.onConnect, this)).on('disconnect', $.proxy(this.onDisconnect, this)).on('message', $.proxy(this.onMessage, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('error', $.proxy(this.onError, this));
   $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this)).on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this));
   $(this.dom.textarea).bind('keydown', 'return', $.proxy(this.onSend, this));
-  this.filters = [new BBCodeFilter(), new UriFilter({chat: this.dom.chat}), new EmotionFilter(EmotionList), new RestrictionFilter()];
+  this.filters = [new BBCodeFilter(), new UriFilter(), new EmotionFilter(EmotionList), new RestrictionFilter()];
 };
 ($traceurRuntime.createClass)(Application, {
   run: function() {
