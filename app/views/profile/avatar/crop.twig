@@ -93,7 +93,6 @@
             });
 
             button.click(function () {
-
                 $.post('{{ url('profile_avatar_crop') }}', cropSize, function () {
                     window.location.href = '{{ url('profile_avatar') }}';
                 });

@@ -1,6 +1,6 @@
 <div class="message" id="message-[id]">
     [#user.avatar]
-    <span class="avatar" data-user-id="[user.id]" style="background-image: url('[user.avatar]')"></span>
+    <img class="avatar" data-user-id="[user.id]" src="[user.avatar]">
     [/user.avatar]
 
     [^user.avatar]

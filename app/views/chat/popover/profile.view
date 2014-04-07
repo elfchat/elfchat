@@ -4,7 +4,7 @@
         [user.name]
     </h3>
     <div class="popover-side">
-        <span class="avatar" data-user-id="[user.id]" style="[#user.avatar]background-image: url('[user.avatar]');[/user.avatar]"></span>
+        <img class="avatar" src="[user.avatar]">
     </div>
     <div class="popover-content">
         {% if app.isModerator() %}

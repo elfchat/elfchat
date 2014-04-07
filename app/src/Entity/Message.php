@@ -49,6 +49,7 @@ class Message extends Entity
 
     public function __construct()
     {
+        $this->room = 'main';
     }
 
     public function export()

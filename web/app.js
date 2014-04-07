@@ -111,6 +111,9 @@ var $WebSocketServer = WebSocketServer;
         $__1.onDisconnect();
         clearInterval($__1.reconnect);
         $__1.reconnect = setInterval((function() {
+          if (null !== $__1.socket) {
+            delete $__1.socket;
+          }
           $__1.connect();
         }), 1000);
       }
@@ -173,7 +176,8 @@ var Scroll = function Scroll(div) {
   },
   instantlyDown: function() {
     "use strict";
-    return this.div.scrollTo('100%', 0);
+    var height = this.div[0].scrollHeight;
+    return this.div.scrollTop(height);
   }
 }, {});
 var popovers = {};
@@ -838,6 +842,12 @@ var Application = function Application(server) {
   $(window).on('connect', $.proxy(this.onConnect, this)).on('disconnect', $.proxy(this.onDisconnect, this)).on('message', $.proxy(this.onMessage, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('error', $.proxy(this.onError, this));
   $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this)).on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this));
   $(this.dom.textarea).bind('keydown', 'return', $.proxy(this.onSend, this));
+  $('[data-action="send"]').on('click', $.proxy(this.onSend, this));
+  $('[target="open"]').on('click', (function(event) {
+    event.stopPropagation();
+    window.open($(event.target).attr('href'), '');
+    return false;
+  }));
   this.filters = [new BBCodeFilter(), new UriFilter(), new EmotionFilter(EmotionList), new RestrictionFilter()];
 };
 ($traceurRuntime.createClass)(Application, {

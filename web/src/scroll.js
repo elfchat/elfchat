@@ -32,6 +32,7 @@ class Scroll {
     }
 
     instantlyDown() {
-        return this.div.scrollTo('100%', 0);
+        var height = this.div[0].scrollHeight;
+        return this.div.scrollTop(height);
     }
 }

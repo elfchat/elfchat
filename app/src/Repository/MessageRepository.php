@@ -12,8 +12,6 @@ use Doctrine\ORM\EntityRepository;
 
 class MessageRepository extends EntityRepository
 {
-    const lastMessageCache = 'last_message';
-
     /**
      * @param $room
      * @return Message[]
@@ -31,7 +29,6 @@ class MessageRepository extends EntityRepository
         $query = $this->_em->createQuery($dql);
         $query->setMaxResults(10);
         $query->setParameter('room', $room);
-        $query->useResultCache(true, 3600, self::lastMessageCache);
         return $query->getResult();
     }
 }

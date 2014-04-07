@@ -31,6 +31,15 @@ class Application {
         $(this.dom.textarea)
             .bind('keydown', 'return', $.proxy(this.onSend, this));
 
+        $('[data-action="send"]')
+            .on('click', $.proxy(this.onSend, this));
+
+        $('[target="open"]').on('click', (event) => {
+            event.stopPropagation();
+            window.open($(event.target).attr('href'), '');
+            return false;
+        });
+
         this.filters = [
             new BBCodeFilter(),
             new UriFilter(),

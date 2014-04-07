@@ -7,7 +7,9 @@
 
 namespace ElfChat;
 
+use ElfChat\Entity\Message;
 use ElfChat\Entity\User;
+use ElfChat\Repository\MessageRepository;
 use ElfChat\Server\Protocol;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
@@ -53,25 +55,23 @@ class Server implements MessageComponentInterface
         }
     }
 
-    public function onMessage(ConnectionInterface $from, $message)
+    public function onMessage(ConnectionInterface $from, $data)
     {
-        /*$message = trim($message);
+        $em = $this->app->entityManager();
+        /** @var $user User */
+        $user = $from->user;
 
-        if (empty($message)) {
-            return;
-        }
+        // Create message
+        $message = new Message();
+        $message->user = $user;
+        $message->datetime = new \DateTime();
+        $message->text = $data;
 
-        $message = [
-            3,
-            [
-                'text' => $message,
-                'user' => $from->user,
-            ]
-        ];
+        // And save it any way
+        $em->persist($message);
+        $em->flush();
 
-        foreach ($this->clients as $client) {
-            $client->send(json_encode($message));
-        }*/
+        $this->send(Protocol::message($message));
     }
 
     public function onClose(ConnectionInterface $conn)

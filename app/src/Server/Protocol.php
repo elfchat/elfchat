@@ -7,6 +7,7 @@
 
 namespace ElfChat\Server;
 
+use ElfChat\Entity\Message;
 use ElfChat\Entity\User;
 
 class Protocol
@@ -46,6 +47,14 @@ class Protocol
         return self::data(
             self::USER_LEAVE,
             $user->export()
+        );
+    }
+
+    public static function message(Message $message)
+    {
+        return self::data(
+            self::MESSAGE,
+            $message->exportWithUser()
         );
     }
 } 
