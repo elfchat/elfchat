@@ -944,6 +944,9 @@ var Application = function Application(server) {
   onError: function(event, error) {
     "use strict";
     notify.error(tr(error));
+  },
+  updateUser: function() {
+    "use strict";
   }
 }, {});
 

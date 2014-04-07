@@ -149,4 +149,8 @@ class Application {
     onError(event, error) {
         notify.error(tr(error));
     }
+
+    updateUser() {
+        // TODO: Create this method.
+    }
 }

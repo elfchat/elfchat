@@ -1,7 +1,7 @@
 <div id="settings" class="popover left" style="top: 0; left: 0; display: none;">
     <div class="arrow"></div>
     <ul class="menu">
-        <li><a id="avatarButton" target="_blank" href="{{ url('profile_avatar') }}">{{ 'Avatar'|trans() }}</a></li>
+        <li><a id="avatarButton" target="open" href="{{ url('profile_avatar') }}">{{ 'Avatar'|trans() }}</a></li>
         {% if app.isAdmin() %}
             <li><a target="_blank" href="{{ url('admin') }}">{{ 'Admin Center'|trans() }}</a></li>
         {% endif %}

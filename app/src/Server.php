@@ -34,12 +34,16 @@ class Server implements MessageComponentInterface
 
     public function onOpen(ConnectionInterface $conn)
     {
+        $em = $this->app->entityManager();
+        $users = $this->app->repository()->users();
+
         $userData = $conn->Session->get('user');
 
         if (count($userData) == 2 && is_int($userData[0])) {
             list($userId, $userRole) = $userData;
 
-            $user = $this->app->repository()->users()->find($userId);
+            $user = $users->find($userId);
+            $em->refresh($user);
             $conn->user = $user;
 
             $this->send(Protocol::userJoin($user));
