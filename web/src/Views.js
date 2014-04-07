@@ -3,9 +3,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 var templates = {};
-
 function template(name) {
     if (!templates[name]) {
         var t = $('#view_' + name.split('/').join('_'));
@@ -33,31 +31,23 @@ class View {
 
 class UserView extends View {
     constructor(user) {
-        super('user-' + user.id);
         this.user = user;
     }
 
     render() {
-        return template('chat/tab/user')({tab: this, user: this.user});
+        return template('chat/tab/user')({user: this.user});
     }
 }
 
 class MessageView extends View {
-    constructor(message, user = null) {
+    constructor(message) {
         this.id = message.id;
         this.time = moment(message.datetime).format('HH:mm:ss');
         this.text = this.filter(this.escape(message.text));
-        this.room = message.room;
-
-        // Add user to message.
-        if (user === null) {
-            this.user = message.user;
-        } else {
-            this.user = user;
-        }
+        this.user = message.user;
 
         this.spirit = false;
-        if(this.text.match(/^∞/)) {
+        if (this.text.match(/^∞/)) {
             this.text = this.text.substring(1);
             this.spirit = true;
         }
@@ -72,7 +62,7 @@ class MessageView extends View {
     }
 
     filter(text) {
-        for(var filter of window.chat.filters) {
+        for (var filter of window.chat.filters) {
             text = filter.filter(text);
         }
         return text;
@@ -81,7 +71,7 @@ class MessageView extends View {
 
 class LogView extends MessageView {
     constructor(text) {
-        super({id: 0, time: new Date(), user: null, text, room: 'main'});
+        super({id: 0, time: new Date(), user: null, text});
     }
 
     render() {
@@ -89,16 +79,6 @@ class LogView extends MessageView {
     }
 }
 
-class ChatBoardView extends View {
-    constructor(room, visible = true) {
-        this.room = room;
-        this.visible = visible;
-    }
-
-    render() {
-        return template('chat/board/chat')(this);
-    }
-}
 
 class UserProfileView extends View {
     constructor(user) {

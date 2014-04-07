@@ -11,6 +11,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 use ElfChat\Validator\Constraints\Unique;
 
 /**
+ * @property $id
+ * @property string $name
+ * @property string $password
+ * @property string $email
+ * @property string $role
+ * @property \ElfChat\Entity\Avatar $avatar
+ *
  * @ORM\Entity(repositoryClass="ElfChat\Repository\UserRepository")
  * @ORM\Table("elfchat_user", indexes={
  *     @ORM\index(name="name_idx", columns={"name"})
@@ -21,7 +28,7 @@ use ElfChat\Validator\Constraints\Unique;
  * @Unique(column="name", groups={"registration"})
  * @Unique(column="email", groups={"registration"})
  */
-class User
+class User extends Entity
 {
     /**
      * @ORM\Id
@@ -56,7 +63,7 @@ class User
     protected $role;
 
     /**
-     * @ORM\OneToOne(targetEntity="ElfChat\Entity\Avatar", cascade={"remove"}, fetch="LAZY")
+     * @ORM\OneToOne(targetEntity="ElfChat\Entity\Avatar", cascade={"remove"}, fetch="EAGER")
      * @var Avatar
      */
     protected $avatar;

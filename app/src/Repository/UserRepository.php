@@ -10,6 +10,9 @@ namespace ElfChat\Repository;
 use ElfChat\Entity\User;
 use Doctrine\ORM\EntityRepository;
 
+/**
+ * @method User find($id)
+ */
 class UserRepository extends EntityRepository
 {
     /**

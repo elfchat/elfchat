@@ -4,6 +4,8 @@ return array(
     'cache' => 'filesystem',
     'locale' => 'en',
 
+    'baseurl' => 'http://localhost',
+
     'domain' => 'chat.dev',
     'server' => 'http://macbook.local:8080',
     'key' => 'key',

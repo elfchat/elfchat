@@ -163,9 +163,8 @@ $app['form.factory'] = $app->share(function () use ($app) {
  * Uploads
  */
 
-$app['chat.upload_path'] = realpath($this->getRootDir() . '/../upload');
-$app['chat.upload_url'] = '/upload';
-ElfChat\Entity\File::setUploadPath($app['chat.upload_path']);
+ElfChat\Entity\File::setUploadPath(realpath($this->getRootDir() . '/../upload'));
+ElfChat\Entity\File::setBaseUrl($config->get('baseurl'). '/upload');
 
 
 /**
@@ -174,10 +173,6 @@ ElfChat\Entity\File::setUploadPath($app['chat.upload_path']);
 
 $app['dispatcher'] = $app->extend('dispatcher',
     function (Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher) use ($app) {
-
-        // Upload base urls
-        $dispatcher->addSubscriber(new ElfChat\EventListener\FileSubscriber($app['chat.upload_url']));
-
         // Authentication
         $dispatcher->addSubscriber($app['security.subscriber']);
 

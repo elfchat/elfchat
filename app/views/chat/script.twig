@@ -1,19 +1,11 @@
-<script src="{{ asset('lib/vendors') }}"></script>
+<script src="{{ asset('lib/vendors.js') }}"></script>
 <script src="{{ asset('app.js') }}"></script>
 <script src="{{ asset('emotion/catalog.js') }}"></script>
 <script src="{{ asset('emotion/list.js') }}"></script>
-<script src="{{ app.config.get('server') }}/socket.io/socket.io.js"></script>
 <script type="text/javascript">
     // Config
     {% autoescape false %}
     window.config = {
-        server: '{{ app.config.get('server') }}',
-        namespace: '{{ app.config.get('domain') }}',
-        domain: '{{ app.config.get('domain') }}',
-        auth: {{ save|json_encode() }},
-        api: {
-            send: '{{ url('send') }}'
-        },
         sound: {
             message: '{{ app.request.basePath }}/web/lib/media/sound/beep.mp3',
             join: '{{ app.request.basePath }}/web/lib/media/sound/online.mp3'
@@ -32,16 +24,16 @@
     // Translation
     window.lang = {{ lang|json_encode|raw }};
 
-    // Room
-    window.room = 'main';
-
     // Application
     $(function () {
+        var server = new WebSocketServer('macbook.local', 1337);
+        window.scroll = new Scroll($('#chat'));
+        window.sound = new Sound();
         window.notify = new Notify();
         window.sound = new Sound();
-        window.tabs = new Tabs();
+        window.users = new Users();
         window.emotion = new Emotion();
-        window.chat = new Application();
+        window.chat = new Application(server);
         window.chat.run();
     });
 </script>
@@ -52,7 +44,6 @@
 {{ view('chat/board/log.view') }}
 {{ view('chat/board/message.view') }}
 {{ view('chat/board/spirit.view') }}
-{{ view('chat/board/chat.view') }}
 {{ view('chat/emotion/tab.view') }}
 {{ view('chat/emotion/image.view') }}
 {{ view('chat/popover/profile.view') }}

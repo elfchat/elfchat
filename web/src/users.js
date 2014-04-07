@@ -4,25 +4,29 @@
  * file that was distributed with this source code.
  */
 
-
-class Tabs {
+class Users {
     constructor() {
         this.dom = {
             users: $('#users'),
-            getUser(user) {
+            user(user) {
                 return $('#user-' + user.id);
             }
         };
 
-        this.bind();
-    }
+        // Users data
+        this.users = {};
 
-    bind() {
+        // Bind to server commands
         $(window)
             .on('synchronize', $.proxy(this.onSynchronize, this))
             .on('user_join', $.proxy(this.onUserJoin, this))
             .on('user_leave', $.proxy(this.onUserLeave, this))
             .on('user_update', $.proxy(this.onUserUpdate, this));
+
+        // Collect user data from recent messages
+        for (var message of window.recent) {
+            this.addUser(message.user);
+        }
     }
 
     onSynchronize(event, ...users) {
@@ -30,13 +34,20 @@ class Tabs {
         this.dom.users.html('');
 
         for (var user of users) {
+            // Save user data
+            this.addUser(user);
+
             // Add user tab
             this.dom.users.append(new UserView(user).render());
         }
     }
 
     onUserJoin(event, user) {
-        var tab = this.dom.getUser(user);
+        // Save user data
+        this.addUser(user);
+
+        // Add to DOM
+        var tab = this.dom.user(user);
         var view = new UserView(user);
         if (tab.exist()) {
             tab.remove();
@@ -45,19 +56,41 @@ class Tabs {
     }
 
     onUserLeave(event, user) {
-        var tab = this.dom.getUser(user);
-        if (tad.exist()) {
+        // Remove from DOM
+        var tab = this.dom.user(user);
+        if (tab.exist()) {
             tab.remove();
         }
     }
 
     onUserUpdate(event, user) {
-        var tab = this.dom.getUser(user);
-        var view = new UserView(user);
+        // Update user data
+        this.addUser(user);
+
+        // Update DOM
+        var tab = this.dom.user(user);
+
         if (tab.exist()) {
-            tab.replaceWith(view.render());
+            tab.replaceWith(window.views.user(user));
         } else {
-            this.dom.users.append(view.render());
+            this.dom.users.append(window.views.user(user));
         }
+    }
+
+    getUser(id) {
+        if (this.isUserExist(id)) {
+            return this.users[id];
+        } else {
+            // TODO: Load from server data of user.
+            throw new Error('Need to load data from server.');
+        }
+    }
+
+    isUserExist(id) {
+        return this.users[id] !== void 0;
+    }
+
+    addUser(user) {
+        this.users[user.id] = user;
     }
 }

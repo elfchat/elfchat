@@ -18,7 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="ElfChat\Repository\MessageRepository")
  * @ORM\Table("elfchat_message")
  */
-class Message
+class Message extends Entity
 {
     /**
      * @ORM\Id
@@ -69,23 +69,6 @@ class Message
         $export = $this->export();
         $export['user'] = $this->user->export();
         return $export;
-    }
-
-    public function __get($name)
-    {
-        $methodName = 'get' . ucfirst($name);
-        return method_exists($this, $methodName) ? $this->{$methodName}() : $this->{$name};
-    }
-
-    public function __set($name, $value)
-    {
-        $methodName = 'set' . ucfirst($name);
-        return method_exists($this, $methodName) ? $this->{$methodName}($value) : $this->{$name} = $value;
-    }
-
-    public function __isset($name)
-    {
-        return property_exists($this, $name);
     }
 
     public function setText($text)

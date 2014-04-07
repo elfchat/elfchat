@@ -16,7 +16,7 @@ $app = new ElfChat\Application();
 $app->boot();
 
 $config = $app->config();
-$chatServer = new ElfChat\Server();
+$chatServer = new ElfChat\Server($app);
 
 // Configure Ratchet server with Http, WebSocket and Session support.
 $server = IoServer::factory(
@@ -24,12 +24,15 @@ $server = IoServer::factory(
         new WsServer(
             new SessionProvider(
                 $chatServer,
-                $app['session.storage.handler']
+                $app['session.storage.handler'],
+                array(
+                    'name' => 'ELFCHAT',
+                )
             )
         )
     ),
     $config->get('server.port', 1337),
-    $config->get('server.host', '127.0.0.1')
+    $config->get('server.host', 'macbook.local')
 );
 
 $server->run();

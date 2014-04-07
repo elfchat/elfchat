@@ -47,9 +47,8 @@ class Subscriber implements EventSubscriberInterface
 
         list($id, $role) = $session->get('user', array(null, 'ROLE_GUEST'));
 
-        if(null === $id && $request->cookies->has(Remember::REMEMBER_ME)) {
-            if( $this->remember->check($request->cookies->get(Remember::REMEMBER_ME)))
-            {
+        if (null === $id && $request->cookies->has(Remember::REMEMBER_ME)) {
+            if ($this->remember->check($request->cookies->get(Remember::REMEMBER_ME))) {
                 list($id, $role) = $this->remember->getIt();
                 $session->set('user', array($id, $role));
             }
@@ -57,14 +56,14 @@ class Subscriber implements EventSubscriberInterface
 
         $this->provider->setRole($role);
 
-        if(!$this->provider->isAllowed($request->getPathInfo())) {
+        if (!$this->provider->isAllowed($request->getPathInfo())) {
             throw new AccessDenied("Access denied to " . $request->getPathInfo());
         }
 
-        if(null !== $id) {
+        if (null !== $id) {
             $user = $this->repository->find($id);
 
-            if(null !== $user) {
+            if (null !== $user) {
                 $this->provider->setUser($user);
                 $this->provider->setAuthenticated(true);
             }
