@@ -31,6 +31,7 @@ class Configuration extends Controller
                 ),
                 'label' => 'Language',
             ))
+            ->add('baseurl')
             ->add('remember_me:token')
             ->add('mysql:host', 'text', array('label' => 'Host'))
             ->add('mysql:user', 'text', array('label' => 'Database user'))
