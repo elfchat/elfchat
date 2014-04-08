@@ -43,6 +43,12 @@ class Server implements MessageComponentInterface
             list($userId, $userRole) = $userData;
 
             $user = $users->find($userId);
+
+            if (null === $user) {
+                $conn->close();
+                return;
+            }
+
             $em->refresh($user);
             $conn->user = $user;
 
@@ -56,6 +62,8 @@ class Server implements MessageComponentInterface
             }
 
             $this->sendPrivate($user->id, Protocol::data(Protocol::SYNCHRONIZE, $users));
+        } else {
+            $conn->close();
         }
     }
 
