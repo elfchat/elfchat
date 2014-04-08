@@ -161,11 +161,19 @@ class ImageFilter extends Filter {
     constructor() {
         this.imageable = true;
         this.maxImages = 3;
+        this.allCount = 0;
         this.regex = /(https?:\/\/[^\?#]*\.(?:png|jpg|jpeg|bmp|tiff|gif))/ig;
     }
 
+    filter(html) {
+        this.count = 0;
+        return this.explode(html, {
+            tag: null,
+            text: $.proxy(this.text, this)
+        });
+    }
+
     text(text) {
-        this.images = 0;
         return text = text.replace(this.regex, $.proxy(this.callback, this));
     }
 
@@ -173,8 +181,8 @@ class ImageFilter extends Filter {
         var id, img, text;
 
         text = uri;
-        if (this.imageable && this.images++ < this.maxImages) {
-            id = 'external-img-' + this.images;
+        if (this.imageable && this.count < this.maxImages) {
+            id = 'external-img-' + this.allCount;
             text = "<img class=\"external\" id=\"" + id + "\" src=\"" + uri + "\">";
             img = new Image();
             img.src = uri;
@@ -184,6 +192,8 @@ class ImageFilter extends Filter {
                     window.scroll.down();
                 })(id, uri);
             };
+            this.count += 1;
+            this.allCount += 1;
         }
         return text;
     }

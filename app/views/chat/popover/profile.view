@@ -3,13 +3,21 @@
     <h3 class="popover-title">
         [user.name]
     </h3>
+
     <div class="popover-side">
         <img class="avatar" src="[user.avatar]">
     </div>
     <div class="popover-content">
+        <div class="buttons">
+            <button>{{ 'Send private message'|trans() }}</button>
+        </div>
         {% if app.isModerator() %}
-            <a class="button" href="{{ url('moderator_add_ban') }}?id=[user.id]" target="_blank">{{ 'Bun'|trans() }}</a>
+            <div class="buttons">
+                <a class="button" href="{{ url('moderator_add_ban') }}?id=[user.id]"
+                   target="_blank">{{ 'Ban'|trans() }}</a>
+                <a class="button" href="{{ url('moderator_add_ban') }}?id=[user.id]"
+                   target="_blank">{{ 'Quiet'|trans() }}</a>
+            </div>
         {% endif %}
-        <button>{{ 'Send private message'|trans() }}</button>
     </div>
 </div>

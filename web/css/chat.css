@@ -174,8 +174,7 @@ footer textarea:focus {
 }
 
 footer .buttons {
-    min-height: 40px;
-    padding-bottom: 10px;
+    min-height: 35px;
 }
 
 footer .buttons .send {
