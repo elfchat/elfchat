@@ -29,13 +29,9 @@ class Config extends DotNotation
     {
         $toFile = null === $toFile ? $this->file : $toFile;
 
-        if (is_writeable($toFile)) {
-            $export = var_export($this->values, true);
-            $code = "<?php return $export;";
-            file_put_contents($toFile, $code);
-        } else {
-            throw new \RuntimeException("The configuration file \"$toFile\" does not writeable.");
-        }
+        $export = var_export($this->values, true);
+        $code = "<?php return $export;";
+        file_put_contents($toFile, $code);
     }
 
     public function __get($name)
