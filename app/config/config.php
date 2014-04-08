@@ -19,7 +19,7 @@ $app['config'] = function () use ($config) {
     return $config;
 };
 
-$app['debug'] = !$config->get('debug', false);
+$app['debug'] = $config->get('debug', false);
 
 $app['locale'] = $config->get('locale', 'en');
 
