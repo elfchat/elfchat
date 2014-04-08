@@ -9,6 +9,51 @@ $app['config.file'] = $app->getOpenDir() . '/config.php';
 
 $configDefault = include $app->getRootDir() . '/config/default.php';
 
+$configDefault = array(
+    'debug' => true,
+    'cache' => 'filesystem',
+    'locale' => 'ru',
+    'baseurl' => 'http://macbook.local/chat.dev/',
+    'key' => 'key',
+    'database' => 'mysql',
+    'mysql' =>
+        array(
+            'driver' => 'pdo_mysql',
+            'host' => 'localhost',
+            'dbname' => 'chat.dev',
+            'user' => 'root',
+            'password' => NULL,
+            'charset' => 'utf8',
+        ),
+    'sqlite' =>
+        array(
+            'driver' => 'pdo_sqlite',
+            'user' => NULL,
+            'password' => NULL,
+            'path' => NULL,
+        ),
+    'postgres' =>
+        array(
+            'driver' => 'pdo_pgsql',
+            'host' => 'localhost',
+            'dbname' => 'elfchat',
+            'user' => 'root',
+            'password' => NULL,
+        ),
+    'remember_me' =>
+        array(
+            'token' => 'test',
+            'new_token' =>
+                array(
+                    'test' => 'etgwer',
+                ),
+        ),
+    'server' => array(
+        'host' => 'macbook.local',
+        'port' => 1337,
+    ),
+);
+
 $config = new ElfChat\Config\Config($configDefault);
 
 if (is_readable($app['config.file'])) {
@@ -30,15 +75,19 @@ $app['router.resource'] = array(
     $app->getRootDir() . '/controller/Chat/',
     $app->getRootDir() . '/controller/Admin/',
 );
-$app['router.cache_dir'] = $app->getCacheDir();
+if ($app->isOpen()) {
+    $app['router.cache_dir'] = $app->getCacheDir();
+}
 
 // Assets
 $app['assets.base_path'] = '/web/';
 
 // Http Cache
-$app->register(new Silex\Provider\HttpCacheServiceProvider(), array(
-    'http_cache.cache_dir' => $app->getCacheDir() . '/http/',
-));
+if ($app->isOpen()) {
+    $app->register(new Silex\Provider\HttpCacheServiceProvider(), array(
+        'http_cache.cache_dir' => $app->getCacheDir() . '/http/',
+    ));
+}
 
 // Controllers
 $app['resolver'] = $app->share(function () use ($app) {
@@ -49,7 +98,7 @@ $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 // Doctrine Common
 $app->register(new Silicone\Provider\DoctrineCommonServiceProvider());
 $app['doctrine.common.cache'] = $app->share(function () use ($app) {
-    if (true === $app['debug']) {
+    if (true === $app['debug'] || !$app->isOpen()) {
         return new \Doctrine\Common\Cache\ArrayCache();
     }
 
@@ -73,7 +122,7 @@ $app->register(new Silicone\Provider\DoctrineOrmServiceProvider());
 $app['doctrine.options'] = array(
     'debug' => $app['debug'],
     'proxy_namespace' => 'Proxy',
-    'proxy_dir' => $app->getCacheDir() . '/proxy/',
+    'proxy_dir' => $app->isOpen() ? $app->getCacheDir() . '/proxy/' : sys_get_temp_dir(),
 );
 
 switch ($config->get('database', 'sqlite')) {
@@ -95,12 +144,14 @@ $app['doctrine.paths'] = array(
 );
 
 // Monolog
-$app->register(new Silex\Provider\MonologServiceProvider());
-$app['monolog.name'] = 'ELFCHAT';
-$app['monolog.logfile'] = $app->getLogDir() . '/error_log.txt';
-$app['monolog.level'] = function () {
-    return \Monolog\Logger::NOTICE;
-};
+if ($app->isOpen()) {
+    $app->register(new Silex\Provider\MonologServiceProvider());
+    $app['monolog.name'] = 'ELFCHAT';
+    $app['monolog.logfile'] = $app->getLogDir() . '/error_log.txt';
+    $app['monolog.level'] = function () {
+        return \Monolog\Logger::NOTICE;
+    };
+}
 
 // Session
 $app->register(new Silex\Provider\SessionServiceProvider(), array(
@@ -121,10 +172,10 @@ $app['session.storage.handler'] = $app->share(function () use ($app) {
 
 // Twig
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
-    'twig.options' => array(
-        'cache' => $app->getCacheDir() . '/twig/',
-        'auto_reload' => true,
-    ),
+    'twig.options' => $app->isOpen() ? array(
+            'cache' => $app->getCacheDir() . '/twig/',
+            'auto_reload' => true,
+        ) : array(),
     'twig.path' => $app->getRootDir() . '/views/',
     'twig.form.templates' => array('form_layout.twig'),
 ));
@@ -164,7 +215,7 @@ $app['form.factory'] = $app->share(function () use ($app) {
  */
 
 ElfChat\Entity\File::setUploadPath(realpath($this->getRootDir() . '/../upload'));
-ElfChat\Entity\File::setBaseUrl($config->get('baseurl'). '/upload');
+ElfChat\Entity\File::setBaseUrl($config->get('baseurl') . '/upload');
 
 
 /**
@@ -261,11 +312,13 @@ if ($app['debug']) {
 
     if (php_sapi_name() !== 'cli') {
         // WebProfiler
-        $app->register(new Silex\Provider\WebProfilerServiceProvider(), array(
-            'profiler.cache_dir' => $app->getCacheDir() . '/profiler',
-            'profiler.mount_prefix' => '/_profiler',
-        ));
-        $app->register(new Silicone\Provider\WebProfilerServiceProvider());
+        if ($app->isOpen()) {
+            $app->register(new Silex\Provider\WebProfilerServiceProvider(), array(
+                'profiler.cache_dir' => $app->getCacheDir() . '/profiler',
+                'profiler.mount_prefix' => '/_profiler',
+            ));
+            $app->register(new Silicone\Provider\WebProfilerServiceProvider());
+        }
 
         // Whoops
         $app->register(new Whoops\Provider\Silex\WhoopsServiceProvider);

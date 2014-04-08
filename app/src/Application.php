@@ -30,11 +30,20 @@ class Application extends Silicone\Application
      */
     public function run(Request $request = null)
     {
-        if ($this['debug']) {
+        if ($this['debug'] || !$this->isOpen()) {
             parent::run($request);
         } else {
             $this['http_cache']->run($request);
         }
+    }
+
+    /**
+     * Is open directory writeable?
+     * @return bool
+     */
+    public function isOpen()
+    {
+        return is_writable($this->getOpenDir());
     }
 
     /**
