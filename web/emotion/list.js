@@ -864,7 +864,7 @@ var EmotionList = [
     [/:-*\)/g, 'img/blush.png'],
     [/:-*o/gi, 'img/scream.png'],
     [/(:|;)-*]/g, 'img/smirk.png'],
-    [/(:|;)-*d/gi, 'img/smiley.png'],
+    [/(:|;)-*D/g, 'img/smiley.png'],
     [/xd/gi, 'img/stuck_out_tongue_closed_eyes.png'],
     [/:-*p/gi, 'img/stuck_out_tongue_winking_eye.png'],
     [/:-*(\[|@)/g, 'img/rage.png'],
