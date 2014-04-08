@@ -66,12 +66,13 @@ aside .user {
 aside .user .avatar {
     display: inline-block;
     vertical-align: middle;
+    margin-top: -4px;
 }
 
 aside .user .name {
     display: inline-block;
-    height: 40px;
-    line-height: 40px;
+    color: #000000;
+    font-size: 14px;
 }
 
 /* Chats */
@@ -238,7 +239,7 @@ footer .buttons .send {
     height: 64px;
     box-shadow: 0 2px 2px rgba(0,0,0,0.2);
     border-radius: 4px;
-    background-color: #2c2c2c;
+    background-color: #dadada;
 }
 
 .profile .popover-side {

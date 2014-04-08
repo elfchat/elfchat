@@ -799,12 +799,20 @@ var ImageFilter = function ImageFilter() {
   "use strict";
   this.imageable = true;
   this.maxImages = 3;
+  this.allCount = 0;
   this.regex = /(https?:\/\/[^\?#]*\.(?:png|jpg|jpeg|bmp|tiff|gif))/ig;
 };
 ($traceurRuntime.createClass)(ImageFilter, {
+  filter: function(html) {
+    "use strict";
+    this.count = 0;
+    return this.explode(html, {
+      tag: null,
+      text: $.proxy(this.text, this)
+    });
+  },
   text: function(text) {
     "use strict";
-    this.images = 0;
     return text = text.replace(this.regex, $.proxy(this.callback, this));
   },
   callback: function(uri) {
@@ -813,8 +821,8 @@ var ImageFilter = function ImageFilter() {
         img,
         text;
     text = uri;
-    if (this.imageable && this.images++ < this.maxImages) {
-      id = 'external-img-' + this.images;
+    if (this.imageable && this.count < this.maxImages) {
+      id = 'external-img-' + this.allCount;
       text = "<img class=\"external\" id=\"" + id + "\" src=\"" + uri + "\">";
       img = new Image();
       img.src = uri;
@@ -824,6 +832,8 @@ var ImageFilter = function ImageFilter() {
           window.scroll.down();
         })(id, uri);
       };
+      this.count += 1;
+      this.allCount += 1;
     }
     return text;
   }
