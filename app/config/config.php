@@ -19,7 +19,7 @@ $app['config'] = function () use ($config) {
     return $config;
 };
 
-$app['debug'] = $config->get('debug', true);
+$app['debug'] = !$config->get('debug', false);
 
 $app['locale'] = $config->get('locale', 'en');
 
@@ -36,13 +36,6 @@ if ($app->isOpen()) {
 
 // Assets
 $app['assets.base_path'] = '/web/';
-
-// Http Cache
-if ($app->isOpen()) {
-    $app->register(new Silex\Provider\HttpCacheServiceProvider(), array(
-        'http_cache.cache_dir' => $app->getCacheDir() . '/http/',
-    ));
-}
 
 // Controllers
 $app['resolver'] = $app->share(function () use ($app) {
@@ -98,15 +91,6 @@ $app['doctrine.paths'] = array(
     $app->getRootDir() . '/src/Entity',
 );
 
-// Monolog
-if ($app->isOpen()) {
-    $app->register(new Silex\Provider\MonologServiceProvider());
-    $app['monolog.name'] = 'ELFCHAT';
-    $app['monolog.logfile'] = $app->getLogDir() . '/error_log.txt';
-    $app['monolog.level'] = function () {
-        return \Monolog\Logger::NOTICE;
-    };
-}
 
 // Session
 $app->register(new Silex\Provider\SessionServiceProvider(), array(
@@ -114,16 +98,18 @@ $app->register(new Silex\Provider\SessionServiceProvider(), array(
         'name' => 'ELFCHAT',
     )
 ));
-$app['session.storage.handler'] = $app->share(function () use ($app) {
-    return new ElfChat\Session\DbalSessionHandler(
-        $app->entityManager()->getConnection(),
-        array(
-            'db_table' => 'elfchat_session',
-            'db_id_col' => 'id',
-            'db_data_col' => 'data',
-            'db_time_col' => 'time',
-        ));
-});
+if ($app->isOpen()) {
+    $app['session.storage.handler'] = $app->share(function () use ($app) {
+        return new ElfChat\Session\DbalSessionHandler(
+            $app->entityManager()->getConnection(),
+            array(
+                'db_table' => 'elfchat_session',
+                'db_id_col' => 'id',
+                'db_data_col' => 'data',
+                'db_time_col' => 'time',
+            ));
+    });
+}
 
 // Twig
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
@@ -172,19 +158,6 @@ $app['form.factory'] = $app->share(function () use ($app) {
 ElfChat\Entity\File::setUploadPath(realpath($this->getRootDir() . '/../upload'));
 ElfChat\Entity\File::setBaseUrl($config->get('baseurl') . '/upload');
 
-
-/**
- * Dispatcher
- */
-
-$app['dispatcher'] = $app->extend('dispatcher',
-    function (Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher) use ($app) {
-        // Authentication
-        $dispatcher->addSubscriber($app['security.subscriber']);
-
-        return $dispatcher;
-    });
-
 /**
  * Form types and transformers.
  */
@@ -208,6 +181,7 @@ $app['chosen_type'] = function () use ($app) {
 $app['validator.unique'] = function () use ($app) {
     return new ElfChat\Validator\Constraints\UniqueValidator($app['em']);
 };
+
 
 /**
  * Security
@@ -237,18 +211,51 @@ $app['security.provider'] = $app->share(function () use ($app) {
     );
 });
 
-$app['security.subscriber'] = $app->share(function () use ($app) {
-    return new \ElfChat\Security\Authentication\Subscriber(
-        $app['security.provider'],
-        $app['em']->getRepository('ElfChat\Entity\User'),
-        $app['security.remember']
-    );
-});
+// Things to do not use then directory "open" does not writeable.
+if ($app->isOpen()) {
 
-$app['security.remember'] = $app->share(function () use ($app) {
-    // TODO: Use something better when key.
-    return new \ElfChat\Security\Authentication\Remember($app->config()->get('remember_me.token'));
-});
+    // Http Cache
+    $app->register(new Silex\Provider\HttpCacheServiceProvider(), array(
+        'http_cache.cache_dir' => $app->getCacheDir() . '/http/',
+    ));
+
+    // Monolog
+    $app->register(new Silex\Provider\MonologServiceProvider());
+    $app['monolog.name'] = 'ELFCHAT';
+    $app['monolog.logfile'] = $app->getLogDir() . '/error_log.txt';
+    $app['monolog.level'] = function () {
+        return \Monolog\Logger::NOTICE;
+    };
+
+
+    /**
+     * Security
+     */
+
+    $app['security.subscriber'] = $app->share(function () use ($app) {
+        return new \ElfChat\Security\Authentication\Subscriber(
+            $app['security.provider'],
+            $app['em']->getRepository('ElfChat\Entity\User'),
+            $app['security.remember']
+        );
+    });
+
+    $app['security.remember'] = $app->share(function () use ($app) {
+        return new \ElfChat\Security\Authentication\Remember($app->config()->get('remember_me.token'));
+    });
+
+    /**
+     * Dispatcher
+     */
+
+    $app['dispatcher'] = $app->extend('dispatcher',
+        function (Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher) use ($app) {
+            // Authentication
+            $dispatcher->addSubscriber($app['security.subscriber']);
+
+            return $dispatcher;
+        });
+}
 
 /**
  * Debug
