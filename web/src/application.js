@@ -37,6 +37,7 @@ class Application {
         this.filters = [
             new BBCodeFilter(),
             new UriFilter(),
+            new ImageFilter(),
             new EmotionFilter(EmotionList),
             new RestrictionFilter()
         ];

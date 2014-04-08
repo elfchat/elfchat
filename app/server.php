@@ -4,7 +4,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-require_once __DIR__ . '/bootstrap.php';
+require __DIR__ . '/bootstrap.php';
 
 use React\EventLoop\Factory as LoopFactory;
 use Ratchet\Http\HttpServer;
@@ -15,6 +15,9 @@ use Ratchet\WebSocket\WsServer;
 // We need to configure application to use common parts.
 $app = new ElfChat\Application();
 $app->boot();
+
+// Error logger.
+ElfChat\Server\ErrorLogger::register($app);
 
 $config = $app->config();
 $host = $config->get('server.host', 'macbook.local');

@@ -23,7 +23,7 @@ class Scroll {
 
         if (this.able) {
             this.scrolling += 1;
-            return this.div.scrollTo('100%', 300, {
+            return this.div.scrollTo({top: '100%', left: '0%'}, 300, {
                 onAfter: function() {
                     return _this.scrolling -= 1;
                 }

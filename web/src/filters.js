@@ -144,12 +144,24 @@ class RestrictionFilter extends Filter {
 
 class UriFilter extends Filter {
     constructor() {
-        var _ref, _ref1, _ref2;
-
-        this.imageable = true;
-        this.imageCount = 0;
-        this.maxImages = 3;
         this.regex = /(https?):\/\/((?:[a-z0-9.-]|%[0-9A-F]{2}){3,})(?::(\d+))?((?:\/(?:[a-z0-9-._~!$&'()*+,;=:@]|%[0-9A-F]{2})*)*)(?:\?((?:[a-z0-9-._~!$&'()*+,;=:\/?@]|%[0-9A-F]{2})*))?(?:#((?:[a-z0-9-._~!$&'()*+,;=:\/?@]|%[0-9A-F]{2})*))?/ig;
+    }
+
+    text(text) {
+        return text = text.replace(this.regex, $.proxy(this.callback, this));
+    }
+
+    callback(uri, p1, p2, p3, p4, p5, p6, p7, p8, p9) {
+        var text = uri;
+        return "<a href=\"" + uri + "\" target=\"_blank\">" + text + "</a>";
+    }
+}
+
+class ImageFilter extends Filter {
+    constructor() {
+        this.imageable = true;
+        this.maxImages = 3;
+        this.regex = /(https?:\/\/[^\?#]*\.(?:png|jpg|jpeg|bmp|tiff|gif))/ig;
     }
 
     text(text) {
@@ -157,29 +169,23 @@ class UriFilter extends Filter {
         return text = text.replace(this.regex, $.proxy(this.callback, this));
     }
 
-    callback(uri, p1, p2, p3, p4, p5, p6, p7, p8, p9) {
-        var ext, id, img, text, _ref,
-            _this = this;
+    callback(uri) {
+        var id, img, text;
 
         text = uri;
-        ext = uri.match(/\.([a-z0-9]+)$/i);
-        if (((_ref = ext != null ? ext[1] : void 0) === 'jpg' || _ref === 'jpeg' || _ref === 'png' || _ref === 'gif') && this.imageable && this.images++ < this.maxImages) {
-            this.imageCount += 1;
-            id = 'external-img-' + this.imageCount;
+        if (this.imageable && this.images++ < this.maxImages) {
+            id = 'external-img-' + this.images;
             text = "<img class=\"external\" id=\"" + id + "\" src=\"" + uri + "\">";
             img = new Image();
             img.src = uri;
             img.onload = function () {
                 return (function (id, uri) {
-                    var height;
-
-                    height = $('#' + id).height();
-
+                    var height  = $('#' + id).height();
                     window.scroll.down();
                 })(id, uri);
             };
         }
-        return "<a href=\"" + uri + "\" target=\"_blank\">" + text + "</a>";
+        return text;
     }
 }
 

@@ -174,7 +174,10 @@ var Scroll = function Scroll(div) {
     var _this = this;
     if (this.able) {
       this.scrolling += 1;
-      return this.div.scrollTo('100%', 300, {onAfter: function() {
+      return this.div.scrollTo({
+        top: '100%',
+        left: '0%'
+      }, 300, {onAfter: function() {
           return _this.scrolling -= 1;
         }});
     }
@@ -775,45 +778,50 @@ var RestrictionFilter = function RestrictionFilter() {
   }}, {}, Filter);
 var UriFilter = function UriFilter() {
   "use strict";
-  var _ref,
-      _ref1,
-      _ref2;
-  this.imageable = true;
-  this.imageCount = 0;
-  this.maxImages = 3;
   this.regex = /(https?):\/\/((?:[a-z0-9.-]|%[0-9A-F]{2}){3,})(?::(\d+))?((?:\/(?:[a-z0-9-._~!$&'()*+,;=:@]|%[0-9A-F]{2})*)*)(?:\?((?:[a-z0-9-._~!$&'()*+,;=:\/?@]|%[0-9A-F]{2})*))?(?:#((?:[a-z0-9-._~!$&'()*+,;=:\/?@]|%[0-9A-F]{2})*))?/ig;
 };
 ($traceurRuntime.createClass)(UriFilter, {
   text: function(text) {
     "use strict";
-    this.images = 0;
     return text = text.replace(this.regex, $.proxy(this.callback, this));
   },
   callback: function(uri, p1, p2, p3, p4, p5, p6, p7, p8, p9) {
     "use strict";
-    var ext,
-        id,
+    var text = uri;
+    return "<a href=\"" + uri + "\" target=\"_blank\">" + text + "</a>";
+  }
+}, {}, Filter);
+var ImageFilter = function ImageFilter() {
+  "use strict";
+  this.imageable = true;
+  this.maxImages = 3;
+  this.regex = /(https?:\/\/[^\?#]*\.(?:png|jpg|jpeg|bmp|tiff|gif))/ig;
+};
+($traceurRuntime.createClass)(ImageFilter, {
+  text: function(text) {
+    "use strict";
+    this.images = 0;
+    return text = text.replace(this.regex, $.proxy(this.callback, this));
+  },
+  callback: function(uri) {
+    "use strict";
+    var id,
         img,
-        text,
-        _ref,
-        _this = this;
+        text;
     text = uri;
-    ext = uri.match(/\.([a-z0-9]+)$/i);
-    if (((_ref = ext != null ? ext[1] : void 0) === 'jpg' || _ref === 'jpeg' || _ref === 'png' || _ref === 'gif') && this.imageable && this.images++ < this.maxImages) {
-      this.imageCount += 1;
-      id = 'external-img-' + this.imageCount;
+    if (this.imageable && this.images++ < this.maxImages) {
+      id = 'external-img-' + this.images;
       text = "<img class=\"external\" id=\"" + id + "\" src=\"" + uri + "\">";
       img = new Image();
       img.src = uri;
       img.onload = function() {
         return (function(id, uri) {
-          var height;
-          height = $('#' + id).height();
+          var height = $('#' + id).height();
           window.scroll.down();
         })(id, uri);
       };
     }
-    return "<a href=\"" + uri + "\" target=\"_blank\">" + text + "</a>";
+    return text;
   }
 }, {}, Filter);
 var EmotionFilter = function EmotionFilter(list) {
@@ -858,7 +866,7 @@ var Application = function Application(server) {
   $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this)).on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this));
   $(this.dom.textarea).bind('keydown', 'return', $.proxy(this.onSend, this));
   $('[data-action="send"]').on('click', $.proxy(this.onSend, this));
-  this.filters = [new BBCodeFilter(), new UriFilter(), new EmotionFilter(EmotionList), new RestrictionFilter()];
+  this.filters = [new BBCodeFilter(), new UriFilter(), new ImageFilter(), new EmotionFilter(EmotionList), new RestrictionFilter()];
 };
 ($traceurRuntime.createClass)(Application, {
   run: function() {
