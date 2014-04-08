@@ -4,7 +4,7 @@
     [/user.avatar]
 
     [^user.avatar]
-    <span class="avatar" data-user-id="[user.id]"></span>
+    <img class="avatar" data-user-id="[user.id]" src="{{ asset('/img/avatar.png') }}">
     [/user.avatar]
 
     <span class="name" data-user-name="[user.name]">[user.name]</span>

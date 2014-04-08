@@ -28,9 +28,12 @@
             });
             var memoryUsage = $.plot('#memoryUsage', [
                 {
-                    color: '#6a9b1e',
+                    color: '#adfe2f',
                     shadowSize: 0,
-                    data: data
+                    data: data,
+                    lines: {
+                        fill: true
+                    }
                 }
             ], {
                 xaxis: {
