@@ -72,10 +72,14 @@ class Users {
         var view = new UserView(user);
 
         if (tab.exist()) {
-            tab.replaceWith(view.render(user));
+            tab.replaceWith(view.render());
         } else {
-            this.dom.users.append(view.render(user));
+            this.dom.users.append(view.render());
         }
+
+        // Update profile popover
+        var profile = new UserProfileView(user);
+        profile.update();
     }
 
     getUser(id) {

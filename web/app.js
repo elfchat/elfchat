@@ -422,6 +422,16 @@ var UserProfileView = function UserProfileView(user) {
     "use strict";
     return template('chat/popover/profile')(this);
   },
+  update: function() {
+    "use strict";
+    if (this.exist()) {
+      this.element().replaceWith(this.render());
+    }
+  },
+  element: function() {
+    "use strict";
+    return $('#' + this.id);
+  },
   remove: function() {
     "use strict";
     $('#' + this.id).remove();
@@ -502,10 +512,12 @@ var Users = function Users() {
     var tab = this.dom.user(user);
     var view = new UserView(user);
     if (tab.exist()) {
-      tab.replaceWith(view.render(user));
+      tab.replaceWith(view.render());
     } else {
-      this.dom.users.append(view.render(user));
+      this.dom.users.append(view.render());
     }
+    var profile = new UserProfileView(user);
+    profile.update();
   },
   getUser: function(id) {
     "use strict";

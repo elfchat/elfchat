@@ -90,6 +90,16 @@ class UserProfileView extends View {
         return template('chat/popover/profile')(this);
     }
 
+    update() {
+        if (this.exist()) {
+            this.element().replaceWith(this.render());
+        }
+    }
+
+    element() {
+        return $('#' + this.id);
+    }
+
     remove() {
         $('#' + this.id).remove();
     }
