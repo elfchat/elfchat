@@ -22,6 +22,11 @@ class Server implements MessageComponentInterface
     private $app;
 
     /**
+     * @var \Doctrine\ORM\EntityManager
+     */
+    private $em;
+
+    /**
      * @var ConnectionInterface[]
      */
     private $clients;
@@ -29,12 +34,12 @@ class Server implements MessageComponentInterface
     public function __construct(Application $app)
     {
         $this->app = $app;
+        $this->em = $this->app->entityManager();
         $this->clients = array();
     }
 
     public function onOpen(ConnectionInterface $conn)
     {
-        $em = $this->app->entityManager();
         $users = $this->app->repository()->users();
 
         $userData = $conn->Session->get('user');
@@ -49,7 +54,7 @@ class Server implements MessageComponentInterface
                 return;
             }
 
-            $em->refresh($user);
+            $this->em->refresh($user);
             $conn->user = $user;
 
             $this->send(Protocol::userJoin($user));
@@ -88,8 +93,8 @@ class Server implements MessageComponentInterface
 
     public function onClose(ConnectionInterface $conn)
     {
+        $this->sendExclude($conn->user->id, Protocol::userLeave($conn->user));
         $this->detach($conn);
-        $this->send(Protocol::userLeave($conn->user));
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e)
@@ -101,6 +106,17 @@ class Server implements MessageComponentInterface
     public function send($data)
     {
         foreach ($this->clients as $id => $conn) {
+            $conn->send($data);
+        }
+    }
+
+    public function sendExclude($userId, $data)
+    {
+        foreach ($this->clients as $id => $conn) {
+            if($id === $userId) {
+                continue;
+            }
+
             $conn->send($data);
         }
     }
@@ -120,8 +136,7 @@ class Server implements MessageComponentInterface
      */
     private function detach(ConnectionInterface $conn)
     {
-        /** @var $user User */
         $user = $conn->user;
-        unset($this->clients[$user->getId()]);
+        unset($this->clients[$user->id]);
     }
 }
