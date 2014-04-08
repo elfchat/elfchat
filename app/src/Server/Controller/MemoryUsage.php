@@ -18,7 +18,7 @@ class MemoryUsage extends Controller
 
     public function action(RequestInterface $request)
     {
-        return $this->json($this->memory);
+        return $this->jsonp($this->memory);
     }
 
     public function gather()

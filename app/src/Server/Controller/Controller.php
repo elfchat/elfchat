@@ -18,14 +18,19 @@ use Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler;
 abstract class Controller implements HttpServerInterface
 {
     /**
+     * @var \SessionHandlerInterface
+     */
+    static private $saveHandler;
+
+    /**
      * @var Session
      */
     protected $session;
 
     /**
-     * @var \SessionHandlerInterface
+     * @var RequestInterface
      */
-    static private $saveHandler;
+    protected $request;
 
     protected $userId;
 
@@ -36,6 +41,7 @@ abstract class Controller implements HttpServerInterface
     function onOpen(ConnectionInterface $conn, RequestInterface $request = null)
     {
         $this->onRequest($request);
+        $this->request = $request;
 
         $userData = $this->session->get('user');
 
@@ -45,7 +51,7 @@ abstract class Controller implements HttpServerInterface
 
             $response = $this->action($request);
         } else {
-            $response = new Response('ACCESS DENIED', Response::HTTP_UNAUTHORIZED);
+            $response = new Response('ACCESS DENIED', Response::HTTP_FORBIDDEN);
         }
 
         $conn->send((string)$response);
@@ -83,10 +89,25 @@ abstract class Controller implements HttpServerInterface
         return str_replace(' ', '', ucwords(str_replace('_', ' ', $langDef)));
     }
 
-    protected function json($data)
+    protected function jsonp($data)
     {
-        return new Response(json_encode($data), 200, array(
-            'Content-Type' => 'application/json; charset=UTF-8',
+        $callback = $this->request->getUrl(true)->getQuery()->get('callback');
+
+        if (empty($callback)) {
+            return new Response('', Response::HTTP_BAD_REQUEST);
+        }
+
+        $json = json_encode($data);
+        return new Response("$callback($json);", 200, array(
+            'Content-Type' => 'application/javascript; charset=UTF-8',
+            'Access-Control-Allow-Origin' => '*'
+        ));
+    }
+
+    protected function html($data)
+    {
+        return new Response($data, 200, array(
+            'Content-Type' => 'text/html; charset=UTF-8',
             'Access-Control-Allow-Origin' => '*'
         ));
     }

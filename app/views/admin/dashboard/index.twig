@@ -27,7 +27,7 @@
             }
         };
 
-        $.getJSON('http://{{ app.config.get('server.host') }}:{{ app.config.get('server.port') }}/memory_usage', function (data) {
+        $.getJSON('http://{{ app.config.get('server.host') }}:{{ app.config.get('server.port') }}/memory_usage?callback=?', function (data) {
             data = data.map(function (value, i) {
                 return [i, value];
             });
