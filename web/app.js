@@ -20,16 +20,23 @@ function format(message) {
 var AbstractServer = function AbstractServer() {
   "use strict";
   this.connected = false;
+  this.MESSAGE = 4;
+  this.PRIVATE_MESSAGE = 5;
 };
 ($traceurRuntime.createClass)(AbstractServer, {
   connect: function() {
     "use strict";
   },
+  sendToServer: function(data) {
+    "use strict";
+  },
   send: function(text) {
     "use strict";
+    this.sendToServer(JSON.stringify([this.MESSAGE, text]));
   },
   sendPrivate: function(userId, text) {
     "use strict";
+    this.sendToServer(JSON.stringify([this.PRIVATE_MESSAGE, userId, text]));
   },
   onData: function(receive) {
     "use strict";
@@ -130,12 +137,9 @@ var $WebSocketServer = WebSocketServer;
       $__1.onError(error.message);
     });
   },
-  send: function(text) {
+  sendToServer: function(data) {
     "use strict";
-    this.socket.send(text);
-  },
-  sendPrivate: function(userId, text) {
-    "use strict";
+    this.socket.send(data);
   }
 }, {}, AbstractServer);
 function Notify() {
@@ -877,9 +881,19 @@ var Application = function Application(server) {
   },
   onSend: function(event) {
     "use strict";
-    this.server.send(this.dom.textarea.val());
-    this.dom.textarea.val('');
     event.stopPropagation();
+    var message,
+        userId,
+        button = $(event.target);
+    if ('' === (message = this.dom.textarea.val())) {
+      return false;
+    }
+    if (undefined === (userId = button.attr('data-private'))) {
+      this.server.send(message);
+    } else {
+      this.server.sendPrivate(userId, message);
+    }
+    this.dom.textarea.val('');
     return false;
   },
   onConnect: function(event) {

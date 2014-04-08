@@ -22,6 +22,8 @@ class Protocol
 
     const MESSAGE = 4;
 
+    const PRIVATE_MESSAGE = 5;
+
     /**
      * @param int $type
      * @param mixed $data

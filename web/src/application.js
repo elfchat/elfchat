@@ -50,10 +50,22 @@ class Application {
     }
 
     onSend(event) {
-        this.server.send(this.dom.textarea.val());
-        this.dom.textarea.val('');
-
         event.stopPropagation();
+        var message,
+            userId,
+            button = $(event.target);
+
+        if('' === (message = this.dom.textarea.val())) {
+            return false;
+        }
+
+        if (undefined === (userId = button.attr('data-private'))) {
+            this.server.send(message);
+        } else {
+            this.server.sendPrivate(userId, message);
+        }
+
+        this.dom.textarea.val('');
         return false;
     }
 

@@ -66,13 +66,28 @@ class Server implements MessageComponentInterface
                 $users[] = $conn->user->export();
             }
 
-            $this->sendPrivate($user->id, Protocol::data(Protocol::SYNCHRONIZE, $users));
+            $this->sendToUser($user->id, Protocol::data(Protocol::SYNCHRONIZE, $users));
         } else {
             $conn->close();
         }
     }
 
     public function onMessage(ConnectionInterface $from, $data)
+    {
+        $data = json_decode($data);
+
+        if (null === json_last_error_msg() || !is_array($data) || count($data) < 0) {
+            return;
+        }
+
+        if ($data[0] === Protocol::MESSAGE && count($data) === 2) {
+            $this->onPublicMessage($from, $data[1]);
+        } else if ($data[0] === Protocol::PRIVATE_MESSAGE && count($data) === 3) {
+            $this->onPrivateMessage($from, $data[1], $data[2]);
+        }
+    }
+
+    private function onPublicMessage(ConnectionInterface $from, $text)
     {
         $em = $this->app->entityManager();
         /** @var $user User */
@@ -82,13 +97,36 @@ class Server implements MessageComponentInterface
         $message = new Message();
         $message->user = $user;
         $message->datetime = new \DateTime();
-        $message->text = $data;
+        $message->text = $text;
 
-        // And save it any way
+        // And save it
         $em->persist($message);
         $em->flush();
 
         $this->send(Protocol::message($message));
+    }
+
+    private function onPrivateMessage(ConnectionInterface $from, $userId, $text)
+    {
+        $em = $this->app->entityManager();
+        /** @var $user User */
+        $user = $from->user;
+
+        // Create message
+        $message = new Message();
+        $message->user = $user;
+        $message->datetime = new \DateTime();
+        $message->text = $text;
+
+        // And save it
+        $em->persist($message);
+        $em->flush();
+
+        $data = Protocol::message($message);
+        $this->sendToUser($user->id, $data);
+        if ($userId != $user->id) {
+            $this->sendToUser($userId, $data);
+        }
     }
 
     public function onClose(ConnectionInterface $conn)
@@ -113,7 +151,7 @@ class Server implements MessageComponentInterface
     public function sendExclude($userId, $data)
     {
         foreach ($this->clients as $id => $conn) {
-            if($id === $userId) {
+            if ($id === $userId) {
                 continue;
             }
 
@@ -121,7 +159,7 @@ class Server implements MessageComponentInterface
         }
     }
 
-    public function sendPrivate($userId, $data)
+    public function sendToUser($userId, $data)
     {
         if (isset($this->clients[$userId])) {
             $conn = $this->clients[$userId];

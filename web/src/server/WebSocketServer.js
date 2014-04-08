@@ -44,10 +44,7 @@ class WebSocketServer extends AbstractServer {
         };
     }
 
-    send(text) {
-        this.socket.send(text);
-    }
-
-    sendPrivate(userId, text) {
+    sendToServer(data) {
+        this.socket.send(data);
     }
 }

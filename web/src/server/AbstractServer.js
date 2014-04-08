@@ -7,18 +7,26 @@
 class AbstractServer {
     constructor() {
         this.connected = false;
+
+        // Consts from ElfChat\Server\Protocol:
+        this.MESSAGE = 4;
+        this.PRIVATE_MESSAGE = 5;
     }
 
     connect() {
         // You need to implement this.
     }
 
-    send(text) {
+    sendToServer(data) {
         // You need to implement this.
     }
 
+    send(text) {
+        this.sendToServer(JSON.stringify([this.MESSAGE, text]));
+    }
+
     sendPrivate(userId, text) {
-        // You need to implement this.
+        this.sendToServer(JSON.stringify([this.PRIVATE_MESSAGE, userId, text]));
     }
 
     onData(receive) {
