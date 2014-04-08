@@ -85,15 +85,16 @@
                     $.getJSON(updateUserUrl, function (result) {
                         window.location.href = '{{ url('profile_avatar') }}';
                     });
-                } else {
-                    avatar.Jcrop({
-                        aspectRatio: 1,
-                        minSize: [50, 50],
-                        setSelect: [10, 10, m, m],
-                        onChange: showPreview,
-                        onSelect: showPreview
-                    });
                 }
+
+                avatar.Jcrop({
+                    aspectRatio: 1,
+                    minSize: [50, 50],
+                    setSelect: [10, 10, m, m],
+                    onChange: showPreview,
+                    onSelect: showPreview
+                });
+
             });
 
             button.click(function () {
