@@ -3,19 +3,17 @@ return array(
     'debug' => false,
     'cache' => 'filesystem',
     'locale' => 'en',
-
     'baseurl' => 'http://localhost',
-
-    'domain' => 'chat.dev',
-    'server' => 'http://macbook.local:8080',
-    'key' => 'key',
-
+    'server' => array(
+        'host' => 'localhost',
+        'port' => 1337,
+    ),
     'database' => 'mysql',
     'mysql' =>
         array(
             'driver' => 'pdo_mysql',
             'host' => 'localhost',
-            'dbname' => 'chat.dev',
+            'dbname' => 'elfchat',
             'user' => 'root',
             'password' => '',
             'charset' => 'utf8',
@@ -23,9 +21,9 @@ return array(
     'sqlite' =>
         array(
             'driver' => 'pdo_sqlite',
-            'user' => NULL,
-            'password' => NULL,
-            'path' => NULL,
+            'user' => '',
+            'password' => '',
+            'path' => '',
         ),
     'postgres' =>
         array(
@@ -33,7 +31,7 @@ return array(
             'host' => 'localhost',
             'dbname' => 'elfchat',
             'user' => 'root',
-            'password' => NULL,
+            'password' => '',
         ),
 
     'remember_me' => array(
