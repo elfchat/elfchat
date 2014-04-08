@@ -14,8 +14,8 @@
         <a class="brand" href="{{ path('admin') }}">{{ 'ElfChat'|trans() }}</a>
         <a href="{{ path('admin_config') }}">{{ 'Configuration'|trans() }}</a>
         <a href="{{ path('admin_users') }}">{{ 'Users'|trans() }}</a>
-        <a href="#">{{ 'Themes'|trans() }}</a>
-        <a href="#">{{ 'Plugins'|trans() }}</a>
+        <a href="{{ path('admin_themes') }}">{{ 'Themes'|trans() }}</a>
+        <a href="{{ path('admin_plugins') }}">{{ 'Plugins'|trans() }}</a>
 
         <a class="pull-right" href="{{ path('logout') }}">{{ 'Exit'|trans() }}</a>
     </div>

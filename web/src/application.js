@@ -65,7 +65,7 @@ class Application {
             this.server.sendPrivate(userId, message);
         }
 
-        this.dom.textarea.val('');
+        this.dom.textarea.val('').focus();
         return false;
     }
 

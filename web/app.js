@@ -903,7 +903,7 @@ var Application = function Application(server) {
     } else {
       this.server.sendPrivate(userId, message);
     }
-    this.dom.textarea.val('');
+    this.dom.textarea.val('').focus();
     return false;
   },
   onConnect: function(event) {
