@@ -171,4 +171,32 @@ class Application extends Silicone\Application
     {
         return $this->isGranted('ROLE_GUEST');
     }
+
+    // TODO: Move next code to Silicone
+
+    /**
+     * Get cache directory.
+     * @return string
+     */
+    public function getCacheDir()
+    {
+        static $dir;
+        if (empty($dir)) {
+            $dir = $this->getOpenDir() . '/cache/';
+
+            if (!is_dir($dir) && is_writable(dirname($dir))) {
+                mkdir($dir, 0755, true);
+            }
+        }
+        return $dir;
+    }
+
+    /**
+     * Get log directory.
+     * @return string
+     */
+    public function getLogDir()
+    {
+        return $this->getOpenDir();
+    }
 }
