@@ -14,6 +14,7 @@
     <div class="alert alert-info">
         {{ 'All system operational.'|trans() }}
     </div>
+    <h3>{{ 'Memory Usage (in megabytes)'|trans() }}</h3>
     <div id="memoryUsage"></div>
 {% endblock %}
 
@@ -21,17 +22,21 @@
     {{ parent() }}
     <script src="{{ asset('/lib/flot/jquery.flot.min.js') }}"></script>
     <script>
-        var options = {
-            xaxis: {
-                show: false
-            }
-        };
-
         $.getJSON('http://{{ app.config.get('server.host') }}:{{ app.config.get('server.port') }}/memory_usage?callback=?', function (data) {
             data = data.map(function (value, i) {
                 return [i, value];
             });
-            var memoryUsage = $.plot('#memoryUsage', [data], options);
+            var memoryUsage = $.plot('#memoryUsage', [
+                {
+                    color: '#6a9b1e',
+                    shadowSize: 0,
+                    data: data
+                }
+            ], {
+                xaxis: {
+                    show: false
+                }
+            });
         });
     </script>
 {% endblock %}
