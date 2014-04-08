@@ -9,51 +9,6 @@ $app['config.file'] = $app->getOpenDir() . '/config.php';
 
 $configDefault = include $app->getRootDir() . '/config/default.php';
 
-$configDefault = array(
-    'debug' => true,
-    'cache' => 'filesystem',
-    'locale' => 'ru',
-    'baseurl' => 'http://macbook.local/chat.dev/',
-    'key' => 'key',
-    'database' => 'mysql',
-    'mysql' =>
-        array(
-            'driver' => 'pdo_mysql',
-            'host' => 'localhost',
-            'dbname' => 'chat.dev',
-            'user' => 'root',
-            'password' => NULL,
-            'charset' => 'utf8',
-        ),
-    'sqlite' =>
-        array(
-            'driver' => 'pdo_sqlite',
-            'user' => NULL,
-            'password' => NULL,
-            'path' => NULL,
-        ),
-    'postgres' =>
-        array(
-            'driver' => 'pdo_pgsql',
-            'host' => 'localhost',
-            'dbname' => 'elfchat',
-            'user' => 'root',
-            'password' => NULL,
-        ),
-    'remember_me' =>
-        array(
-            'token' => 'test',
-            'new_token' =>
-                array(
-                    'test' => 'etgwer',
-                ),
-        ),
-    'server' => array(
-        'host' => 'macbook.local',
-        'port' => 1337,
-    ),
-);
-
 $config = new ElfChat\Config\Config($configDefault);
 
 if (is_readable($app['config.file'])) {
