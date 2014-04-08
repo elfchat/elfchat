@@ -18,12 +18,10 @@ class Config extends DotNotation
 
     public function load($fromFile)
     {
+        $this->file = $fromFile;
         if (is_readable($fromFile)) {
-            $this->file = $fromFile;
             $loaded = include $fromFile;
             $this->values = $this->arrayMergeRecursiveDistinct($this->values, $loaded);
-        } else {
-            throw new \RuntimeException("The configuration file \"$fromFile\" does not readable.");
         }
     }
 

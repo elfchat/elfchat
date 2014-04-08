@@ -6,21 +6,14 @@ $app['version'] = '6.0.0 BETA 1';
 // Configuration
 
 $app['config.file'] = $app->getOpenDir() . '/config.php';
-
-$configDefault = include $app->getRootDir() . '/config/default.php';
-
-$config = new ElfChat\Config\Config($configDefault);
-
-if (is_readable($app['config.file'])) {
-    $config->load($app['config.file']);
-}
+$config = new ElfChat\Config\Config(include $app->getRootDir() . '/config/default.php');
+$config->load($app['config.file']);
 
 $app['config'] = function () use ($config) {
     return $config;
 };
 
 $app['debug'] = $config->get('debug', false);
-
 $app['locale'] = $config->get('locale', 'en');
 
 
