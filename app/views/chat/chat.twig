@@ -25,7 +25,9 @@
                 <div class="send">
                     <button class="primary" data-action="send">{{ 'Send'|trans() }}</button>
                     {{ 'to'|trans() }}
-                    <button data-action="send" data-private="1">{{ 'Elfet '|trans() }}</button>
+                    <div class="button-group">
+                        <button data-action="send" data-private="1">{{ 'Elfet '|trans() }}</button><button data-action="close">✘</button>
+                    </div>
                 </div>
             </div>
 
