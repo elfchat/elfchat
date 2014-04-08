@@ -111,9 +111,7 @@ var $WebSocketServer = WebSocketServer;
         $__1.onDisconnect();
         clearInterval($__1.reconnect);
         $__1.reconnect = setInterval((function() {
-          if (null !== $__1.socket) {
-            delete $__1.socket;
-          }
+          $__1.socket.close();
           $__1.connect();
         }), 1000);
       }

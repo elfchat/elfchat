@@ -29,9 +29,7 @@ class WebSocketServer extends AbstractServer {
 
                 clearInterval(this.reconnect);
                 this.reconnect = setInterval(() => {
-                    if (null !== this.socket) {
-                        delete this.socket;
-                    }
+                    this.socket.close();
                     this.connect();
                 }, 1000);
             }
