@@ -1,7 +1,37 @@
 {% extends 'admin/layout.twig' %}
 
+{% block style %}
+    {{ parent() }}
+    <style type="text/css">
+        #memoryUsage {
+            width: 450px;
+            height: 250px;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
     <div class="alert alert-info">
         {{ 'All system operational.'|trans() }}
     </div>
+    <div id="memoryUsage"></div>
+{% endblock %}
+
+{% block script %}
+    {{ parent() }}
+    <script src="{{ asset('/lib/flot/jquery.flot.min.js') }}"></script>
+    <script>
+        var options = {
+            xaxis: {
+                show: false
+            }
+        };
+
+        $.getJSON('http://{{ app.config.get('server.host') }}:{{ app.config.get('server.port') }}/memory_usage', function (data) {
+            data = data.map(function (value, i) {
+                return [i, value];
+            });
+            var memoryUsage = $.plot('#memoryUsage', [data], options);
+        });
+    </script>
 {% endblock %}

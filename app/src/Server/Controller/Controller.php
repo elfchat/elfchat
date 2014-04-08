@@ -85,7 +85,10 @@ abstract class Controller implements HttpServerInterface
 
     protected function json($data)
     {
-        return new Response(json_encode($data), 200, array('Content-Type' => 'application/json; charset=UTF-8'));
+        return new Response(json_encode($data), 200, array(
+            'Content-Type' => 'application/json; charset=UTF-8',
+            'Access-Control-Allow-Origin' => '*'
+        ));
     }
 
     /**

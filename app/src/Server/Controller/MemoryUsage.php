@@ -12,7 +12,7 @@ use Guzzle\Http\Message\RequestInterface;
 
 class MemoryUsage extends Controller
 {
-    const LIMIT = 10;
+    const LIMIT = 1000;
 
     private $memory = array();
 
@@ -23,7 +23,7 @@ class MemoryUsage extends Controller
 
     public function gather()
     {
-        $this->memory[] = memory_get_usage(true);
+        $this->memory[] = memory_get_usage(true) / 1048576; // in megabytes
 
         if(count($this->memory) > self::LIMIT) {
             array_shift($this->memory);
