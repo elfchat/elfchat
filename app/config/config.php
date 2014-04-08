@@ -98,18 +98,6 @@ $app->register(new Silex\Provider\SessionServiceProvider(), array(
         'name' => 'ELFCHAT',
     )
 ));
-if ($app->isOpen()) {
-    $app['session.storage.handler'] = $app->share(function () use ($app) {
-        return new ElfChat\Session\DbalSessionHandler(
-            $app->entityManager()->getConnection(),
-            array(
-                'db_table' => 'elfchat_session',
-                'db_id_col' => 'id',
-                'db_data_col' => 'data',
-                'db_time_col' => 'time',
-            ));
-    });
-}
 
 // Twig
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
@@ -211,6 +199,18 @@ $app['security.provider'] = $app->share(function () use ($app) {
     );
 });
 
+$app['security.subscriber'] = $app->share(function () use ($app) {
+    return new \ElfChat\Security\Authentication\Subscriber(
+        $app['security.provider'],
+        $app['em']->getRepository('ElfChat\Entity\User'),
+        $app['security.remember']
+    );
+});
+
+$app['security.remember'] = $app->share(function () use ($app) {
+    return new \ElfChat\Security\Authentication\Remember($app->config()->get('remember_me.token'));
+});
+
 // Things to do not use then directory "open" does not writeable.
 if ($app->isOpen()) {
 
@@ -226,23 +226,11 @@ if ($app->isOpen()) {
     $app['monolog.level'] = function () {
         return \Monolog\Logger::NOTICE;
     };
+}
 
 
-    /**
-     * Security
-     */
-
-    $app['security.subscriber'] = $app->share(function () use ($app) {
-        return new \ElfChat\Security\Authentication\Subscriber(
-            $app['security.provider'],
-            $app['em']->getRepository('ElfChat\Entity\User'),
-            $app['security.remember']
-        );
-    });
-
-    $app['security.remember'] = $app->share(function () use ($app) {
-        return new \ElfChat\Security\Authentication\Remember($app->config()->get('remember_me.token'));
-    });
+// Things that block install script.
+if ($app->isInstalled()) {
 
     /**
      * Dispatcher
@@ -255,7 +243,23 @@ if ($app->isOpen()) {
 
             return $dispatcher;
         });
+
+    /**
+     *  Session Handler
+     */
+
+    $app['session.storage.handler'] = $app->share(function () use ($app) {
+        return new ElfChat\Session\DbalSessionHandler(
+            $app->entityManager()->getConnection(),
+            array(
+                'db_table' => 'elfchat_session',
+                'db_id_col' => 'id',
+                'db_data_col' => 'data',
+                'db_time_col' => 'time',
+            ));
+    });
 }
+
 
 /**
  * Debug

@@ -47,6 +47,15 @@ class Application extends Silicone\Application
     }
 
     /**
+     * Is application installed correctly?
+     * @return bool
+     */
+    public function isInstalled()
+    {
+        return is_readable($this['config.file']);
+    }
+
+    /**
      * Get root directory.
      * @return string
      */
