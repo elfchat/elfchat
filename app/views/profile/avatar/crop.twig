@@ -48,6 +48,8 @@
     {{ parent() }}
     <script src="{{ asset('lib/jcrop/jquery.Jcrop.min.js') }}"></script>
     <script>
+        var updateUserUrl = 'http://{{ app.config.get('server.host') }}:{{ app.config.get('server.port') }}/update_user?callback=?';
+
         $(function () {
             var avatar = $('#avatar');
             var preview = $('#preview');
@@ -79,23 +81,26 @@
             avatar.load(function () {
                 var m = Math.min(avatar.width(), avatar.height()) - 10;
 
-                if(m <= 50) {
-                    window.location.href = '{{ url('profile_avatar') }}';
+                if (m <= 50) {
+                    $.getJSON(updateUserUrl, function (result) {
+                        window.location.href = '{{ url('profile_avatar') }}';
+                    });
+                } else {
+                    avatar.Jcrop({
+                        aspectRatio: 1,
+                        minSize: [50, 50],
+                        setSelect: [10, 10, m, m],
+                        onChange: showPreview,
+                        onSelect: showPreview
+                    });
                 }
-
-                avatar.Jcrop({
-                    aspectRatio: 1,
-                    minSize: [50, 50],
-                    setSelect: [10, 10, m, m],
-                    onChange: showPreview,
-                    onSelect: showPreview
-                });
             });
 
             button.click(function () {
                 $.post('{{ url('profile_avatar_crop') }}', cropSize, function () {
-                    //window.parent.opener.window.chat.updateUser();
-                    window.location.href = '{{ url('profile_avatar') }}';
+                    $.getJSON(updateUserUrl, function (result) {
+                        window.location.href = '{{ url('profile_avatar') }}';
+                    });
                 });
             });
         });

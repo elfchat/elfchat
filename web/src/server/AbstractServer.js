@@ -40,6 +40,10 @@ class AbstractServer {
                 break;
 
             case 3:
+                this.onUserUpdate(data);
+                break;
+
+            case 4:
                 this.onMessage(data);
                 break;
 
@@ -61,7 +65,7 @@ class AbstractServer {
     }
 
     onSynchronize(users) {
-        $(window).trigger('synchronize', users);
+        $(window).trigger('synchronize', [users]);
     }
 
     onUserJoin(user) {
@@ -70,6 +74,10 @@ class AbstractServer {
 
     onUserLeave(user) {
         $(window).trigger('user_leave', user);
+    }
+
+    onUserUpdate(user) {
+        $(window).trigger('user_update', user);
     }
 
     onMessage(message) {

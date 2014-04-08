@@ -139,4 +139,25 @@ class Server implements MessageComponentInterface
         $user = $conn->user;
         unset($this->clients[$user->id]);
     }
+
+    /**
+     * @param $userId
+     * @return null|ConnectionInterface
+     */
+    public function getClient($userId)
+    {
+        if (isset($this->clients[$userId])) {
+            return $conn = $this->clients[$userId];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @return \Doctrine\ORM\EntityManager
+     */
+    public function getEntityManager()
+    {
+        return $this->em;
+    }
 }

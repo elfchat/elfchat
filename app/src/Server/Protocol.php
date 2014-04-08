@@ -18,7 +18,9 @@ class Protocol
 
     const USER_LEAVE = 2;
 
-    const MESSAGE = 3;
+    const USER_UPDATE = 3;
+
+    const MESSAGE = 4;
 
     /**
      * @param int $type
@@ -50,6 +52,14 @@ class Protocol
         );
     }
 
+    public static function userUpdate(User $user)
+    {
+        return self::data(
+            self::USER_UPDATE,
+            $user->export()
+        );
+    }
+
     public static function message(Message $message)
     {
         return self::data(
@@ -57,4 +67,4 @@ class Protocol
             $message->exportWithUser()
         );
     }
-} 
+}

@@ -29,7 +29,7 @@ class Users {
         }
     }
 
-    onSynchronize(event, ...users) {
+    onSynchronize(event, users) {
         // Clear all users tabs
         this.dom.users.html('');
 
@@ -69,11 +69,12 @@ class Users {
 
         // Update DOM
         var tab = this.dom.user(user);
+        var view = new UserView(user);
 
         if (tab.exist()) {
-            tab.replaceWith(window.views.user(user));
+            tab.replaceWith(view.render(user));
         } else {
-            this.dom.users.append(window.views.user(user));
+            this.dom.users.append(view.render(user));
         }
     }
 

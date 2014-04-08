@@ -47,6 +47,9 @@ var AbstractServer = function AbstractServer() {
         this.onUserLeave(data);
         break;
       case 3:
+        this.onUserUpdate(data);
+        break;
+      case 4:
         this.onMessage(data);
         break;
       default:
@@ -67,7 +70,7 @@ var AbstractServer = function AbstractServer() {
   },
   onSynchronize: function(users) {
     "use strict";
-    $(window).trigger('synchronize', users);
+    $(window).trigger('synchronize', [users]);
   },
   onUserJoin: function(user) {
     "use strict";
@@ -76,6 +79,10 @@ var AbstractServer = function AbstractServer() {
   onUserLeave: function(user) {
     "use strict";
     $(window).trigger('user_leave', user);
+  },
+  onUserUpdate: function(user) {
+    "use strict";
+    $(window).trigger('user_update', user);
   },
   onMessage: function(message) {
     "use strict";
@@ -460,11 +467,8 @@ var Users = function Users() {
   }
 };
 ($traceurRuntime.createClass)(Users, {
-  onSynchronize: function(event) {
+  onSynchronize: function(event, users) {
     "use strict";
-    for (var users = [],
-        $__12 = 1; $__12 < arguments.length; $__12++)
-      users[$__12 - 1] = arguments[$__12];
     this.dom.users.html('');
     for (var $__10 = users[Symbol.iterator](),
         $__11; !($__11 = $__10.next()).done; ) {
@@ -496,10 +500,11 @@ var Users = function Users() {
     "use strict";
     this.addUser(user);
     var tab = this.dom.user(user);
+    var view = new UserView(user);
     if (tab.exist()) {
-      tab.replaceWith(window.views.user(user));
+      tab.replaceWith(view.render(user));
     } else {
-      this.dom.users.append(window.views.user(user));
+      this.dom.users.append(view.render(user));
     }
   },
   getUser: function(id) {
@@ -604,9 +609,9 @@ var EmotionTabs = function EmotionTabs(catalog) {
     for (var title in this.catalog)
       if (this.catalog.hasOwnProperty(title)) {
         var tab = this.catalog[title];
-        for (var $__14 = tab[Symbol.iterator](),
-            $__15; !($__15 = $__14.next()).done; ) {
-          var emotion = $__15.value;
+        for (var $__13 = tab[Symbol.iterator](),
+            $__14; !($__14 = $__13.next()).done; ) {
+          var emotion = $__14.value;
           {
             this.emotions.push(emotion);
             if (this.n >= this.pertab - 1) {
@@ -809,9 +814,9 @@ var EmotionFilter = function EmotionFilter(list) {
     var _this = this;
     var count = 0;
     text = text.replace(/&apos;/g, "'");
-    for (var $__17 = this.list[Symbol.iterator](),
-        $__18; !($__18 = $__17.next()).done; ) {
-      var row = $__18.value;
+    for (var $__16 = this.list[Symbol.iterator](),
+        $__17; !($__17 = $__16.next()).done; ) {
+      var row = $__17.value;
       {
         var regexp = row[0];
         var src = row[1];
@@ -841,11 +846,6 @@ var Application = function Application(server) {
   $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this)).on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this));
   $(this.dom.textarea).bind('keydown', 'return', $.proxy(this.onSend, this));
   $('[data-action="send"]').on('click', $.proxy(this.onSend, this));
-  $('[target="open"]').on('click', (function(event) {
-    event.stopPropagation();
-    window.open($(event.target).attr('href'), '');
-    return false;
-  }));
   this.filters = [new BBCodeFilter(), new UriFilter(), new EmotionFilter(EmotionList), new RestrictionFilter()];
 };
 ($traceurRuntime.createClass)(Application, {
@@ -880,9 +880,9 @@ var Application = function Application(server) {
   },
   addRecentMessages: function() {
     "use strict";
-    for (var $__20 = window.recent[Symbol.iterator](),
-        $__21; !($__21 = $__20.next()).done; ) {
-      var message = $__21.value;
+    for (var $__19 = window.recent[Symbol.iterator](),
+        $__20; !($__20 = $__19.next()).done; ) {
+      var message = $__20.value;
       {
         this.addMessage(message);
       }

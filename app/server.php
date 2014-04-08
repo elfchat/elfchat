@@ -47,6 +47,8 @@ $ratchet->route('/', $wsServer, array('*'));
 $memoryUsage = new ElfChat\Server\Controller\MemoryUsage();
 $ratchet->route('/memory_usage', $memoryUsage, array('*'));
 
+$ratchet->route('/update_user', new ElfChat\Server\Controller\UpdateUser($chat), array('*'));
+
 // Loops
 $loop->addPeriodicTimer(1, function () use ($memoryUsage) {
     $memoryUsage->gather();
