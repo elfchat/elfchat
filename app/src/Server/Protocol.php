@@ -24,6 +24,8 @@ class Protocol
 
     const PRIVATE_MESSAGE = 5;
 
+    const LOG = 6;
+
     /**
      * @param int $type
      * @param mixed $data

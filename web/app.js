@@ -59,6 +59,9 @@ var AbstractServer = function AbstractServer() {
       case 4:
         this.onMessage(data);
         break;
+      case 6:
+        this.onLog(data);
+        break;
       default:
         throw new Error('Unknown message type received from server.');
     }
@@ -95,6 +98,10 @@ var AbstractServer = function AbstractServer() {
     "use strict";
     $(window).trigger('message', message);
   },
+  onLog: function(message) {
+    "use strict";
+    $(window).trigger('log', message);
+  },
   onError: function(error) {
     "use strict";
     console.error(error);
@@ -121,6 +128,7 @@ var $WebSocketServer = WebSocketServer;
     this.socket.onclose = (function(event) {
       if (event.wasClean) {
         $__1.onDisconnect();
+        window.location.reload();
       } else {
         $__1.onDisconnect();
         clearInterval($__1.reconnect);
@@ -410,12 +418,14 @@ var MessageView = function MessageView(message) {
 }, {}, View);
 var LogView = function LogView(text) {
   "use strict";
+  var level = arguments[1] !== (void 0) ? arguments[1] : 'default';
   $traceurRuntime.superCall(this, $LogView.prototype, "constructor", [{
     id: 0,
     time: new Date(),
     user: null,
     text: text
   }]);
+  this.level = level;
 };
 var $LogView = LogView;
 ($traceurRuntime.createClass)(LogView, {render: function() {
@@ -879,7 +889,7 @@ var Application = function Application(server) {
     textarea: $('#message'),
     body: $('body')
   };
-  $(window).on('connect', $.proxy(this.onConnect, this)).on('disconnect', $.proxy(this.onDisconnect, this)).on('message', $.proxy(this.onMessage, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('error', $.proxy(this.onError, this));
+  $(window).on('connect', $.proxy(this.onConnect, this)).on('disconnect', $.proxy(this.onDisconnect, this)).on('message', $.proxy(this.onMessage, this)).on('log', $.proxy(this.onLog, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('error', $.proxy(this.onError, this));
   $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this)).on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this)).on('click.private', '[data-private]', $.proxy(this.onPrivateClick, this));
   this.filters = [new BBCodeFilter(), new UriFilter(), new ImageFilter(), new EmotionFilter(EmotionList), new RestrictionFilter()];
   this.send = new SendBehavior(this);
@@ -902,6 +912,11 @@ var Application = function Application(server) {
   onMessage: function(event, message) {
     "use strict";
     this.addMessage(message);
+    window.sound.message.play();
+  },
+  onLog: function(event, log) {
+    "use strict";
+    this.addLog(log.text, log.level);
     window.sound.message.play();
   },
   onMessageRemove: function(event, message) {
@@ -958,8 +973,9 @@ var Application = function Application(server) {
   },
   addLog: function(log) {
     "use strict";
+    var level = arguments[1] !== (void 0) ? arguments[1] : 'default';
     if (log !== undefined) {
-      this.dom.chat.append(new LogView(log).render());
+      this.dom.chat.append(new LogView(log, level).render());
       window.scroll.down();
     }
   },

@@ -10,7 +10,7 @@ namespace ElfChat\Server\Controller;
 use ElfChat\Server;
 use Guzzle\Http\Message\RequestInterface;
 
-class UpdateUser extends Controller
+class Log extends Controller
 {
     private $chat;
 
@@ -19,17 +19,12 @@ class UpdateUser extends Controller
         $this->chat = $chat;
     }
 
+
     public function action(RequestInterface $request)
     {
-        $conn = $this->chat->getClient($this->userId);
-
-        if(null === $conn) {
-            return $this->json(false);
-        }
-
-        $this->chat->getEntityManager()->refresh($conn->user);
-        $this->chat->send(Server\Protocol::userUpdate($conn->user));
-
+        $text = $request->getUrl(true)->getQuery()->get('text');
+        $level = $request->getUrl(true)->getQuery()->get('level');
+        $this->chat->log($text, $level ?: 'default');
         return $this->json(true);
     }
 }

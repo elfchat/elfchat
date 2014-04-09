@@ -89,19 +89,23 @@ abstract class Controller implements HttpServerInterface
         return str_replace(' ', '', ucwords(str_replace('_', ' ', $langDef)));
     }
 
-    protected function jsonp($data)
+    protected function json($data)
     {
+        $json = json_encode($data);
+
         $callback = $this->request->getUrl(true)->getQuery()->get('callback');
 
         if (empty($callback)) {
-            return new Response('', Response::HTTP_BAD_REQUEST);
+            return new Response($json, 200, array(
+                'Content-Type' => 'application/json; charset=UTF-8',
+                'Access-Control-Allow-Origin' => '*'
+            ));
+        } else {
+            return new Response("$callback($json);", 200, array(
+                'Content-Type' => 'application/javascript; charset=UTF-8',
+                'Access-Control-Allow-Origin' => '*'
+            ));
         }
-
-        $json = json_encode($data);
-        return new Response("$callback($json);", 200, array(
-            'Content-Type' => 'application/javascript; charset=UTF-8',
-            'Access-Control-Allow-Origin' => '*'
-        ));
     }
 
     protected function html($data)

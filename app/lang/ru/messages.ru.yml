@@ -1,6 +1,7 @@
 Register: Регистрация
 Login: Вход
 Username: Имя
+User: Пользователь
 Email: E-Mail
 Password: Пароль
 Repeat password: Повторите пароль
@@ -12,3 +13,24 @@ Admin Center: Админ-Центр
 Emotions: Смайлики
 Send: Отправить
 Send private message: Отправить личное сообщение
+
+Bans: Баны
+Add ban: Забанить
+Ban: Бан
+Ban %user%: Бан %user%
+User ID: ID Пользователя
+On how long: На сколько
+Reason: Причина
+Ban was deleted.: Бан был удалён.
+
+One min: Одна минута
+5 min: 5 минут
+15 min: 15 минут
+One hour: 1 час
+12 hours: 12 часов
+One day: Один день
+2 days: 2 дня
+7 days: 7 дней
+14 days: 14 дней
+31 days: 31 день
+Forever: Навсегда

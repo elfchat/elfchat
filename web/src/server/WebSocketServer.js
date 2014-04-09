@@ -24,6 +24,7 @@ class WebSocketServer extends AbstractServer {
         this.socket.onclose = (event) => {
             if (event.wasClean) {
                 this.onDisconnect();
+                window.location.reload();
             } else {
                 this.onDisconnect();
 

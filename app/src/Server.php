@@ -203,4 +203,22 @@ class Server implements MessageComponentInterface
     {
         return $this->em;
     }
+
+    public function kill($userId)
+    {
+        $conn = $this->getClient($userId);
+
+        if(null !== $conn) {
+            $conn->close();
+            //$this->onClose($conn);
+        }
+    }
+
+    public function log($text, $level = 'default')
+    {
+        $this->send(Protocol::data(Protocol::LOG, array(
+            'text' => $text,
+            'level' => $level,
+        )));
+    }
 }

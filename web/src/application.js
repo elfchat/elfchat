@@ -19,6 +19,7 @@ class Application {
             .on('connect', $.proxy(this.onConnect, this))
             .on('disconnect', $.proxy(this.onDisconnect, this))
             .on('message', $.proxy(this.onMessage, this))
+            .on('log', $.proxy(this.onLog, this))
             .on('user_join', $.proxy(this.onUserJoin, this))
             .on('user_leave', $.proxy(this.onUserLeave, this))
             .on('error', $.proxy(this.onError, this));
@@ -56,6 +57,11 @@ class Application {
 
     onMessage(event, message) {
         this.addMessage(message);
+        window.sound.message.play();
+    }
+
+    onLog(event, log) {
+        this.addLog(log.text, log.level);
         window.sound.message.play();
     }
 
@@ -118,9 +124,9 @@ class Application {
         }
     }
 
-    addLog(log) {
+    addLog(log, level = 'default') {
         if (log !== undefined) {
-            this.dom.chat.append(new LogView(log).render());
+            this.dom.chat.append(new LogView(log, level).render());
             window.scroll.down();
         }
     }

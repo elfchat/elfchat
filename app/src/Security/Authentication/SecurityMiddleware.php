@@ -7,42 +7,31 @@
 
 namespace ElfChat\Security\Authentication;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use ElfChat\Entity\Ban;
 use ElfChat\Exception\AccessDenied;
 use ElfChat\Security\Authentication\Provider;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
 
-class Subscriber implements EventSubscriberInterface
+class SecurityMiddleware
 {
     protected $provider;
 
-    protected $repository;
+    protected $em;
 
     protected $remember;
 
-    public function __construct(Provider $provider, EntityRepository $repository, Remember $remember)
+    public function __construct(Provider $provider, EntityManager $em, Remember $remember)
     {
         $this->provider = $provider;
-        $this->repository = $repository;
+        $this->em = $em;
         $this->remember = $remember;
     }
 
-
-    public static function getSubscribedEvents()
+    public function onRequest(Request $request)
     {
-        return array(
-            KernelEvents::REQUEST => array(
-                array('onKernelRequest', 120),
-            ),
-        );
-    }
-
-    public function onKernelRequest(GetResponseEvent $event)
-    {
-        $request = $event->getRequest();
         $session = $request->getSession();
 
         list($id, $role) = $session->get('user', array(null, 'ROLE_GUEST'));
@@ -61,12 +50,36 @@ class Subscriber implements EventSubscriberInterface
         }
 
         if (null !== $id) {
-            $user = $this->repository->find($id);
+            // Ban check
+            $ban = $this->em->getRepository('ElfChat\Entity\Ban')->findActive($id, $request->getClientIp());
+            if (!empty($ban)) {
+                return new Response($this->youAreBanned($ban[0]), Response::HTTP_FORBIDDEN);
+            }
 
+            $user = $this->em->getRepository('ElfChat\Entity\User')->find($id);
             if (null !== $user) {
                 $this->provider->setUser($user);
                 $this->provider->setAuthenticated(true);
             }
         }
+    }
+
+    private function youAreBanned(Ban $ban)
+    {
+        $long = Ban::howLongChoices();
+        return <<< HTML
+<!doctype html>
+<html>
+<head>
+    <title>You are banned</title>
+</head>
+<body>
+    <h1>You are banned for {$long[$ban->howLong]}</h1>
+    <strong>Reason:</strong><br>
+    <pre>{$ban->reason}</pre>
+</body>
+</html>
+HTML;
+
     }
 }

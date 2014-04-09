@@ -3,40 +3,30 @@
 {% block title %}{{ 'Moderator Center'|trans() }}{% endblock %}
 
 {% block style %}
-    <link rel="stylesheet" href="{{ asset('lib/bootstrap/css/bootstrap.min.css') }}" type="text/css">
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/common/form.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/admin/layout.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/admin/table.css') }}">
 {% endblock style %}
 
 {% block body %}
+    <div class="navbar">
+        <a href="{{ path('moderator_bans') }}">{{ 'Bans'|trans() }}</a>
 
-    <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                <span class="sr-only">{{ 'Toggle navigation'|trans() }}</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-        </div>
+        <a class="pull-right" href="{{ path('logout') }}">{{ 'Exit'|trans() }}</a>
+    </div>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse navbar-ex1-collapse">
-            <ul class="nav navbar-nav">
-                <li><a href="{{ path('moderator_bans') }}">{{ 'Bans'|trans() }}</a></li>
-            </ul>
-        </div><!-- /.navbar-collapse -->
-    </nav>
-
-    <div class="container">
+    <div class="content">
         {% for message in app.session.flashBag.get('success') %}
-            <div class="alert alert-success">{{ message }}</div>
+            <div class="alert alert-success">{{ message|trans() }}</div>
         {% endfor %}
         {% for message in app.session.flashBag.get('error') %}
-            <div class="alert alert-danger">{{ message }}</div>
+            <div class="alert alert-error">{{ message|trans() }}</div>
         {% endfor %}
         {% for message in app.session.flashBag.get('info') %}
-            <div class="alert alert-info">{{ message }}</div>
+            <div class="alert alert-info">{{ message|trans() }}</div>
         {% endfor %}
+
         {% block content %}
         {% endblock %}
     </div>
@@ -44,13 +34,20 @@
 
 {% block script %}
     {{ parent() }}
-    <script src="{{ asset('lib/bootstrap/js/bootstrap.min.js') }}"></script>
     <script type="text/javascript">
-        /**
-         * Auto selecting of active menu item.
-         */
         $(function () {
-            $('a[href^="' + window.location.pathname + '"]').parent().addClass('active');
+            /**
+             * Auto selecting of active menu item.
+             */
+            $('.navbar a').each(function () {
+                var href = $(this).attr('href');
+                if (href) {
+                    var regex = new RegExp('^' + href, 'i');
+                    if (regex.test(window.location.pathname)) {
+                        $(this).addClass('active');
+                    }
+                }
+            });
         });
     </script>
 {% endblock %}

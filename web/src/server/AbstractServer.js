@@ -55,6 +55,10 @@ class AbstractServer {
                 this.onMessage(data);
                 break;
 
+            case 6:
+                this.onLog(data);
+                break;
+
             default:
                 throw new Error('Unknown message type received from server.');
         }
@@ -90,6 +94,10 @@ class AbstractServer {
 
     onMessage(message) {
         $(window).trigger('message', message);
+    }
+
+    onLog(message) {
+        $(window).trigger('log', message);
     }
 
     onError(error) {

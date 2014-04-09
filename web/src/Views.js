@@ -73,8 +73,9 @@ class MessageView extends View {
 }
 
 class LogView extends MessageView {
-    constructor(text) {
+    constructor(text, level = 'default') {
         super({id: 0, time: new Date(), user: null, text});
+        this.level = level;
     }
 
     render() {

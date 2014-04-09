@@ -39,7 +39,7 @@ $sessionWrapper = function ($component) use ($app) {
     );
 };
 
-\ElfChat\Server\Controller\Controller::setSaveHandler($app['session.storage.handler']);
+ElfChat\Server\Controller\Controller::setSaveHandler($app['session.storage.handler']);
 
 // WebSocket Server
 $chat = new ElfChat\Server($app);
@@ -47,10 +47,12 @@ $wsServer = new WsServer($sessionWrapper($chat));
 $ratchet->route('/', $wsServer, array('*'));
 
 // Http services
+$ratchet->route('/kill', new ElfChat\Server\Controller\Kill($chat), array('*'));
+$ratchet->route('/log', new ElfChat\Server\Controller\Log($chat), array('*'));
+$ratchet->route('/update_user', new ElfChat\Server\Controller\UpdateUser($chat), array('*'));
+
 $memoryUsage = new ElfChat\Server\Controller\MemoryUsage();
 $ratchet->route('/memory_usage', $memoryUsage, array('*'));
-
-$ratchet->route('/update_user', new ElfChat\Server\Controller\UpdateUser($chat), array('*'));
 
 // Loops
 $loop->addPeriodicTimer(1, function () use ($memoryUsage) {

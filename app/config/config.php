@@ -22,6 +22,7 @@ $app->register(new Silicone\Provider\RouterServiceProvider());
 $app['router.resource'] = array(
     $app->getRootDir() . '/controller/Chat/',
     $app->getRootDir() . '/controller/Admin/',
+    $app->getRootDir() . '/controller/Moderator/',
 );
 if ($app->isOpen()) {
     $app['router.cache_dir'] = $app->getCacheDir();
@@ -192,16 +193,16 @@ $app['security.provider'] = $app->share(function () use ($app) {
     );
 });
 
-$app['security.subscriber'] = $app->share(function () use ($app) {
-    return new \ElfChat\Security\Authentication\Subscriber(
+$app['security.middleware'] = $app->share(function () use ($app) {
+    return new ElfChat\Security\Authentication\SecurityMiddleware(
         $app['security.provider'],
-        $app['em']->getRepository('ElfChat\Entity\User'),
+        $app['em'],
         $app['security.remember']
     );
 });
 
 $app['security.remember'] = $app->share(function () use ($app) {
-    return new \ElfChat\Security\Authentication\Remember($app->config()->get('remember_me.token'));
+    return new ElfChat\Security\Authentication\Remember($app->config()->get('remember_me.token'));
 });
 
 // Things to do not use then directory "open" does not writeable.
@@ -226,16 +227,12 @@ if ($app->isOpen()) {
 if ($app->isInstalled()) {
 
     /**
-     * Dispatcher
+     * Middleware
      */
 
-    $app['dispatcher'] = $app->extend('dispatcher',
-        function (Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher) use ($app) {
-            // Authentication
-            $dispatcher->addSubscriber($app['security.subscriber']);
-
-            return $dispatcher;
-        });
+    $app->before(function ($request) use($app) {
+        return $app['security.middleware']->onRequest($request);
+    });
 
     /**
      *  Session Handler

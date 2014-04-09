@@ -13,10 +13,10 @@
         </div>
         {% if app.isModerator() %}
             <div class="buttons">
-                <a class="button" href="{{ url('moderator_add_ban') }}?id=[user.id]"
+                <a class="button" href="{{ url('add_ban') }}?id=[user.id]"
                    target="_blank">{{ 'Ban'|trans() }}</a>
-                <a class="button" href="{{ url('moderator_add_ban') }}?id=[user.id]"
-                   target="_blank">{{ 'Quiet'|trans() }}</a>
+                <!--<a class="button" href="{{ '' }}?id=[user.id]"
+                   target="_blank">{{ 'Quiet'|trans() }}</a>-->
             </div>
         {% endif %}
     </div>

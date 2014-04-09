@@ -1,13 +1,14 @@
 {% extends 'moderator/layout.twig' %}
 
 {% block content %}
+    <a class="button" href="{{ url('add_ban') }}">{{ 'Add ban'|trans() }}</a>
     <table class="table">
         <thead>
         <tr>
             <th>{{ 'Active'|trans() }}</th>
             <th>{{ 'User'|trans() }}</th>
             <th>{{ 'IP'|trans() }}</th>
-            <th>{{ 'How long'|trans() }}</th>
+            <th>{{ 'On how long'|trans() }}</th>
             <th>{{ 'Created'|trans() }}</th>
             <th>{{ 'Moderator'|trans() }}</th>
             <th>{{ 'Reason'|trans() }}</th>
@@ -17,11 +18,7 @@
         <tbody>
         {% for ban in bans %}
             <tr>
-                <td>
-                    {% if ban.isActive() %}
-                        <i class="glyphicon glyphicon-ok-circle"></i>
-                    {% endif %}
-                </td>
+                <td>{% if ban.isActive() %}✔{% endif %}</td>
                 <td>{{ ban.user is null ? 'No user'|trans() : ban.user.name }}</td>
                 <td>{{ ban.ip }}</td>
                 <td>{{ ban.howLong|replace(howLongChoices)|trans() }}</td>
@@ -29,7 +26,7 @@
                 <td>{{ ban.author.name }}</td>
                 <td>{{ ban.reason }}</td>
                 <td>
-                    <a href="{{ url('moderator_remove_ban', {'id': ban.id}) }}" class="btn btn-danger">Delete</a>
+                    <a href="{{ url('remove_ban', {'id': ban.id}) }}" class="button">{{ 'Delete'|trans() }}</a>
                 </td>
             </tr>
         {% endfor %}

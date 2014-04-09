@@ -131,6 +131,11 @@ aside .user .name {
     max-height: 300px;
 }
 
+.log.danger {
+    background-color: rgb(255, 65, 54);
+    color: #ffffff;
+}
+
 /* Emotions */
 
 .emotion {

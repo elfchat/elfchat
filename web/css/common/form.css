@@ -21,7 +21,8 @@ form input[type="checkbox"] {
 input[type="text"],
 input[type="password"],
 input[type="email"],
-select {
+select,
+textarea {
     display: inline-block;
     width: 300px;
     height: 34px;
