@@ -15,7 +15,7 @@
 
     // User
     {% autoescape false %}
-    window.user = {{ save.user|json_encode() }};
+    window.user = {{ user|json_encode() }};
     {% endautoescape %}
 
     // Recent messages
@@ -43,7 +43,6 @@
 {{ view('chat/tab/user.view') }}
 {{ view('chat/board/log.view') }}
 {{ view('chat/board/message.view') }}
-{{ view('chat/board/spirit.view') }}
 {{ view('chat/emotion/tab.view') }}
 {{ view('chat/emotion/image.view') }}
 {{ view('chat/popover/profile.view') }}

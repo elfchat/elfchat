@@ -104,6 +104,8 @@ class Server implements MessageComponentInterface
         $em->flush();
 
         $this->send(Protocol::message($message));
+
+        $em->detach($message);
     }
 
     private function onPrivateMessage(ConnectionInterface $from, $userId, $text)
@@ -115,6 +117,7 @@ class Server implements MessageComponentInterface
         // Create message
         $message = new Message();
         $message->user = $user;
+        $message->for = $em->getPartialReference('ElfChat\Entity\User', $userId);
         $message->datetime = new \DateTime();
         $message->text = $text;
 
@@ -127,6 +130,8 @@ class Server implements MessageComponentInterface
         if ($userId != $user->id) {
             $this->sendToUser($userId, $data);
         }
+
+        $em->detach($message);
     }
 
     public function onClose(ConnectionInterface $conn)

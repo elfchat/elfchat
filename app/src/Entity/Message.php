@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @property int $id
  * @property \ElfChat\Entity\User $user
+ * @property \ElfChat\Entity\User $for
  * @property \DateTime $datetime
  * @property string $room
  * @property string $text
@@ -31,6 +32,11 @@ class Message extends Entity
      * @ORM\ManyToOne(targetEntity="ElfChat\Entity\User")
      */
     protected $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="ElfChat\Entity\User")
+     */
+    protected $for;
 
     /**
      * @ORM\Column(type="datetime")
@@ -59,6 +65,7 @@ class Message extends Entity
             'user' => array(
                 'id' => $this->user->getId()
             ),
+            'for' => null,
             'datetime' => $this->datetime->format(\DateTime::ISO8601),
             'room' => $this->room,
             'text' => $this->text,
@@ -69,6 +76,7 @@ class Message extends Entity
     {
         $export = $this->export();
         $export['user'] = $this->user->export();
+        $export['for'] = empty($this->for) ? null : $this->for->export();
         return $export;
     }
 

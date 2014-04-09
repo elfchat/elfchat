@@ -143,6 +143,8 @@ class Application {
 
 class SendBehavior {
     constructor(chat) {
+        this.privateUserId = null;
+        this.isPrivate = false;
         this.chat = chat;
         this.dom = {
             sendButtons: $('[data-action="send"]'),
@@ -164,20 +166,15 @@ class SendBehavior {
 
     onSend(event) {
         event.stopPropagation();
-        var isPrivate, message, userId, button;
+        var message, userId, button;
 
         if (event.type === 'keydown') {
-            isPrivate = this.dom.privateButton.hasClass('primary');
         } else {
             button = $(event.target);
-            isPrivate = button.attr('id') === 'private';
-
-            if (isPrivate) {
-                this.dom.sendButton.removeClass('primary');
-                this.dom.privateButton.addClass('primary');
+            if (button.attr('id') === 'private') {
+                this.setPrivateButtonActive()
             } else {
-                this.dom.sendButton.addClass('primary');
-                this.dom.privateButton.removeClass('primary');
+                this.setPublicButtonActive();
             }
         }
 
@@ -185,11 +182,10 @@ class SendBehavior {
             return false;
         }
 
-        if (!isPrivate) {
+        if (!this.isPrivate) {
             this.chat.server.send(message);
         } else {
-            userId = this.dom.privateButton.attr('data-user');
-            this.chat.server.sendPrivate(userId, message);
+            this.chat.server.sendPrivate(this.getPrivateUserId(), message);
         }
 
         this.chat.dom.textarea.val('').focus();
@@ -198,28 +194,43 @@ class SendBehavior {
 
     onClosePrivate(event) {
         event.stopPropagation();
+        this.isPrivate = false;
+
         this.dom.privateGroup.hide();
+        this.dom.privateButton.removeClass('primary');
         this.dom.sendButton.addClass('primary');
         this.chat.dom.textarea.focus();
         return false;
     }
 
+    setPrivateButtonActive() {
+        this.isPrivate = true;
+        this.dom.sendButton.removeClass('primary');
+        this.dom.privateButton.addClass('primary');
+    }
+
+    setPublicButtonActive() {
+        this.isPrivate = false;
+        this.dom.sendButton.addClass('primary');
+        this.dom.privateButton.removeClass('primary');
+    }
+
+    getPrivateUserId() {
+        return this.privateUserId;
+    }
+
     setPrivate(userId) {
         var user = window.users.getUser(userId);
         if (user) {
+            this.setPrivateButtonActive();
+            this.privateUserId = user.id;
+
             // Hide profile popover
             var profile = new UserProfileView(user);
             profile.element().hide();
 
-            // Set private button
+            // Set private button and show private button
             this.dom.privateButton.text(user.name);
-            this.dom.privateButton.attr('data-user', user.id);
-
-            // Set private button active
-            this.dom.sendButton.removeClass('primary');
-            this.dom.privateButton.addClass('primary');
-
-            // Show private button
             this.dom.privateGroup.show();
 
             this.chat.dom.textarea.focus();
