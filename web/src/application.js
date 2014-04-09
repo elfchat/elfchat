@@ -26,13 +26,8 @@ class Application {
         $(document)
             .on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this))
             .on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this))
-            .on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this));
-
-        $(this.dom.textarea)
-            .bind('keydown', 'return', $.proxy(this.onSend, this));
-
-        $('[data-action="send"]')
-            .on('click', $.proxy(this.onSend, this));
+            .on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this))
+            .on('click.private', '[data-private]', $.proxy(this.onPrivateClick, this));
 
         this.filters = [
             new BBCodeFilter(),
@@ -41,32 +36,14 @@ class Application {
             new EmotionFilter(EmotionList),
             new RestrictionFilter()
         ];
+
+        this.send = new SendBehavior(this);
     }
 
     run() {
         notify.connecting.start();
         this.server.connect();
         this.addRecentMessages();
-    }
-
-    onSend(event) {
-        event.stopPropagation();
-        var message,
-            userId,
-            button = $(event.target);
-
-        if('' === (message = this.dom.textarea.val())) {
-            return false;
-        }
-
-        if (undefined === (userId = button.attr('data-private'))) {
-            this.server.send(message);
-        } else {
-            this.server.sendPrivate(userId, message);
-        }
-
-        this.dom.textarea.val('').focus();
-        return false;
     }
 
     onConnect(event) {
@@ -157,7 +134,95 @@ class Application {
         notify.error(tr(error));
     }
 
-    updateUser() {
-        // TODO: Create this method.
+    onPrivateClick(event) {
+        var userId = $(event.target).attr('data-private');
+        this.send.setPrivate(userId);
+    }
+}
+
+
+class SendBehavior {
+    constructor(chat) {
+        this.chat = chat;
+        this.dom = {
+            sendButtons: $('[data-action="send"]'),
+            sendButton: $('#send'),
+            privateButton: $('#private'),
+            privateGroup: $('#privateGroup'),
+            closeButton: $('[data-action="close"]')
+        };
+
+        this.chat.dom.textarea
+            .bind('keydown', 'return', $.proxy(this.onSend, this));
+
+        this.dom.sendButtons
+            .on('click.send', $.proxy(this.onSend, this));
+
+        this.dom.closeButton
+            .on('click.close', $.proxy(this.onClosePrivate, this));
+    }
+
+    onSend(event) {
+        event.stopPropagation();
+        var isPrivate, message, userId, button;
+
+        if (event.type === 'keydown') {
+            isPrivate = this.dom.privateButton.hasClass('primary');
+        } else {
+            button = $(event.target);
+            isPrivate = button.attr('id') === 'private';
+
+            if (isPrivate) {
+                this.dom.sendButton.removeClass('primary');
+                this.dom.privateButton.addClass('primary');
+            } else {
+                this.dom.sendButton.addClass('primary');
+                this.dom.privateButton.removeClass('primary');
+            }
+        }
+
+        if ('' === (message = this.chat.dom.textarea.val())) {
+            return false;
+        }
+
+        if (!isPrivate) {
+            this.chat.server.send(message);
+        } else {
+            userId = this.dom.privateButton.attr('data-user');
+            this.chat.server.sendPrivate(userId, message);
+        }
+
+        this.chat.dom.textarea.val('').focus();
+        return false;
+    }
+
+    onClosePrivate(event) {
+        event.stopPropagation();
+        this.dom.privateGroup.hide();
+        this.dom.sendButton.addClass('primary');
+        this.chat.dom.textarea.focus();
+        return false;
+    }
+
+    setPrivate(userId) {
+        var user = window.users.getUser(userId);
+        if (user) {
+            // Hide profile popover
+            var profile = new UserProfileView(user);
+            profile.element().hide();
+
+            // Set private button
+            this.dom.privateButton.text(user.name);
+            this.dom.privateButton.attr('data-user', user.id);
+
+            // Set private button active
+            this.dom.sendButton.removeClass('primary');
+            this.dom.privateButton.addClass('primary');
+
+            // Show private button
+            this.dom.privateGroup.show();
+
+            this.chat.dom.textarea.focus();
+        }
     }
 }

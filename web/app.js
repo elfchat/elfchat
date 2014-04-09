@@ -877,10 +877,9 @@ var Application = function Application(server) {
     body: $('body')
   };
   $(window).on('connect', $.proxy(this.onConnect, this)).on('disconnect', $.proxy(this.onDisconnect, this)).on('message', $.proxy(this.onMessage, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('error', $.proxy(this.onError, this));
-  $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this)).on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this));
-  $(this.dom.textarea).bind('keydown', 'return', $.proxy(this.onSend, this));
-  $('[data-action="send"]').on('click', $.proxy(this.onSend, this));
+  $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this)).on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this)).on('click.private', '[data-private]', $.proxy(this.onPrivateClick, this));
   this.filters = [new BBCodeFilter(), new UriFilter(), new ImageFilter(), new EmotionFilter(EmotionList), new RestrictionFilter()];
+  this.send = new SendBehavior(this);
 };
 ($traceurRuntime.createClass)(Application, {
   run: function() {
@@ -888,23 +887,6 @@ var Application = function Application(server) {
     notify.connecting.start();
     this.server.connect();
     this.addRecentMessages();
-  },
-  onSend: function(event) {
-    "use strict";
-    event.stopPropagation();
-    var message,
-        userId,
-        button = $(event.target);
-    if ('' === (message = this.dom.textarea.val())) {
-      return false;
-    }
-    if (undefined === (userId = button.attr('data-private'))) {
-      this.server.send(message);
-    } else {
-      this.server.sendPrivate(userId, message);
-    }
-    this.dom.textarea.val('').focus();
-    return false;
   },
   onConnect: function(event) {
     "use strict";
@@ -987,8 +969,80 @@ var Application = function Application(server) {
     "use strict";
     notify.error(tr(error));
   },
-  updateUser: function() {
+  onPrivateClick: function(event) {
     "use strict";
+    var userId = $(event.target).attr('data-private');
+    this.send.setPrivate(userId);
+  }
+}, {});
+var SendBehavior = function SendBehavior(chat) {
+  "use strict";
+  this.chat = chat;
+  this.dom = {
+    sendButtons: $('[data-action="send"]'),
+    sendButton: $('#send'),
+    privateButton: $('#private'),
+    privateGroup: $('#privateGroup'),
+    closeButton: $('[data-action="close"]')
+  };
+  this.chat.dom.textarea.bind('keydown', 'return', $.proxy(this.onSend, this));
+  this.dom.sendButtons.on('click.send', $.proxy(this.onSend, this));
+  this.dom.closeButton.on('click.close', $.proxy(this.onClosePrivate, this));
+};
+($traceurRuntime.createClass)(SendBehavior, {
+  onSend: function(event) {
+    "use strict";
+    event.stopPropagation();
+    var isPrivate,
+        message,
+        userId,
+        button;
+    if (event.type === 'keydown') {
+      isPrivate = this.dom.privateButton.hasClass('primary');
+    } else {
+      button = $(event.target);
+      isPrivate = button.attr('id') === 'private';
+      if (isPrivate) {
+        this.dom.sendButton.removeClass('primary');
+        this.dom.privateButton.addClass('primary');
+      } else {
+        this.dom.sendButton.addClass('primary');
+        this.dom.privateButton.removeClass('primary');
+      }
+    }
+    if ('' === (message = this.chat.dom.textarea.val())) {
+      return false;
+    }
+    if (!isPrivate) {
+      this.chat.server.send(message);
+    } else {
+      userId = this.dom.privateButton.attr('data-user');
+      this.chat.server.sendPrivate(userId, message);
+    }
+    this.chat.dom.textarea.val('').focus();
+    return false;
+  },
+  onClosePrivate: function(event) {
+    "use strict";
+    event.stopPropagation();
+    this.dom.privateGroup.hide();
+    this.dom.sendButton.addClass('primary');
+    this.chat.dom.textarea.focus();
+    return false;
+  },
+  setPrivate: function(userId) {
+    "use strict";
+    var user = window.users.getUser(userId);
+    if (user) {
+      var profile = new UserProfileView(user);
+      profile.element().hide();
+      this.dom.privateButton.text(user.name);
+      this.dom.privateButton.attr('data-user', user.id);
+      this.dom.sendButton.removeClass('primary');
+      this.dom.privateButton.addClass('primary');
+      this.dom.privateGroup.show();
+      this.chat.dom.textarea.focus();
+    }
   }
 }, {});
 

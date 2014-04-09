@@ -9,7 +9,7 @@
     </div>
     <div class="popover-content">
         <div class="buttons">
-            <button>{{ 'Send private message'|trans() }}</button>
+            <button data-private="[user.id]">{{ 'Send private message'|trans() }}</button>
         </div>
         {% if app.isModerator() %}
             <div class="buttons">

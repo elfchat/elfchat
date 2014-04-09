@@ -10,7 +10,7 @@
         <header>
             ElfChat
             <div class="buttons">
-                <a class="button" target="_blank" href="#">{{ 'Archive'|trans() }}</a>
+                <!--<a class="button" target="_blank" href="#">{{ 'Archive'|trans() }}</a>-->
                 <button data-popover="settings">{{ 'Settings'|trans() }}</button>
             </div>
         </header>
@@ -24,10 +24,10 @@
             <div class="buttons">
                 <button data-popover="emotions">{{ 'Emotions'|trans() }}</button>
                 <div class="send">
-                    <div class="button-group">
-                        <button data-action="send">{{ 'Elfet '|trans() }}</button><button data-action="close">✘</button>
+                    <div id="privateGroup" class="button-group" style="display: none">
+                        <button id="private" data-action="send" data-user=""></button><button data-action="close">✘</button>
                     </div>
-                    <button class="primary" data-action="send">{{ 'Send'|trans() }}</button>
+                    <button id="send" class="primary" data-action="send">{{ 'Send'|trans() }}</button>
                 </div>
             </div>
 
