@@ -47,10 +47,15 @@ class Ajax extends Controller
         // Message queue workflow.
 
         $last = (int)$this->request->get('last', 0);
-        $queue = Queue::poll($last, $this->app->user()->id, $last === 0 ? 1 : 10);
+        $initFirstLoad = $last === 0;
+        $queue = Queue::poll($last, $this->app->user()->id, $initFirstLoad ? 1 : 10);
 
         if (!empty($queue)) {
             $last = $queue[0]->id;
+
+            if($initFirstLoad) {
+                $queue = array();
+            }
         } else {
             // Clear queue in one on hundred times.
             if (1 === rand(1, 100)) {
