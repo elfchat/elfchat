@@ -1,17 +1,60 @@
+<!doctype html>
+<htmL>
+<head>
+    <title>ElfChat Requirement</title>
+    <style>
+        body {
+            margin: 30px 200px;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .requirement {
+            color: #ff0000;
+        }
+
+        .recommendation {
+            color: #3749da;
+        }
+
+        .done {
+            color: #81ac2b;
+        }
+
+        a {
+            display: inline-block;
+            padding: 10px 30px;
+            margin: 10px;
+            font: inherit;
+            text-decoration: none;
+            border: solid 1px rgb(33, 134, 34);
+            border-radius: 5px;
+            color: rgb(255, 255, 255);
+            background-color: rgb(40, 182, 44);
+        }
+    </style>
+</head>
+<body>
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+// Based on Symfony Requirement
+$requirements = 0;
+
+function requirement($if, $text)
+{
+    global $requirements;
+    if (!$if) {
+        print "<div class='requirement'>$text</div>";
+        $requirements++;
+    }
+}
+
+function recommendation($if, $text)
+{
+    $if or print "<div class='recommendation'>$text</div>";
+}
 
 define('REQUIRED_PHP_VERSION', '5.3.3');
 
 $installedPhpVersion = phpversion();
-
-/**
- * Requirement
- */
 
 requirement(
     version_compare($installedPhpVersion, REQUIRED_PHP_VERSION, '>='),
@@ -27,15 +70,16 @@ requirement(
     'PHP version must not be 5.3.16 as ElfChat won\'t work properly with it'
 );
 
-$open = dirname(__DIR__) . '/open';
+$open = dirname(__DIR__) . '/app/open';
 requirement(
     is_writable($open),
     sprintf('%s directory must be writable', $open)
 );
 
-phpIniRequirement(
-    'date.timezone', true, false,
-    'date.timezone setting must be set');
+requirement(
+    !empty(ini_get('date.timezone')),
+    'date.timezone setting must be set in php.ini.'
+);
 
 requirement(
     function_exists('json_encode'),
@@ -94,10 +138,6 @@ if (class_exists('PDO')) {
     );
 }
 
-/**
- * Recommendations
- */
-
 recommendation(
     class_exists('Locale'),
     'Install and enable the <strong>intl</strong> extension.'
@@ -121,17 +161,11 @@ recommendation(
     'Install and enable a <strong>PHP accelerator</strong> like APC (highly recommended).'
 );
 
-phpIniRecommendation('short_open_tag', false);
+if ($requirements == 0) {
+    echo "<div class='done'>Everything is OK, you can continue with the installation.</div>";
+    echo "<a href='../'>Install</a>";
+}
 
-phpIniRecommendation('short_open_tag', false);
-
-phpIniRecommendation('magic_quotes_gpc', false, true);
-
-phpIniRecommendation('register_globals', false, true);
-
-phpIniRecommendation('session.auto_start', false);
-
-
-include __DIR__ . '/views/header.php';
-include __DIR__ . '/views/check.php';
-include __DIR__ . '/views/footer.php';
+?>
+</body>
+</htmL>
