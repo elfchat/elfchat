@@ -4,7 +4,8 @@ use \Rych\ByteSize\ByteSize;
 
 require __DIR__ . '/app/vendor/autoload.php';
 
-$zipName = 'ElfChat-Pro-6.0.0-BETA-1.zip';
+$version = '6.0.0-BETA-1';
+$zipName = "ElfChat-Pro-$version.zip";
 $zipFile = __DIR__ . '/' . $zipName;
 
 if (file_exists($zipFile)) {
@@ -20,13 +21,15 @@ $finder = new Symfony\Component\Finder\Finder();
 $finder->files()
     ->ignoreVCS(true)
     ->name('*')
-    ->exclude('app/open')
-    ->exclude('upload')
-    ->exclude('.gitignore')
-    ->exclude('composer.lock')
-    ->exclude('chmod')
-    ->exclude('build')
-    ->exclude('*.zip')
+    ->name('.htaccess')
+    ->notPath('app/open')
+    ->notPath('upload')
+    ->notName('.gitignore')
+    ->notName('composer.lock')
+    ->notName('chmod')
+    ->notName('build')
+    ->notName('*.zip')
+    ->notName('*.map')
     ->exclude('phpunit')
     ->exclude('Tests')
     ->exclude('test')
@@ -51,7 +54,7 @@ foreach ($finder as $file) {
 
 $zip->addEmptyDir('app/open');
 $zip->addEmptyDir('upload');
-$zip->setArchiveComment('(c) ElfChat ' . date('Y') . ' by Elfet');
+$zip->setArchiveComment("(c) ElfChat $version by Elfet\nSite: http://elfchat.net");
 
 $zip->close();
 
