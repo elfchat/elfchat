@@ -1,5 +1,6 @@
 <?php
 return array(
+    'installed' => false,
     'debug' => false,
     'cache' => 'filesystem',
     'locale' => 'en',

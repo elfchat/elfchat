@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %} &mdash; {{ 'ElfChat Installation'|trans() }}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    {% block style %}
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/common/common.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/common/alert.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/common/form.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/common/button.css') }}">
+        <style>
+           .installer {
+               margin: 50px 200px;
+           }
+        </style>
+    {% endblock %}
+    <script src="{{ asset('lib/vendor/jquery/jquery.min.js') }}"></script>
+</head>
+<body>
+<div class="installer">
+    <h1>{{ block('title') }}</h1>
+    {% block content %}
+    {% endblock %}
+</div>
+</body>
+</html>

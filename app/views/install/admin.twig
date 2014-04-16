@@ -1,0 +1,12 @@
+{% extends 'install/layout.twig' %}
+
+{% block title %}{{ 'Register'|trans() }}{% endblock %}
+
+{% block content %}
+    <form action="{{ url('install_admin') }}" method="post">
+        {{ form_widget(form) }}
+        <div class="actions">
+            <button type="submit" class="primary">{{ 'Register'|trans() }}</button>
+        </div>
+    </form>
+{% endblock %}

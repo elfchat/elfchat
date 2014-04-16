@@ -1,0 +1,9 @@
+{% extends 'install/layout.twig' %}
+
+{% block title %}{{ 'Installation error'|trans() }}{% endblock %}
+
+{% block content %}
+    <div class="alert alert-danger">
+        {{ message }}
+    </div>
+{% endblock %}

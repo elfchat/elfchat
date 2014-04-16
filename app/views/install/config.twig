@@ -1,0 +1,45 @@
+{% extends 'install/layout.twig' %}
+
+{% block title %}{{ 'Configuration'|trans() }}{% endblock %}
+
+{% block content %}
+    <form action="{{ url('install_configuration') }}" method="post">
+        {{ form_widget(form._token) }}
+        {{ form_row(form.locale) }}
+        {{ form_row(form.baseurl) }}
+        {{ form_row(form.database) }}
+        <fieldset class="database mysql">
+            <legend>{{ 'MySQL'|trans() }}</legend>
+            {{ form_row(form['mysql:host']) }}
+            {{ form_row(form['mysql:user']) }}
+            {{ form_row(form['mysql:password']) }}
+            {{ form_row(form['mysql:dbname']) }}
+        </fieldset>
+        <fieldset class="database sqlite">
+            <legend>{{ 'SQLite'|trans() }}</legend>
+            {{ form_row(form['sqlite:path']) }}
+            {{ form_row(form['sqlite:user']) }}
+            {{ form_row(form['sqlite:password']) }}
+        </fieldset>
+        <fieldset class="database postgres">
+            <legend>{{ 'PostgreSQL'|trans() }}</legend>
+            {{ form_row(form['postgres:host']) }}
+            {{ form_row(form['postgres:user']) }}
+            {{ form_row(form['postgres:password']) }}
+            {{ form_row(form['postgres:dbname']) }}
+        </fieldset>
+        <div class="actions">
+            <button type="submit" class="primary">{{ 'Next'|trans() }}</button>
+        </div>
+    </form>
+
+    <script>
+        var databaseChange = function () {
+            $('.database').hide();
+            var id = $('#form_database').val();
+            $('.' + id).show();
+        };
+        $('#form_database').change(databaseChange);
+        databaseChange();
+    </script>
+{% endblock %}

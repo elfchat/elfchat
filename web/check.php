@@ -162,8 +162,9 @@ recommendation(
 );
 
 if ($requirements == 0) {
+    file_put_contents($open . '/config.php', '<?php return array();');
     echo "<div class='done'>Everything is OK, you can continue with the installation.</div>";
-    echo "<a href='../'>Install</a>";
+    echo "<a href='../install'>Install</a>";
 }
 
 ?>

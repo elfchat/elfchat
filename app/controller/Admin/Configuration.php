@@ -31,14 +31,17 @@ class Configuration extends Controller
                 ),
                 'label' => 'Language',
             ))
-            ->add('baseurl')
-            ->add('remember_me:token')
-            ->add('mysql:host', 'text', array('label' => 'Host'))
-            ->add('mysql:user', 'text', array('label' => 'Database user'))
-            ->add('mysql:password', 'text', array('label' => 'Password', 'required' => false))
-            ->add('mysql:dbname', 'text', array('label' => 'Database name'))
-            ->add('server:host')
-            ->add('server:port')
+            ->add('baseurl', 'text', array('label' => 'Base URL'))
+            ->add('remember_me:token', 'text', array('label' => 'Remember me token'))
+            ->add('server:type', 'choice', array(
+                'choices' => array(
+                    'ajax' => 'Ajax Server',
+                    'websocket' => 'WebSocket Server',
+                ),
+                'label' => 'Server Type',
+            ))
+            ->add('server:host', 'text', array('label' => 'Server Host'))
+            ->add('server:port', 'text', array('label' => 'Server Port'))
             ->getForm();
 
         $form->handleRequest($this->request);

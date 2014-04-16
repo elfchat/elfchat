@@ -59,11 +59,11 @@ form ul.errors {
 }
 
 form fieldset {
-    border: none;
+    border: solid 1px #bababa;
     margin: 15px;
 }
 
 form legend {
     font-size: 18px;
-    margin-bottom: 15px;
+    margin-left: 20px;
 }

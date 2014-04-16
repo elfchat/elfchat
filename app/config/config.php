@@ -183,6 +183,7 @@ $app['security.role_hierarchy'] = array(
 
 $app['security.access_rules'] = array(
     array('^/admin', 'ROLE_ADMIN'),
+    array('^/install', 'ROLE_ADMIN'),
     array('^/moderator', 'ROLE_MODERATOR'),
     array('^/profile', 'ROLE_USER'),
     array('^/ajax', 'ROLE_GUEST'),
@@ -240,20 +241,23 @@ if ($app->isInstalled()) {
         return $app['security.middleware']->onRequest($request);
     });
 
+
     /**
      *  Session Handler
      */
 
-    $app['session.storage.handler'] = $app->share(function () use ($app) {
-        return new ElfChat\Session\DbalSessionHandler(
-            $app->entityManager()->getConnection(),
-            array(
-                'db_table' => 'elfchat_session',
-                'db_id_col' => 'id',
-                'db_data_col' => 'data',
-                'db_time_col' => 'time',
-            ));
-    });
+    if ($config->get('server.type') === 'websocket') {
+        $app['session.storage.handler'] = $app->share(function () use ($app) {
+            return new ElfChat\Session\DbalSessionHandler(
+                $app->entityManager()->getConnection(),
+                array(
+                    'db_table' => 'elfchat_session',
+                    'db_id_col' => 'id',
+                    'db_data_col' => 'data',
+                    'db_time_col' => 'time',
+                ));
+        });
+    }
 
 
     /**

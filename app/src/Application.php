@@ -52,7 +52,7 @@ class Application extends Silicone\Application
      */
     public function isInstalled()
     {
-        return is_readable($this['config.file']);
+        return $this->config()->get('installed', false);
     }
 
     /**
