@@ -85,6 +85,11 @@ $app['doctrine.paths'] = array(
     $app->getRootDir() . '/src/Entity',
 );
 
+// ElfChat Entities
+ElfChat\Entity\Entity::setEntityManagerFactory(function () use ($app) {
+    return $app['em'];
+});
+
 
 // Session
 $app->register(new Silex\Provider\SessionServiceProvider(), array(
@@ -180,6 +185,7 @@ $app['security.access_rules'] = array(
     array('^/admin', 'ROLE_ADMIN'),
     array('^/moderator', 'ROLE_MODERATOR'),
     array('^/profile', 'ROLE_USER'),
+    array('^/ajax', 'ROLE_GUEST'),
 
     // Next rule must be at the end of list,
     // otherwise access rules will not work.
@@ -230,7 +236,7 @@ if ($app->isInstalled()) {
      * Middleware
      */
 
-    $app->before(function ($request) use($app) {
+    $app->before(function ($request) use ($app) {
         return $app['security.middleware']->onRequest($request);
     });
 
@@ -247,6 +253,16 @@ if ($app->isInstalled()) {
                 'db_data_col' => 'data',
                 'db_time_col' => 'time',
             ));
+    });
+
+
+    /**
+     * Server
+     */
+    $app['server'] = $app->share(function () use ($app) {
+        return $app->config()->get('server.type') === 'ajax' ?
+            new ElfChat\Server\AjaxServer($app->user()) :
+            new ElfChat\Server\WebSocketServerProxy();
     });
 }
 

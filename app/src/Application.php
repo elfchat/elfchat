@@ -68,7 +68,6 @@ class Application extends Silicone\Application
         return $dir;
     }
 
-
     /**
      * @return \Symfony\Component\HttpFoundation\Request
      */
@@ -76,6 +75,7 @@ class Application extends Silicone\Application
     {
         return $this['request'];
     }
+
 
     /**
      * @return \Symfony\Component\HttpFoundation\Session\Session
@@ -134,6 +134,14 @@ class Application extends Silicone\Application
     public function cache()
     {
         return $this['doctrine.common.cache'];
+    }
+
+    /**
+     * @return \ElfChat\Server\ServerInterface
+     */
+    public function server()
+    {
+        return $this['server'];
     }
 
     public function isGranted($role)

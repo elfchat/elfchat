@@ -7,16 +7,14 @@
 
 namespace ElfChat\Server\Controller;
 
-use ElfChat\Server;
+use ElfChat\Server\WebSocketServer;
 use Guzzle\Http\Message\RequestInterface;
 
 class Kill extends Controller
 {
-    private $chat;
-
-    public function __construct(Server $chat)
+    public function isAllowed($role)
     {
-        $this->chat = $chat;
+        return $role === 'ROLE_MODERATOR';
     }
 
     public function action(RequestInterface $request)

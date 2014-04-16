@@ -22,12 +22,12 @@ class Remember
 
     public function encode($it)
     {
-        return serialize(array($it, $this->hash($it)));
+        return base64_encode(serialize(array($it, $this->hash($it))));
     }
 
     public function check($check)
     {
-        list($it, $hash) = unserialize($check);
+        list($it, $hash) = unserialize(base64_decode($check));
 
         if ($this->hash($it) === $hash) {
             $this->it = $it;

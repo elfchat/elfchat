@@ -7,6 +7,8 @@
 
 namespace ElfChat\Server\Controller;
 
+use ElfChat\Application;
+use ElfChat\Server\WebSocketServer;
 use Guzzle\Http\Message\RequestInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\Http\HttpServerInterface;
@@ -32,11 +34,32 @@ abstract class Controller implements HttpServerInterface
      */
     protected $request;
 
+    /**
+     * @var int
+     */
     protected $userId;
 
+    /**
+     * @var string
+     */
     protected $userRole;
 
+    protected $chat;
+
+    protected $app;
+
+    public function __construct(Application $app, WebSocketServer $chat)
+    {
+        $this->app = $app;
+        $this->chat = $chat;
+    }
+
     abstract public function action(RequestInterface $request);
+
+    public function isAllowed($role)
+    {
+        return true;
+    }
 
     function onOpen(ConnectionInterface $conn, RequestInterface $request = null)
     {
@@ -45,7 +68,7 @@ abstract class Controller implements HttpServerInterface
 
         $userData = $this->session->get('user');
 
-        if (count($userData) == 2 && is_int($userData[0])) {
+        if (count($userData) == 2 && is_int($userData[0]) && $this->isAllowed($userData[1])) {
             $this->userId = $userData[0];
             $this->userRole = $userData[1];
 

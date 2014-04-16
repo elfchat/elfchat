@@ -20,46 +20,50 @@ function format(message) {
 var AbstractServer = function AbstractServer() {
   "use strict";
   this.connected = false;
+  this.SYNCHRONIZE = 0;
+  this.USER_JOIN = 1;
+  this.USER_LEAVE = 2;
+  this.USER_UPDATE = 3;
   this.MESSAGE = 4;
   this.PRIVATE_MESSAGE = 5;
+  this.LOG = 6;
 };
 ($traceurRuntime.createClass)(AbstractServer, {
   connect: function() {
     "use strict";
   },
-  sendToServer: function(data) {
+  sendData: function() {
     "use strict";
   },
   send: function(text) {
     "use strict";
-    this.sendToServer(JSON.stringify([this.MESSAGE, text]));
+    this.sendData(JSON.stringify([this.MESSAGE, text]));
   },
   sendPrivate: function(userId, text) {
     "use strict";
-    this.sendToServer(JSON.stringify([this.PRIVATE_MESSAGE, userId, text]));
+    this.sendData(JSON.stringify([this.PRIVATE_MESSAGE, userId, text]));
   },
-  onData: function(receive) {
+  onData: function(json) {
     "use strict";
-    var json = JSON.parse(receive.data);
     var type = json[0];
     var data = json[1];
     switch (type) {
-      case 0:
+      case this.SYNCHRONIZE:
         this.onSynchronize(data);
         break;
-      case 1:
+      case this.USER_JOIN:
         this.onUserJoin(data);
         break;
-      case 2:
+      case this.USER_LEAVE:
         this.onUserLeave(data);
         break;
-      case 3:
+      case this.USER_UPDATE:
         this.onUserUpdate(data);
         break;
-      case 4:
+      case this.MESSAGE:
         this.onMessage(data);
         break;
-      case 6:
+      case this.LOG:
         this.onLog(data);
         break;
       default:
@@ -139,15 +143,58 @@ var $WebSocketServer = WebSocketServer;
       }
     });
     this.socket.onmessage = (function(receive) {
-      $__1.onData(receive);
+      $__1.onData(JSON.parse(receive.data));
     });
     this.onerror = (function(error) {
       $__1.onError(error.message);
     });
   },
-  sendToServer: function(data) {
+  sendData: function(data) {
     "use strict";
     this.socket.send(data);
+  }
+}, {}, AbstractServer);
+var AjaxServer = function AjaxServer(api, period) {
+  "use strict";
+  $traceurRuntime.superCall(this, $AjaxServer.prototype, "constructor", []);
+  this.api = api;
+  this.period = period;
+  this.interval = null;
+  this.last = 0;
+};
+var $AjaxServer = AjaxServer;
+($traceurRuntime.createClass)(AjaxServer, {
+  connect: function() {
+    "use strict";
+    var $__3 = this;
+    this.onConnect();
+    this.interval = setInterval((function() {
+      $.getJSON($__3.api.poll, {last: $__3.last}).done((function(data) {
+        if (!$__3.connected) {
+          $__3.onConnect();
+        }
+        $__3.last = data.last;
+        for (var $__5 = data.queue[Symbol.iterator](),
+            $__6; !($__6 = $__5.next()).done; ) {
+          var i = $__6.value;
+          {
+            $__3.onData(i);
+          }
+        }
+      })).fail((function(xhr, status) {
+        if ($__3.connected) {
+          $__3.onError(status);
+        }
+        $__3.onDisconnect();
+      }));
+    }), this.period);
+  },
+  sendData: function(data) {
+    "use strict";
+    var $__3 = this;
+    $.post(this.api.send, {data: data}).fail((function(xhr, status) {
+      $__3.onError(status);
+    }));
   }
 }, {}, AbstractServer);
 function Notify() {
@@ -406,9 +453,9 @@ var MessageView = function MessageView(message) {
   },
   filter: function(text) {
     "use strict";
-    for (var $__7 = window.chat.filters[Symbol.iterator](),
-        $__8; !($__8 = $__7.next()).done; ) {
-      var filter = $__8.value;
+    for (var $__11 = window.chat.filters[Symbol.iterator](),
+        $__12; !($__12 = $__11.next()).done; ) {
+      var filter = $__12.value;
       {
         text = filter.filter(text);
       }
@@ -488,9 +535,9 @@ var Users = function Users() {
   };
   this.users = {};
   $(window).on('synchronize', $.proxy(this.onSynchronize, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('user_update', $.proxy(this.onUserUpdate, this));
-  for (var $__10 = window.recent[Symbol.iterator](),
-      $__11; !($__11 = $__10.next()).done; ) {
-    var message = $__11.value;
+  for (var $__14 = window.recent[Symbol.iterator](),
+      $__15; !($__15 = $__14.next()).done; ) {
+    var message = $__15.value;
     {
       this.addUser(message.user);
     }
@@ -500,9 +547,9 @@ var Users = function Users() {
   onSynchronize: function(event, users) {
     "use strict";
     this.dom.users.html('');
-    for (var $__10 = users[Symbol.iterator](),
-        $__11; !($__11 = $__10.next()).done; ) {
-      var user = $__11.value;
+    for (var $__14 = users[Symbol.iterator](),
+        $__15; !($__15 = $__14.next()).done; ) {
+      var user = $__15.value;
       {
         this.addUser(user);
         this.dom.users.append(new UserView(user).render());
@@ -641,9 +688,9 @@ var EmotionTabs = function EmotionTabs(catalog) {
     for (var title in this.catalog)
       if (this.catalog.hasOwnProperty(title)) {
         var tab = this.catalog[title];
-        for (var $__13 = tab[Symbol.iterator](),
-            $__14; !($__14 = $__13.next()).done; ) {
-          var emotion = $__14.value;
+        for (var $__17 = tab[Symbol.iterator](),
+            $__18; !($__18 = $__17.next()).done; ) {
+          var emotion = $__18.value;
           {
             this.emotions.push(emotion);
             if (this.n >= this.pertab - 1) {
@@ -861,9 +908,9 @@ var EmotionFilter = function EmotionFilter(list) {
     var _this = this;
     var count = 0;
     text = text.replace(/&apos;/g, "'");
-    for (var $__16 = this.list[Symbol.iterator](),
-        $__17; !($__17 = $__16.next()).done; ) {
-      var row = $__17.value;
+    for (var $__20 = this.list[Symbol.iterator](),
+        $__21; !($__21 = $__20.next()).done; ) {
+      var row = $__21.value;
       {
         var regexp = row[0];
         var src = row[1];
@@ -891,6 +938,7 @@ var Application = function Application(server) {
   };
   $(window).on('connect', $.proxy(this.onConnect, this)).on('disconnect', $.proxy(this.onDisconnect, this)).on('message', $.proxy(this.onMessage, this)).on('log', $.proxy(this.onLog, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('error', $.proxy(this.onError, this));
   $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this)).on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this)).on('click.private', '[data-private]', $.proxy(this.onPrivateClick, this));
+  $('[data-action="bbcode"]').on('click.bbcode', $.proxy(this.onBBCodeClick, this));
   this.filters = [new BBCodeFilter(), new UriFilter(), new ImageFilter(), new EmotionFilter(EmotionList), new RestrictionFilter()];
   this.send = new SendBehavior(this);
 };
@@ -924,9 +972,9 @@ var Application = function Application(server) {
   },
   addRecentMessages: function() {
     "use strict";
-    for (var $__19 = window.recent[Symbol.iterator](),
-        $__20; !($__20 = $__19.next()).done; ) {
-      var message = $__20.value;
+    for (var $__23 = window.recent[Symbol.iterator](),
+        $__24; !($__24 = $__23.next()).done; ) {
+      var message = $__24.value;
       {
         this.addMessage(message);
       }
@@ -992,6 +1040,11 @@ var Application = function Application(server) {
     "use strict";
     var userId = $(event.target).attr('data-private');
     this.send.setPrivate(userId);
+  },
+  onBBCodeClick: function(event) {
+    "use strict";
+    var bbcode = $(event.target).attr('data-bbcode');
+    this.dom.textarea.insertAtCaret(bbcode);
   }
 }, {});
 var SendBehavior = function SendBehavior(chat) {

@@ -13,15 +13,21 @@ Admin Center: Админ-Центр
 Emotions: Смайлики
 Send: Отправить
 Send private message: Отправить личное сообщение
+Created: Создан
 
+Moderator Center: Модератор-Центр
+Moderator: Модератор
 Bans: Баны
 Add ban: Забанить
 Ban: Бан
 Ban %user%: Бан %user%
+Active: Активен
 User ID: ID Пользователя
 On how long: На сколько
 Reason: Причина
 Ban was deleted.: Бан был удалён.
+User %user% was banned for %time%.: Пользователь %user% забанен на %time%.
+"Reason: %reason%": "Причина: %reason%"
 
 One min: Одна минута
 5 min: 5 минут

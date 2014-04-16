@@ -7,8 +7,20 @@
 
 namespace ElfChat\Entity;
 
+use Doctrine\ORM\EntityManager;
+
 class Entity
 {
+    /**
+     * @var \Closure
+     */
+    static private $entityManagerFactory;
+
+    /**
+     * @var EntityManager
+     */
+    static private $entityManager;
+
     public function __get($name)
     {
         $methodName = 'get' . ucfirst($name);
@@ -25,4 +37,44 @@ class Entity
     {
         return property_exists($this, $name);
     }
-} 
+
+    final public function persist()
+    {
+        self::entityManager()->persist($this);
+    }
+
+    final public function save()
+    {
+        $this->persist($this);
+        self::flush($this);
+    }
+
+    final public function refresh()
+    {
+        self::entityManager()->refresh($this);
+    }
+
+    final public static function flush($entity = null)
+    {
+        self::entityManager()->flush($entity);
+    }
+
+    final public static function reference($id)
+    {
+        return self::entityManager()->getPartialReference(get_called_class(), $id);
+    }
+
+    final public static function entityManager()
+    {
+        if (self::$entityManager === null) {
+            self::$entityManager = self::$entityManagerFactory->__invoke();
+        }
+
+        return self::$entityManager;
+    }
+
+    final public static function setEntityManagerFactory(\Closure $factory)
+    {
+        self::$entityManagerFactory = $factory;
+    }
+}

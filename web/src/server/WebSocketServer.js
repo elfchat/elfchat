@@ -37,7 +37,7 @@ class WebSocketServer extends AbstractServer {
         };
 
         this.socket.onmessage = (receive) => {
-            this.onData(receive);
+            this.onData(JSON.parse(receive.data));
         };
 
         this.onerror = (error) => {
@@ -45,7 +45,7 @@ class WebSocketServer extends AbstractServer {
         };
     }
 
-    sendToServer(data) {
+    sendData(data) {
         this.socket.send(data);
     }
 }

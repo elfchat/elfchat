@@ -7,7 +7,7 @@
 
 namespace ElfChat\Form;
 
-use ElfChat\EventListener\PasswordEncoderSubscriber;
+use ElfChat\Form\EventListener\PasswordEncoderSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;

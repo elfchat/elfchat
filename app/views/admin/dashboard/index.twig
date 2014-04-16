@@ -11,42 +11,50 @@
 {% endblock %}
 
 {% block content %}
-    <div id="good" class="alert alert-info" style="display: none">
-        {{ 'All system operational.'|trans() }}
-    </div>
-    <div id="bad" class="alert alert-danger" style="display: none">
-        <strong>{{ 'Deamon does not response!'|trans() }}</strong>
-    </div>
-    <h3>{{ 'Memory Usage (in megabytes)'|trans() }}</h3>
-    <div id="memoryUsage"></div>
+    {% if app.config.get('server.type') == 'ajax' %}
+        <div id="good" class="alert alert-info">
+            {{ 'All system operational.'|trans() }}
+        </div>
+    {% else %}
+        <div id="good" class="alert alert-info" style="display: none">
+            {{ 'All system operational.'|trans() }}
+        </div>
+        <div id="bad" class="alert alert-danger" style="display: none">
+            <strong>{{ 'Deamon does not response!'|trans() }}</strong>
+        </div>
+        <h3>{{ 'Memory Usage (in megabytes)'|trans() }}</h3>
+        <div id="memoryUsage"></div>
+    {% endif %}
 {% endblock %}
 
 {% block script %}
     {{ parent() }}
-    <script src="{{ asset('/lib/flot/jquery.flot.min.js') }}"></script>
-    <script>
-        $.getJSON('http://{{ app.config.get('server.host') }}:{{ app.config.get('server.port') }}/memory_usage?callback=?', function (data) {
-            data = data.map(function (value, i) {
-                return [i, value];
-            });
-            var memoryUsage = $.plot('#memoryUsage', [
-                {
-                    color: '#adfe2f',
-                    shadowSize: 0,
-                    data: data,
-                    lines: {
-                        fill: true
+    {% if app.config.get('server.type') == 'websocket' %}
+        <script src="{{ asset('/lib/flot/jquery.flot.min.js') }}"></script>
+        <script>
+            $.getJSON('http://{{ app.config.get('server.host') }}:{{ app.config.get('server.port') }}/memory_usage?callback=?',function (data) {
+                data = data.map(function (value, i) {
+                    return [i, value];
+                });
+                var memoryUsage = $.plot('#memoryUsage', [
+                    {
+                        color: '#adfe2f',
+                        shadowSize: 0,
+                        data: data,
+                        lines: {
+                            fill: true
+                        }
                     }
-                }
-            ], {
-                xaxis: {
-                    show: false
-                }
+                ], {
+                    xaxis: {
+                        show: false
+                    }
+                });
+            }).fail(function () {
+                $('#bad').show();
+            }).done(function () {
+                $('#good').show();
             });
-        }).fail(function () {
-            $('#bad').show();
-        }).done(function () {
-            $('#good').show();
-        });
-    </script>
+        </script>
+    {% endif %}
 {% endblock %}

@@ -30,6 +30,9 @@ class Application {
             .on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this))
             .on('click.private', '[data-private]', $.proxy(this.onPrivateClick, this));
 
+        $('[data-action="bbcode"]')
+            .on('click.bbcode', $.proxy(this.onBBCodeClick, this));
+
         this.filters = [
             new BBCodeFilter(),
             new UriFilter(),
@@ -143,6 +146,11 @@ class Application {
     onPrivateClick(event) {
         var userId = $(event.target).attr('data-private');
         this.send.setPrivate(userId);
+    }
+
+    onBBCodeClick(event) {
+        var bbcode = $(event.target).attr('data-bbcode');
+        this.dom.textarea.insertAtCaret(bbcode);
     }
 }
 

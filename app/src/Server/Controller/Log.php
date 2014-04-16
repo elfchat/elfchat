@@ -7,19 +7,11 @@
 
 namespace ElfChat\Server\Controller;
 
-use ElfChat\Server;
+use ElfChat\Server\WebSocketServer;
 use Guzzle\Http\Message\RequestInterface;
 
 class Log extends Controller
 {
-    private $chat;
-
-    public function __construct(Server $chat)
-    {
-        $this->chat = $chat;
-    }
-
-
     public function action(RequestInterface $request)
     {
         $text = $request->getUrl(true)->getQuery()->get('text');

@@ -5,8 +5,9 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat;
+namespace ElfChat\Server;
 
+use ElfChat\Application;
 use ElfChat\Entity\Message;
 use ElfChat\Entity\User;
 use ElfChat\Repository\MessageRepository;
@@ -14,7 +15,7 @@ use ElfChat\Server\Protocol;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
-class Server implements MessageComponentInterface
+class WebSocketServer extends AbstractServer implements ServerInterface, MessageComponentInterface
 {
     /**
      * @var Application
@@ -31,6 +32,9 @@ class Server implements MessageComponentInterface
      */
     private $clients;
 
+    /**
+     * @param Application $app
+     */
     public function __construct(Application $app)
     {
         $this->app = $app;
@@ -38,6 +42,9 @@ class Server implements MessageComponentInterface
         $this->clients = array();
     }
 
+    /**
+     * @param ConnectionInterface $conn
+     */
     public function onOpen(ConnectionInterface $conn)
     {
         $users = $this->app->repository()->users();
@@ -72,6 +79,10 @@ class Server implements MessageComponentInterface
         }
     }
 
+    /**
+     * @param ConnectionInterface $from
+     * @param string $data
+     */
     public function onMessage(ConnectionInterface $from, $data)
     {
         $data = json_decode($data);
@@ -80,79 +91,61 @@ class Server implements MessageComponentInterface
             return;
         }
 
-        if ($data[0] === Protocol::MESSAGE && count($data) === 2) {
-            $this->onPublicMessage($from, $data[1]);
-        } else if ($data[0] === Protocol::PRIVATE_MESSAGE && count($data) === 3) {
-            $this->onPrivateMessage($from, $data[1], $data[2]);
+        $message = $this->onReceiveData($from->user, $data);
+        if (null !== $message) {
+            $this->em->detach($message);
         }
     }
 
-    private function onPublicMessage(ConnectionInterface $from, $text)
+    /**
+     * When we send to user private message, we need to send this message to author.
+     *
+     * @param User $user
+     * @param $forId
+     * @param $text
+     * @return Message
+     */
+    protected function privateMessage(User $user, $forId, $text)
     {
-        $em = $this->app->entityManager();
-        /** @var $user User */
-        $user = $from->user;
-
-        // Create message
-        $message = new Message();
-        $message->user = $user;
-        $message->datetime = new \DateTime();
-        $message->text = $text;
-
-        // And save it
-        $em->persist($message);
-        $em->flush();
-
-        $this->send(Protocol::message($message));
-
-        $em->detach($message);
+        $message = parent::privateMessage($user, $forId, $text);
+        $this->sendToUser($user->id, Protocol::message($message));
+        return $message;
     }
 
-    private function onPrivateMessage(ConnectionInterface $from, $userId, $text)
-    {
-        $em = $this->app->entityManager();
-        /** @var $user User */
-        $user = $from->user;
 
-        // Create message
-        $message = new Message();
-        $message->user = $user;
-        $message->for = $em->getPartialReference('ElfChat\Entity\User', $userId);
-        $message->datetime = new \DateTime();
-        $message->text = $text;
-
-        // And save it
-        $em->persist($message);
-        $em->flush();
-
-        $data = Protocol::message($message);
-        $this->sendToUser($user->id, $data);
-        if ($userId != $user->id) {
-            $this->sendToUser($userId, $data);
-        }
-
-        $em->detach($message);
-    }
-
+    /**
+     * @param ConnectionInterface $conn
+     */
     public function onClose(ConnectionInterface $conn)
     {
         $this->sendExclude($conn->user->id, Protocol::userLeave($conn->user));
         $this->detach($conn);
     }
 
+    /**
+     * @param ConnectionInterface $conn
+     * @param \Exception $e
+     */
     public function onError(ConnectionInterface $conn, \Exception $e)
     {
         $conn->close();
         $this->detach($conn);
     }
 
+    /**
+     * @param $data
+     */
     public function send($data)
     {
         foreach ($this->clients as $id => $conn) {
-            $conn->send($data);
+            $conn->send(json_encode($data));
         }
     }
 
+    /**
+     * @param $userId
+     * @param $data
+     */
     public function sendExclude($userId, $data)
     {
         foreach ($this->clients as $id => $conn) {
@@ -160,15 +153,19 @@ class Server implements MessageComponentInterface
                 continue;
             }
 
-            $conn->send($data);
+            $conn->send(json_encode($data));
         }
     }
 
+    /**
+     * @param $userId
+     * @param $data
+     */
     public function sendToUser($userId, $data)
     {
         if (isset($this->clients[$userId])) {
             $conn = $this->clients[$userId];
-            $conn->send($data);
+            $conn->send(json_encode($data));
         }
     }
 
@@ -204,21 +201,20 @@ class Server implements MessageComponentInterface
         return $this->em;
     }
 
+    /**
+     * @param $userId
+     */
     public function kill($userId)
     {
         $conn = $this->getClient($userId);
 
-        if(null !== $conn) {
+        if (null !== $conn) {
             $conn->close();
-            //$this->onClose($conn);
         }
     }
 
     public function log($text, $level = 'default')
     {
-        $this->send(Protocol::data(Protocol::LOG, array(
-            'text' => $text,
-            'level' => $level,
-        )));
+        $this->send(Protocol::log($text, $level));
     }
 }

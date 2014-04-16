@@ -29,11 +29,11 @@ class Protocol
     /**
      * @param int $type
      * @param mixed $data
-     * @return string
+     * @return array
      */
     public static function data($type, $data)
     {
-        return json_encode(array($type, $data));
+        return array($type, $data);
     }
 
     /**
@@ -69,6 +69,17 @@ class Protocol
         return self::data(
             self::MESSAGE,
             $message->exportWithUser()
+        );
+    }
+
+    public static function log($text, $level = 'default')
+    {
+        return self::data(
+            self::LOG,
+            array(
+                'text' => $text,
+                'level' => $level,
+            )
         );
     }
 }

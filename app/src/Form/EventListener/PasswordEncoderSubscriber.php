@@ -5,7 +5,7 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\EventListener;
+namespace ElfChat\Form\EventListener;
 
 use ElfChat\Entity\User;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

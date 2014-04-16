@@ -6,6 +6,12 @@
     // Config
     {% autoescape false %}
     window.config = {
+        server: {
+            type: '{{ app.config.get('server.type') }}',
+            host: '{{ app.config.get('server.host') }}',
+            port: {{ app.config.get('server.port') }},
+            interval: {{ app.config.get('server.interval') }}
+        },
         sound: {
             message: '{{ app.request.basePath }}/web/lib/media/sound/beep.mp3',
             join: '{{ app.request.basePath }}/web/lib/media/sound/online.mp3'
@@ -26,14 +32,21 @@
 
     // Application
     $(function () {
-        var server = new WebSocketServer('macbook.local', 1337);
+        {% if app.config.get('server.type') == 'ajax' %}
+        window.server = new AjaxServer({
+            poll: '{{ url('ajax_poll') }}',
+            send: '{{ url('ajax_send') }}'
+        }, window.config.server.interval);
+        {% else %}
+        window.server = new WebSocketServer(window.config.server.host, window.config.server.port);
+        {% endif %}
         window.scroll = new Scroll($('#chat'));
         window.sound = new Sound();
         window.notify = new Notify();
         window.sound = new Sound();
         window.users = new Users();
         window.emotion = new Emotion();
-        window.chat = new Application(server);
+        window.chat = new Application(window.server);
         window.chat.run();
     });
 </script>
@@ -51,4 +64,5 @@
 {# Popovers #}
 {% include 'chat/popover/emotion.twig' %}
 {% include 'chat/popover/settings.twig' %}
+{% include 'chat/popover/bbcode.twig' %}
 

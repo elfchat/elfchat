@@ -5,8 +5,10 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Controller\Admin;
+namespace ElfChat\Controller\Moderator;
 
+use Buzz\Browser;
+use Buzz\Client\Curl;
 use ElfChat\Controller;
 use ElfChat\Entity\Ban;
 use ElfChat\Entity\User;
@@ -17,7 +19,7 @@ use Symfony\Component\Validator\Constraints\DateTime;
 /**
  * @Route("/moderator/ban")
  */
-class BanController extends Controller
+class Bans extends Controller
 {
     /**
      * @Route("", name="moderator_bans")
@@ -27,12 +29,12 @@ class BanController extends Controller
         $bans = $this->app->repository()->bans()->findAll();
         return $this->render('moderator/ban/index.twig', array(
             'bans' => $bans,
-            'howLongChoices' => BanType::howLongChoices(),
+            'howLongChoices' => Ban::howLongChoices(),
         ));
     }
 
     /**
-     * @Route("/add", name="moderator_add_ban")
+     * @Route("/add", name="add_ban")
      */
     public function addBan()
     {
@@ -41,7 +43,7 @@ class BanController extends Controller
         $user = null;
         if ($id = $this->request->get('id')) {
             if ($user = $this->app->repository()->users()->find($id)) {
-                $ban->setUser($user);
+                $ban->user = $user;
             }
         }
 
@@ -52,10 +54,50 @@ class BanController extends Controller
         if ($form->isValid()) {
             $em = $this->app->entityManager();
             $ban = $form->getData();
-            $ban->setCreated(new \DateTime());
-            $ban->setAuthor($this->app->user());
+
+            $ban->created = time();
+            $ban->author = $this->app->user();
+
             $em->persist($ban);
             $em->flush();
+
+            if (null !== $ban->user) {
+                $browser = new Browser(new Curl());
+                $response = $browser->get(
+                    'http://' .
+                    $this->app->config()->get('server.host') .
+                    ':' .
+                    $this->app->config()->get('server.port') .
+                    '/kill?userId=' .
+                    $ban->user->id,
+                    array(
+                        'Cookie' => $this->app->request()->headers->get('Cookie')
+                    )
+                );
+
+                $log = $this->app->trans('User %user% was banned for %time%.', array(
+                    '%user%' => $ban->user->name,
+                    '%time%' => $this->app->trans($ban->getHowLongString()),
+                ));
+
+                if ($ban->reason != '') {
+                    $log .= ' ' . $this->app->trans('Reason: %reason%', array(
+                            '%reason%' => $ban->reason,
+                        ));
+                }
+
+                $response = $browser->get(
+                    'http://' .
+                    $this->app->config()->get('server.host') .
+                    ':' .
+                    $this->app->config()->get('server.port') .
+                    '/log?level=danger&text=' .
+                    urlencode($log),
+                    array(
+                        'Cookie' => $this->app->request()->headers->get('Cookie')
+                    )
+                );
+            }
 
             return $this->app->redirect($this->app->url('moderator_bans'));
         }
@@ -67,11 +109,11 @@ class BanController extends Controller
     }
 
     /**
-     * @Route("/remove/{id}", name="moderator_remove_ban", requirements={"id": "\d+"})
+     * @Route("/remove/{id}", name="remove_ban", requirements={"id": "\d+"})
      */
     public function removeBan($id)
     {
-        if($ban = $this->app->repository()->bans()->find($id)) {
+        if ($ban = $this->app->repository()->bans()->find($id)) {
             $this->app->entityManager()->remove($ban);
             $this->app->entityManager()->flush();
             $this->app->session()->getFlashBag()->add('success', $this->app->trans('Ban was deleted.'));

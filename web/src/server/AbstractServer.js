@@ -8,54 +8,65 @@ class AbstractServer {
     constructor() {
         this.connected = false;
 
-        // Consts from ElfChat\Server\Protocol:
+        // From ElfChat\Server\Protocol:
+
+        this.SYNCHRONIZE = 0;
+
+        this.USER_JOIN = 1;
+
+        this.USER_LEAVE = 2;
+
+        this.USER_UPDATE = 3;
+
         this.MESSAGE = 4;
+
         this.PRIVATE_MESSAGE = 5;
+
+        this.LOG = 6;
     }
 
     connect() {
         // You need to implement this.
     }
 
-    sendToServer(data) {
+    sendData() {
         // You need to implement this.
     }
 
     send(text) {
-        this.sendToServer(JSON.stringify([this.MESSAGE, text]));
+        this.sendData(JSON.stringify([this.MESSAGE, text]));
     }
 
     sendPrivate(userId, text) {
-        this.sendToServer(JSON.stringify([this.PRIVATE_MESSAGE, userId, text]));
+        this.sendData(JSON.stringify([this.PRIVATE_MESSAGE, userId, text]));
     }
 
-    onData(receive) {
-        var json = JSON.parse(receive.data);
+    onData(json) {
         var type = json[0];
         var data = json[1];
 
         switch (type) {
-            case 0:
+            case this.SYNCHRONIZE:
                 this.onSynchronize(data);
                 break;
 
-            case 1:
+            case this.USER_JOIN:
                 this.onUserJoin(data);
                 break;
 
-            case 2:
+            case this.USER_LEAVE:
                 this.onUserLeave(data);
                 break;
 
-            case 3:
+            case this.USER_UPDATE:
                 this.onUserUpdate(data);
                 break;
 
-            case 4:
+            case this.MESSAGE:
                 this.onMessage(data);
                 break;
 
-            case 6:
+            case this.LOG:
                 this.onLog(data);
                 break;
 

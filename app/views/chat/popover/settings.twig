@@ -5,6 +5,9 @@
         {% if app.isAdmin() %}
             <li><a target="_blank" href="{{ url('admin') }}">{{ 'Admin Center'|trans() }}</a></li>
         {% endif %}
+        {% if app.isModerator() %}
+            <li><a target="_blank" href="{{ url('moderator_bans') }}">{{ 'Moderator Center'|trans() }}</a></li>
+        {% endif %}
         <li class="divider"></li>
         <li><a href={{ url('logout') }}>{{ 'Logout'|trans() }}</a></li>
     </ul>

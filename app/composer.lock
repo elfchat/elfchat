@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "4fbdd52ae7bd86c2badc0856130909bd",
+    "hash": "f6ca8dd676b226352362a410bd3da668",
     "packages": [
         {
             "name": "cboden/ratchet",
@@ -743,6 +743,53 @@
                 "zf2"
             ],
             "time": "2013-12-04 14:19:30"
+        },
+        {
+            "name": "gabrielelana/graceful-death",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gabrielelana/graceful-death.git",
+                "reference": "d3fe62695d53e7d0ca7032b4036a13350467999e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gabrielelana/graceful-death/zipball/d3fe62695d53e7d0ca7032b4036a13350467999e",
+                "reference": "d3fe62695d53e7d0ca7032b4036a13350467999e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gabriele Lana",
+                    "email": "gabriele.lana@gmail.com"
+                }
+            ],
+            "description": "Library that let you catch fatal errors",
+            "homepage": "https://github.com/gabrielelana/graceful-death",
+            "keywords": [
+                "catch",
+                "error",
+                "fatal",
+                "register_shutdown_function",
+                "try"
+            ],
+            "time": "2014-04-11 17:13:29"
         },
         {
             "name": "guzzle/common",
@@ -3278,7 +3325,8 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "silex/web-profiler": 20
+        "silex/web-profiler": 20,
+        "gabrielelana/graceful-death": 20
     },
     "platform": {
         "php": ">=5.3.0"

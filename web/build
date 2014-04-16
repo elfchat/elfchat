@@ -21,6 +21,7 @@ lib/vendor/howler/howler.min.js \
 --script src/Helpers.js \
 --script src/Server/AbstractServer.js \
 --script src/Server/WebSocketServer.js \
+--script src/Server/AjaxServer.js \
 --script src/Notify.js \
 --script src/Sound.js \
 --script src/Scroll.js \

@@ -5,8 +5,10 @@ return array(
     'locale' => 'en',
     'baseurl' => 'http://localhost',
     'server' => array(
+        'type' => 'ajax',
         'host' => 'localhost',
         'port' => 1337,
+        'interval' => 2000,
     ),
     'database' => 'mysql',
     'mysql' =>

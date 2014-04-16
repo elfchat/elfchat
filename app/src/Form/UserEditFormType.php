@@ -8,7 +8,7 @@
 namespace ElfChat\Form;
 
 use ElfChat\Entity\User;
-use ElfChat\EventListener\PasswordEncoderSubscriber;
+use ElfChat\Form\EventListener\PasswordEncoderSubscriber;
 use Silex\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
