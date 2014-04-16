@@ -262,7 +262,10 @@ if ($app->isInstalled()) {
     $app['server'] = $app->share(function () use ($app) {
         return $app->config()->get('server.type') === 'ajax' ?
             new ElfChat\Server\AjaxServer($app->user()) :
-            new ElfChat\Server\WebSocketServerProxy();
+            new ElfChat\Server\WebSocketServerProxy(
+                'http://' . $app->config()->get('server.host') . ':' . $app->config()->get('server.port'),
+                $app->request()->headers->get('Cookie')
+            );
     });
 }
 
