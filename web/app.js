@@ -160,6 +160,7 @@ var AjaxServer = function AjaxServer(api, period) {
   this.api = api;
   this.period = period;
   this.interval = null;
+  this.pulling = false;
   this.last = 0;
 };
 var $AjaxServer = AjaxServer;
@@ -169,26 +170,37 @@ var $AjaxServer = AjaxServer;
     var $__3 = this;
     this.onConnect();
     this.interval = setInterval((function() {
-      $.getJSON($__3.api.poll, {last: $__3.last}).done((function(data) {
-        if (!$__3.connected) {
-          $__3.onConnect();
-        }
-        $__3.last = data.last;
-        for (var $__5 = data.queue[Symbol.iterator](),
-            $__6; !($__6 = $__5.next()).done; ) {
-          var i = $__6.value;
-          {
-            $__3.onData(i);
-          }
-        }
-      })).fail((function(xhr, status) {
-        if ($__3.connected) {
-          $__3.onError(status);
-        }
-        $__3.onDisconnect();
-        window.location.reload();
-      }));
+      $__3.pull();
     }), this.period);
+  },
+  pull: function() {
+    "use strict";
+    var $__3 = this;
+    if (this.pulling) {
+      return;
+    }
+    this.pulling = true;
+    $.getJSON(this.api.poll, {last: this.last}).done((function(data) {
+      if (!$__3.connected) {
+        $__3.onConnect();
+      }
+      $__3.last = data.last;
+      for (var $__5 = data.queue[Symbol.iterator](),
+          $__6; !($__6 = $__5.next()).done; ) {
+        var i = $__6.value;
+        {
+          $__3.onData(i);
+        }
+      }
+    })).fail((function(xhr, status) {
+      if ($__3.connected) {
+        $__3.onError(status);
+      }
+      $__3.onDisconnect();
+      window.location.reload();
+    })).always((function() {
+      $__3.pulling = false;
+    }));
   },
   onConnect: function() {
     "use strict";
@@ -198,7 +210,9 @@ var $AjaxServer = AjaxServer;
   sendData: function(data) {
     "use strict";
     var $__3 = this;
-    $.post(this.api.send, {data: data}).fail((function(xhr, status) {
+    $.post(this.api.send, {data: data}).done((function() {
+      $__3.pull();
+    })).fail((function(xhr, status) {
       $__3.onError(status);
     }));
   },
