@@ -61,7 +61,7 @@ $runable = function () {
     $ratchet->run();
 };
 
-if (false && extension_loaded('pcntl')) {
+if (extension_loaded('pcntl')) {
     GracefulDeath::around($runable)
         ->reanimationPolicy(function () {
             return true;
