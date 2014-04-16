@@ -139,6 +139,11 @@ if (class_exists('PDO')) {
 }
 
 recommendation(
+    !extension_loaded('xdebug'),
+    'Disable XDebug on production for performance.'
+);
+
+recommendation(
     class_exists('Locale'),
     'Install and enable the <strong>intl</strong> extension.'
 );
