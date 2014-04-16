@@ -31,7 +31,7 @@ class Ajax extends Controller
         if (empty($online)) {
             $online = new Online();
             $online->user = $this->app->user();
-            $this->app->server()->send(Protocol::userJoin($this->app->user()));
+            $this->app->server()->send($userJoin = Protocol::userJoin($this->app->user()));
         }
 
         $online->updateTime();
@@ -62,6 +62,10 @@ class Ajax extends Controller
         $queue = array_reverse(array_map(function ($q) {
             return $q->data;
         }, $queue));
+
+        if(isset($userJoin)) {
+            $queue = array($userJoin);
+        }
 
         return $this->app->json(array('last' => (int)$last, 'queue' => $queue));
     }

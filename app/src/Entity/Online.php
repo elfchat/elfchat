@@ -58,7 +58,7 @@ class Online extends Entity
      * @param int $timeout Timeout in seconds.
      * @return Online[]
      */
-    public static function users($timeout = 10)
+    public static function users($timeout = 30)
     {
         $dql = '
         SELECT o FROM ElfChat\Entity\Online o JOIN o.user u WHERE :now < o.time + :timeout
