@@ -21,7 +21,6 @@ $finder = new Symfony\Component\Finder\Finder();
 $finder->files()
     ->ignoreVCS(true)
     ->name('*')
-    ->name('.htaccess')
     ->notPath('app/open')
     ->notPath('upload')
     ->notName('.gitignore')
@@ -52,8 +51,12 @@ foreach ($finder as $file) {
     $zip->addFile($file->getRealPath(), $file->getRelativePathname());
 }
 
+$zip->addFile('.htaccess', __DIR__ . '/.htaccess');
+$zip->addFile('app/.htaccess', __DIR__ . '/app/.htaccess');
+
 $zip->addEmptyDir('app/open');
 $zip->addEmptyDir('upload');
+
 $zip->setArchiveComment("(c) ElfChat $version by Elfet\nSite: http://elfchat.net");
 
 $zip->close();
