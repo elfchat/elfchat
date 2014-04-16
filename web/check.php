@@ -76,8 +76,9 @@ requirement(
     sprintf('%s directory must be writable', $open)
 );
 
+$timezone = ini_get('date.timezone');
 requirement(
-    !empty(ini_get('date.timezone')),
+    !empty($timezone),
     'date.timezone setting must be set in php.ini.'
 );
 
@@ -99,6 +100,11 @@ requirement(
 requirement(
     function_exists('token_get_all'),
     'Install and enable the <strong>Tokenizer</strong> extension.'
+);
+
+requirement(
+    extension_loaded('fileinfo'),
+    'Install and enable the <strong>Fileinfo</strong> extension.'
 );
 
 if (function_exists('apc_store') && ini_get('apc.enabled')) {

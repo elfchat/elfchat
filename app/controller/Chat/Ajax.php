@@ -63,7 +63,7 @@ class Ajax extends Controller
             return $q->data;
         }, $queue));
 
-        return $this->app->json(['last' => (int)$last, 'queue' => $queue]);
+        return $this->app->json(array('last' => (int)$last, 'queue' => $queue));
     }
 
     /**
@@ -73,7 +73,7 @@ class Ajax extends Controller
     {
         $data = json_decode($this->request->request->get('data'));
 
-        if (null === json_last_error_msg() || !is_array($data) || count($data) < 0) {
+        if (JSON_ERROR_NONE !== json_last_error() || !is_array($data) || count($data) < 0) {
             return $this->app->json(false);
         }
 
@@ -93,7 +93,7 @@ class Ajax extends Controller
      */
     public function synchronize()
     {
-        $users = [];
+        $users = array();
         foreach (Online::users() as $online) {
             $users[] = $online->user->export();
         }

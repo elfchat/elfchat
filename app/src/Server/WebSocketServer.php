@@ -87,7 +87,7 @@ class WebSocketServer extends AbstractServer implements ServerInterface, Message
     {
         $data = json_decode($data);
 
-        if (null === json_last_error_msg() || !is_array($data) || count($data) < 0) {
+        if (JSON_ERROR_NONE !== json_last_error() || !is_array($data) || count($data) < 0) {
             return;
         }
 

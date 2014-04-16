@@ -20,7 +20,7 @@ use ElfChat\Validator\Constraints\Unique;
  *
  * @ORM\Entity(repositoryClass="ElfChat\Repository\UserRepository")
  * @ORM\Table("elfchat_user", indexes={
- *     @ORM\index(name="name_idx", columns={"name"})
+ *     @ORM\Index(name="name_idx", columns={"name"})
  * })
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")

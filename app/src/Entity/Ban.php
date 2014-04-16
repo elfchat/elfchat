@@ -21,8 +21,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Entity(repositoryClass="ElfChat\Repository\BanRepository")
  * @ORM\Table("elfchat_ban", indexes={
- *     @ORM\index(name="ip_idx", columns={"ip"}),
- *     @ORM\index(name="user_idx", columns={"user_id"})
+ *     @ORM\Index(name="ip_idx", columns={"ip"}),
+ *     @ORM\Index(name="user_idx", columns={"user_id"})
  * })
  */
 class Ban extends Entity
