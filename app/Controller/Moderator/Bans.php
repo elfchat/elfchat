@@ -62,18 +62,7 @@ class Bans extends Controller
             $em->flush();
 
             if (null !== $ban->user) {
-                $browser = new Browser(new Curl());
-                $response = $browser->get(
-                    'http://' .
-                    $this->app->config()->get('server.host') .
-                    ':' .
-                    $this->app->config()->get('server.port') .
-                    '/kill?userId=' .
-                    $ban->user->id,
-                    array(
-                        'Cookie' => $this->app->request()->headers->get('Cookie')
-                    )
-                );
+                $this->app->server()->kill($ban->user->id);
 
                 $log = $this->app->trans('User %user% was banned for %time%.', array(
                     '%user%' => $ban->user->name,
@@ -86,17 +75,7 @@ class Bans extends Controller
                         ));
                 }
 
-                $response = $browser->get(
-                    'http://' .
-                    $this->app->config()->get('server.host') .
-                    ':' .
-                    $this->app->config()->get('server.port') .
-                    '/log?level=danger&text=' .
-                    urlencode($log),
-                    array(
-                        'Cookie' => $this->app->request()->headers->get('Cookie')
-                    )
-                );
+                $this->app->server()->log($log, 'danger');
             }
 
             return $this->app->redirect($this->app->url('moderator_bans'));
