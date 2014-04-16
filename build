@@ -1,0 +1,61 @@
+#!/usr/bin/env php
+<?php
+use \Rych\ByteSize\ByteSize;
+
+require __DIR__ . '/app/vendor/autoload.php';
+
+$zipName = 'ElfChat-Pro-6.0.0-BETA-1.zip';
+$zipFile = __DIR__ . '/' . $zipName;
+
+if (file_exists($zipFile)) {
+    unlink($zipFile);
+}
+
+$zip = new ZipArchive();
+if ($zip->open($zipFile, ZipArchive::CREATE) !== true) {
+    die("Can not open zip archive\n");
+}
+
+$finder = new Symfony\Component\Finder\Finder();
+$finder->files()
+    ->ignoreVCS(true)
+    ->name('*')
+    ->exclude('app/open')
+    ->exclude('upload')
+    ->exclude('.gitignore')
+    ->exclude('composer.lock')
+    ->exclude('chmod')
+    ->exclude('build')
+    ->exclude('*.zip')
+    ->exclude('phpunit')
+    ->exclude('Tests')
+    ->exclude('test')
+    ->exclude('tests')
+    ->exclude('bin')
+    ->in(__DIR__);
+
+$count = 0;
+
+/** @var $file \Symfony\Component\Finder\SplFileInfo */
+foreach ($finder as $file) {
+
+    $name = $file->getRelativePathname();
+    if(strlen($name) >= 70) {
+        $name = substr($name, 0, 33) . '...' . substr($name, -33);
+    }
+    echo "Add file: $name \n";
+    $count++;
+
+    $zip->addFile($file->getRealPath(), $file->getRelativePathname());
+}
+
+$zip->addEmptyDir('app/open');
+$zip->addEmptyDir('upload');
+$zip->setArchiveComment('(c) ElfChat ' . date('Y') . ' by Elfet');
+
+$zip->close();
+
+echo "\n=====================================================\n";
+echo "Zip archive created: $zipName\n";
+echo "Total files: " . $count . "\n";
+echo "Total size: " . ByteSize::formatMetric(filesize($zipFile)) . "\n";
