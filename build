@@ -51,8 +51,8 @@ foreach ($finder as $file) {
     $zip->addFile($file->getRealPath(), $file->getRelativePathname());
 }
 
-$zip->addFile('.htaccess', __DIR__ . '/.htaccess');
-$zip->addFile('app/.htaccess', __DIR__ . '/app/.htaccess');
+$zip->addFile(__DIR__ . '/.htaccess', '.htaccess');
+$zip->addFile(__DIR__ . '/app/.htaccess', 'app/.htaccess');
 
 $zip->addEmptyDir('app/open');
 $zip->addEmptyDir('upload');
