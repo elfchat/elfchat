@@ -35,7 +35,8 @@
         {% if app.config.get('server.type') == 'ajax' %}
         window.server = new AjaxServer({
             poll: '{{ url('ajax_poll') }}',
-            send: '{{ url('ajax_send') }}'
+            send: '{{ url('ajax_send') }}',
+            synchronize: '{{ url('ajax_synchronize') }}'
         }, window.config.server.interval);
         {% else %}
         window.server = new WebSocketServer(window.config.server.host, window.config.server.port);

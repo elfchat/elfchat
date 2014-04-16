@@ -49,6 +49,17 @@ class Entity
         self::flush($this);
     }
 
+    final public function delete()
+    {
+        $this->remove($this);
+        self::flush($this);
+    }
+
+    final public function remove()
+    {
+        self::entityManager()->remove($this);
+    }
+
     final public function refresh()
     {
         self::entityManager()->refresh($this);
@@ -62,6 +73,11 @@ class Entity
     final public static function reference($id)
     {
         return self::entityManager()->getPartialReference(get_called_class(), $id);
+    }
+
+    final public static function find($id)
+    {
+        return self::entityManager()->find(get_called_class(), $id);
     }
 
     final public static function entityManager()

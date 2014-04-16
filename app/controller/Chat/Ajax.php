@@ -24,20 +24,25 @@ class Ajax extends Controller
      */
     public function poll()
     {
-        // Online users list workflow.
-
+        // Make use "online"
         $online = Online::findUser($this->app->user()->id);
 
         // If user does not online, "connect" user to chat.
         if (empty($online)) {
             $online = new Online();
             $online->user = $this->app->user();
-
             $this->app->server()->send(Protocol::userJoin($this->app->user()));
         }
 
         $online->updateTime();
         $online->save();
+
+        // Check for online other users.
+        foreach(Online::offlineUsers() as $online) {
+            $this->app->server()->send(Protocol::userLeave($online->user));
+            $online->remove();
+        }
+        Online::flush();
 
         // Message queue workflow.
 
@@ -74,7 +79,7 @@ class Ajax extends Controller
 
         $server = $this->app->server();
 
-        if($server instanceof AjaxServer) {
+        if ($server instanceof AjaxServer) {
             $message = $server->onReceiveData($this->app->user(), $data);
 
             return $this->app->json($message !== null);
@@ -82,4 +87,17 @@ class Ajax extends Controller
 
         return $this->app->json(false);
     }
-} 
+
+    /**
+     * @Route("/synchronize", name="ajax_synchronize", methods="post")
+     */
+    public function synchronize()
+    {
+        $users = [];
+        foreach (Online::users() as $online) {
+            $users[] = $online->user->export();
+        }
+
+        return $this->app->json(Protocol::synchronize($users));
+    }
+}

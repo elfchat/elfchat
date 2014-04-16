@@ -75,7 +75,6 @@ class SecurityMiddleware
 </head>
 <body>
     <h1>You are banned for {$long[$ban->howLong]}</h1>
-    <strong>Reason:</strong><br>
     <pre>{$ban->reason}</pre>
 </body>
 </html>

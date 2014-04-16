@@ -39,9 +39,51 @@ class Online extends Entity
      */
     protected $time;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    protected $connected;
+
+    public function __construct()
+    {
+        $this->connected = new \DateTime();
+    }
+
     public function updateTime()
     {
         $this->time = time();
+    }
+
+    /**
+     * @param int $timeout Timeout in seconds.
+     * @return Online[]
+     */
+    public static function users($timeout = 10)
+    {
+        $dql = '
+        SELECT o FROM ElfChat\Entity\Online o JOIN o.user u WHERE :now < o.time + :timeout
+        ORDER BY o.connected DESC
+        ';
+        $query = self::entityManager()->createQuery($dql);
+        $query->setParameter('now', time());
+        $query->setParameter('timeout', $timeout);
+        return $query->getResult();
+    }
+
+
+    /**
+     * @param int $timeout Timeout in seconds.
+     * @return Online[]
+     */
+    public static function offlineUsers($timeout = 30)
+    {
+        $dql = '
+        SELECT o FROM ElfChat\Entity\Online o JOIN o.user u WHERE :now > o.time + :timeout
+        ';
+        $query = self::entityManager()->createQuery($dql);
+        $query->setParameter('now', time());
+        $query->setParameter('timeout', $timeout);
+        return $query->getResult();
     }
 
     /**

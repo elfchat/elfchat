@@ -32,14 +32,27 @@ class AjaxServer extends AbstractServer {
                         this.onError(status);
                     }
                     this.onDisconnect();
+                    window.location.reload();
                 });
         }, this.period);
+    }
+
+    onConnect() {
+        super.onConnect();
+        this.synchronize();
     }
 
     sendData(data) {
         $.post(this.api.send, {data})
             .fail((xhr, status) => {
                 this.onError(status);
+            });
+    }
+
+    synchronize() {
+        $.post(this.api.synchronize, 'json')
+            .done((data) => {
+                this.onData(data);
             });
     }
 }

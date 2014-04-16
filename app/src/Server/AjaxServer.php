@@ -52,13 +52,13 @@ class AjaxServer extends AbstractServer implements ServerInterface
 
     public function kill($userId)
     {
-        // TODO: Implement kill() method.
+        $this->send(Protocol::userLeave(User::find($userId)));
     }
 
     public function log($text, $level = 'default')
     {
         $queue = new Queue();
-        $queue->data = Protocol::log($this, $level);
+        $queue->data = Protocol::log($text, $level);
         $queue->save();
     }
 

@@ -194,14 +194,6 @@ class WebSocketServer extends AbstractServer implements ServerInterface, Message
     }
 
     /**
-     * @return \Doctrine\ORM\EntityManager
-     */
-    public function getEntityManager()
-    {
-        return $this->em;
-    }
-
-    /**
      * @param $userId
      */
     public function kill($userId)

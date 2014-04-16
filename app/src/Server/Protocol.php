@@ -37,6 +37,18 @@ class Protocol
     }
 
     /**
+     * @param $users
+     * @return array
+     */
+    public static function synchronize($users)
+    {
+        return self::data(
+            self::SYNCHRONIZE,
+            $users
+        );
+    }
+
+    /**
      * @param User $user
      * @return string
      */

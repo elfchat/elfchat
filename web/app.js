@@ -186,14 +186,27 @@ var $AjaxServer = AjaxServer;
           $__3.onError(status);
         }
         $__3.onDisconnect();
+        window.location.reload();
       }));
     }), this.period);
+  },
+  onConnect: function() {
+    "use strict";
+    $traceurRuntime.superCall(this, $AjaxServer.prototype, "onConnect", []);
+    this.synchronize();
   },
   sendData: function(data) {
     "use strict";
     var $__3 = this;
     $.post(this.api.send, {data: data}).fail((function(xhr, status) {
       $__3.onError(status);
+    }));
+  },
+  synchronize: function() {
+    "use strict";
+    var $__3 = this;
+    $.post(this.api.synchronize, 'json').done((function(data) {
+      $__3.onData(data);
     }));
   }
 }, {}, AbstractServer);

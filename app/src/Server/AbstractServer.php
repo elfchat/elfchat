@@ -40,7 +40,7 @@ abstract class AbstractServer implements ServerInterface
     {
         $message = new Message();
         $message->user = $user;
-        $message->for = User::reference($forId);
+        $message->for = User::find($forId);
         $message->datetime = new \DateTime();
         $message->text = $text;
         $message->save();
