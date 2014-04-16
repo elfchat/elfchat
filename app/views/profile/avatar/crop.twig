@@ -48,8 +48,6 @@
     {{ parent() }}
     <script src="{{ asset('lib/jcrop/jquery.Jcrop.min.js') }}"></script>
     <script>
-        var updateUserUrl = 'http://{{ app.config.get('server.host') }}:{{ app.config.get('server.port') }}/update_user?callback=?';
-
         $(function () {
             var avatar = $('#avatar');
             var preview = $('#preview');
@@ -82,9 +80,7 @@
                 var m = Math.min(avatar.width(), avatar.height()) - 10;
 
                 if (m <= 50) {
-                    $.getJSON(updateUserUrl, function (result) {
-                        window.location.href = '{{ url('profile_avatar') }}';
-                    });
+                    window.location.href = '{{ url('profile_update_user') }}';
                 }
 
                 avatar.Jcrop({
@@ -99,9 +95,7 @@
 
             button.click(function () {
                 $.post('{{ url('profile_avatar_crop') }}', cropSize, function () {
-                    $.getJSON(updateUserUrl, function (result) {
-                        window.location.href = '{{ url('profile_avatar') }}';
-                    });
+                    window.location.href = '{{ url('profile_update_user') }}';
                 });
             });
         });

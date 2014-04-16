@@ -49,7 +49,7 @@ class Profile extends Controller
     }
 
     /**
-     * @Route("/crop", methods="POST", name="profile_avatar_crop")
+     * @Route("/avatar/crop", methods="POST", name="profile_avatar_crop")
      */
     public function crop()
     {
@@ -72,6 +72,16 @@ class Profile extends Controller
         }
 
         return $this->app->json(true);
+    }
+
+    /**
+     * @Route("/update_user", methods="get", name="profile_update_user")
+     */
+    public function updateAvatar()
+    {
+        $this->app->server()->updateUser();
+
+        return $this->app->redirect($this->app->url('profile_avatar'));
     }
 
     /**

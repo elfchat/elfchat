@@ -55,4 +55,8 @@ class WebSocketServerProxy implements ServerInterface
         $this->get('/log', array('text' => $text, 'level' => $level));
     }
 
-} 
+    public function updateUser()
+    {
+        $this->get('/update_user');
+    }
+}

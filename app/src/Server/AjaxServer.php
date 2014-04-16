@@ -62,4 +62,8 @@ class AjaxServer extends AbstractServer implements ServerInterface
         $queue->save();
     }
 
-} 
+    public function updateUser()
+    {
+        $this->send(Protocol::userUpdate($this->user));
+    }
+}

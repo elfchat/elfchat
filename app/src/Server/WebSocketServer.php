@@ -209,4 +209,9 @@ class WebSocketServer extends AbstractServer implements ServerInterface, Message
     {
         $this->send(Protocol::log($text, $level));
     }
+
+    public function updateUser()
+    {
+        // Update user in WebSocketServer\Controller::updateUser
+    }
 }

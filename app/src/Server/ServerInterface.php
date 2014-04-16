@@ -18,4 +18,6 @@ interface ServerInterface
     public function kill($userId);
 
     public function log($text, $level = 'default');
+
+    public function updateUser();
 } 

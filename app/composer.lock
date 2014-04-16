@@ -750,12 +750,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/gabrielelana/graceful-death.git",
-                "reference": "d3fe62695d53e7d0ca7032b4036a13350467999e"
+                "reference": "c949a1e64ba2667321c198b4a77bab6d94890a3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gabrielelana/graceful-death/zipball/d3fe62695d53e7d0ca7032b4036a13350467999e",
-                "reference": "d3fe62695d53e7d0ca7032b4036a13350467999e",
+                "url": "https://api.github.com/repos/gabrielelana/graceful-death/zipball/c949a1e64ba2667321c198b4a77bab6d94890a3c",
+                "reference": "c949a1e64ba2667321c198b4a77bab6d94890a3c",
                 "shasum": ""
             },
             "require": {
@@ -789,7 +789,7 @@
                 "register_shutdown_function",
                 "try"
             ],
-            "time": "2014-04-11 17:13:29"
+            "time": "2014-04-16 16:08:54"
         },
         {
             "name": "guzzle/common",
