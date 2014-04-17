@@ -28,32 +28,41 @@ class Ajax extends Controller
         $online = Online::findUser($this->app->user()->id);
 
         // If user does not online, "connect" user to chat.
+        // First check if online entity exist, if not when create new one.
+        // If entity exist but in timeout, when send "user join" again.
+
         if (empty($online)) {
             $online = new Online();
             $online->user = $this->app->user();
+            $this->app->server()->send($userJoin = Protocol::userJoin($this->app->user()));
+        } else if ($online->isTimeout()) {
             $this->app->server()->send($userJoin = Protocol::userJoin($this->app->user()));
         }
 
         $online->updateTime();
         $online->save();
 
-        // Check for online other users.
-        foreach(Online::offlineUsers() as $online) {
+        // Time out other users.
+        foreach (Online::offlineUsers() as $online) {
             $this->app->server()->send(Protocol::userLeave($online->user));
             $online->remove();
         }
         Online::flush();
 
         // Message queue workflow.
+        // On first load user send last=0, and we need to send correct last queue id for him.
+        // If its first load poll only 1 entity - grab id of it and clear queue (message duplicate issue).
+        // Otherwise pull 10 entities, clear queue only if where are no messages pulled.
 
         $last = (int)$this->request->get('last', 0);
-        $initFirstLoad = $last === 0;
-        $queue = Queue::poll($last, $this->app->user()->id, $initFirstLoad ? 1 : 10);
+        $firstLoad = $last === 0;
+
+        $queue = Queue::poll($last, $this->app->user()->id, $firstLoad ? 1 : 10);
 
         if (!empty($queue)) {
             $last = $queue[0]->id;
 
-            if($initFirstLoad) {
+            if ($firstLoad) {
                 $queue = array();
             }
         } else {
@@ -63,12 +72,12 @@ class Ajax extends Controller
             }
         }
 
-        // Sort in correct direction and for convert to json format.
+        // Sort in correct direction and convert to json format.
         $queue = array_reverse(array_map(function ($q) {
             return $q->data;
         }, $queue));
 
-        if(isset($userJoin)) {
+        if (isset($userJoin)) {
             $queue = array($userJoin);
         }
 

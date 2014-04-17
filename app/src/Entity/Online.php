@@ -96,4 +96,9 @@ class Online extends Entity
             'user' => $userId,
         ));
     }
+
+    public function isTimeout($timeout = 30)
+    {
+        return time() > $this->time + $timeout;
+    }
 }
