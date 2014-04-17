@@ -1,7 +1,7 @@
 <?php
 /** @var $app \ElfChat\Application */
 
-$app['version'] = 'UNLIM 6.0.0 BETA 1';
+$app['version'] = ELFCHAT_VERSION . ' ' . ELFCHAT_EDITION;
 
 // Configuration
 

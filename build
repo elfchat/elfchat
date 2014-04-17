@@ -4,7 +4,7 @@ use \Rych\ByteSize\ByteSize;
 
 require __DIR__ . '/app/vendor/autoload.php';
 
-$version = '6.0.0-BETA-1';
+$version = '6.0.0 BETA 1';
 
 $unlim = new Symfony\Component\Finder\Finder();
 $unlim->files()
@@ -14,6 +14,7 @@ $unlim->files()
     ->notPath('upload')
     ->notName('.gitignore')
     ->notName('composer.lock')
+    ->notName('bootstrap.php')
     ->notName('chmod')
     ->notName('build')
     ->notName('*.zip')
@@ -25,9 +26,19 @@ $unlim->files()
     ->exclude('bin')
     ->in(__DIR__);
 
-$zipName = "ElfChat-Unlim-$version.zip";
+/**
+ * UNLIM edition build
+ */
+
+$edition = "UNLIM";
+$zipName = "ElfChat $version $edition.zip";
 $zipFile = __DIR__ . '/' . $zipName;
-createZip($unlim, $zipFile, $zipName, $version);
+createZip($unlim, $zipFile, $zipName, $version, $edition);
+
+
+/**
+ * PRO edition build
+ */
 
 $pro = clone $unlim;
 $pro->notName('server.php')
@@ -35,12 +46,20 @@ $pro->notName('server.php')
     ->notName('WebSocketServerProxy.php')
     ->notPath('WebSocketServer');
 
-$zipName = "ElfChat-Pro-$version.zip";
+$edition = "PRO";
+$zipName = "ElfChat $version $edition.zip";
 $zipFile = __DIR__ . '/' . $zipName;
-createZip($pro, $zipFile, $zipName, $version);
+createZip($pro, $zipFile, $zipName, $version, $edition);
 
-function createZip($finder, $zipFile, $zipName, $version, $showAdded = false)
+
+/**
+ * Build function
+ */
+
+function createZip($finder, $zipFile, $zipName, $version, $edition, $showAdded = false)
 {
+    echo "Start creating zip archive...\n";
+
     if (file_exists($zipFile)) {
         unlink($zipFile);
     }
@@ -66,17 +85,22 @@ function createZip($finder, $zipFile, $zipName, $version, $showAdded = false)
         $zip->addFile($file->getRealPath(), $file->getRelativePathname());
     }
 
+
+    $content = file_get_contents(__DIR__ . '/app/bootstrap.php');
+    $content = str_replace('__VERSION__', $version, $content);
+    $content = str_replace('__EDITION__', $edition, $content);
+    $zip->addFromString('app/bootstrap.php', $content);
+
     $zip->addFile(__DIR__ . '/.htaccess', '.htaccess');
     $zip->addFile(__DIR__ . '/app/.htaccess', 'app/.htaccess');
 
     $zip->addEmptyDir('app/open');
     $zip->addEmptyDir('upload');
 
-    $zip->setArchiveComment("(c) ElfChat $version by Elfet\nSite: http://elfchat.net");
+    $zip->setArchiveComment("(c) ElfChat $version $edition by Elfet");
 
     $zip->close();
 
-    echo "=====================================================\n";
     echo "Zip archive created: $zipName\n";
     echo "Total files: " . $count . "\n";
     echo "Total size: " . ByteSize::formatMetric(filesize($zipFile)) . "\n";

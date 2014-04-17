@@ -4,7 +4,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 $loader = require_once __DIR__ . '/vendor/autoload.php';
 
 Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
+
+define('ELFCHAT_VERSION', '__VERSION__');
+define('ELFCHAT_EDITION', '__EDITION__');
