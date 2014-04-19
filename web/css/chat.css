@@ -281,3 +281,30 @@ footer .buttons .send {
     color: #9b9b9b;
     font-size: 10px;
 }
+
+
+/*
+ * SmartPhones (portrait and landscape)
+ */
+
+@media only screen
+and (min-device-width : 320px)
+and (max-device-width : 480px) {
+    aside {
+        display: none;
+    }
+
+    footer {
+        left: 0;
+    }
+
+    .chat {
+        left: 0;
+    }
+
+    .copyright,
+    .copyright a ,
+    .copyright:first-letter {
+        font-size: 6px !important;
+    }
+}
