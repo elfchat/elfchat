@@ -6,8 +6,8 @@ require __DIR__ . '/app/vendor/autoload.php';
 
 $version = '6.0.0 BETA 1';
 
-$unlim = new Symfony\Component\Finder\Finder();
-$unlim->files()
+$finder = new Symfony\Component\Finder\Finder();
+$finder->files()
     ->ignoreVCS(true)
     ->name('*')
     ->notPath('app/open')
@@ -19,6 +19,7 @@ $unlim->files()
     ->notName('build')
     ->notName('*.zip')
     ->notName('*.map')
+    ->notName('LICENSE_*.htm')
     ->exclude('phpunit')
     ->exclude('Tests')
     ->exclude('test')
@@ -30,6 +31,8 @@ $unlim->files()
  * UNLIM edition build
  */
 
+$unlim = clone $finder;
+
 $edition = "UNLIM";
 $zipName = "ElfChat $version $edition.zip";
 $zipFile = __DIR__ . '/' . $zipName;
@@ -40,7 +43,7 @@ createZip($unlim, $zipFile, $zipName, $version, $edition);
  * PRO edition build
  */
 
-$pro = clone $unlim;
+$pro = clone $finder;
 $pro->notName('server.php')
     ->notName('WebSocketServer.php')
     ->notName('WebSocketServerProxy.php')
@@ -96,6 +99,12 @@ function createZip($finder, $zipFile, $zipName, $version, $edition, $showAdded =
 
     $zip->addEmptyDir('app/open');
     $zip->addEmptyDir('upload');
+
+    if($edition === 'UNLIM') {
+        $zip->addFile(__DIR__ . '/license/LICENSE_COMMERCIAL_USE.htm', 'LICENSE.htm');
+    } else {
+        $zip->addFile(__DIR__ . '/license/LICENSE_NO_COMMERCIAL_USE.htm', 'LICENSE.htm');
+    }
 
     $zip->setArchiveComment("(c) ElfChat $version $edition by Elfet");
 
