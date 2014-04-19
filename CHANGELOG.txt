@@ -1,0 +1,9 @@
+ElfChat 6.0.0 BETA 2,
+--------------------------------
+- Flood control
+- Mobile version
+- Fix FireFox box-sizing
+
+ElfChat 6.0.0 BETA 1, 2014-04-19
+--------------------------------
+- Initial release
