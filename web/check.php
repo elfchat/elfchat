@@ -76,6 +76,12 @@ requirement(
     sprintf('%s directory must be writable', $open)
 );
 
+$open = dirname(__DIR__) . '/upload';
+requirement(
+    is_writable($open),
+    sprintf('%s directory must be writable', $open)
+);
+
 $timezone = ini_get('date.timezone');
 requirement(
     !empty($timezone),

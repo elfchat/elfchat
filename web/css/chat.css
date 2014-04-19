@@ -279,6 +279,7 @@ footer .buttons .send {
     left: 5px;
     color: #9b9b9b;
     font-size: 10px;
+    z-index: 100;
 }
 
 .copyright:first-letter {
@@ -308,7 +309,7 @@ footer .buttons .send {
     }
 
     .buttons .other {
-        display: none;
+        display: none !important;
     }
 
     .copyright,
