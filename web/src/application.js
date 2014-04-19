@@ -15,7 +15,7 @@ class Application {
             body: $('body')
         };
 
-        $(window)
+        var $window = $(window)
             .on('connect', $.proxy(this.onConnect, this))
             .on('disconnect', $.proxy(this.onDisconnect, this))
             .on('message', $.proxy(this.onMessage, this))
@@ -42,6 +42,14 @@ class Application {
         ];
 
         this.send = new SendBehavior(this);
+
+        // Mobile
+        if ($window.width() < 480) {
+            var snapper = new Snap({
+                element: document.getElementById('chat'),
+                disable: 'right'
+            });
+        }
     }
 
     run() {
