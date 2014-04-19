@@ -144,7 +144,7 @@ class Application {
 
     onUsernameClick(event) {
         var name = $(event.target).attr('data-user-name');
-        this.dom.textarea.insertAtCaret(' ' + name + ' ');
+        this.dom.textarea.insertAtCaret('' + name + ', ');
     }
 
     onError(event, error) {
@@ -168,6 +168,7 @@ class SendBehavior {
         this.privateUserId = null;
         this.isPrivate = false;
         this.chat = chat;
+        this.flood = [];
         this.dom = {
             sendButtons: $('[data-action="send"]'),
             sendButton: $('#send'),
@@ -189,6 +190,17 @@ class SendBehavior {
     onSend(event) {
         event.stopPropagation();
         var message, userId, button;
+
+        // Flood: more than 10 messages in 15 seconds.
+        this.flood.push(new Date());
+        this.flood = this.flood.filter((date) => {
+            return new Date().getTime() < date.getTime() + 15 * 1000;
+        });
+        console.log(this.flood);
+        if (this.flood.length > 10) {
+            this.chat.addLog(tr('Flooding is prohibited.'), 'danger');
+            return false;
+        }
 
         if (event.type === 'keydown') {
         } else {

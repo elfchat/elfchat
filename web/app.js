@@ -1063,7 +1063,7 @@ var Application = function Application(server) {
   onUsernameClick: function(event) {
     "use strict";
     var name = $(event.target).attr('data-user-name');
-    this.dom.textarea.insertAtCaret(' ' + name + ' ');
+    this.dom.textarea.insertAtCaret('' + name + ', ');
   },
   onError: function(event, error) {
     "use strict";
@@ -1085,6 +1085,7 @@ var SendBehavior = function SendBehavior(chat) {
   this.privateUserId = null;
   this.isPrivate = false;
   this.chat = chat;
+  this.flood = [];
   this.dom = {
     sendButtons: $('[data-action="send"]'),
     sendButton: $('#send'),
@@ -1103,6 +1104,15 @@ var SendBehavior = function SendBehavior(chat) {
     var message,
         userId,
         button;
+    this.flood.push(new Date());
+    this.flood = this.flood.filter((function(date) {
+      return new Date().getTime() < date.getTime() + 15 * 1000;
+    }));
+    console.log(this.flood);
+    if (this.flood.length > 10) {
+      this.chat.addLog(tr('Flooding is prohibited.'), 'danger');
+      return false;
+    }
     if (event.type === 'keydown') {} else {
       button = $(event.target);
       if (button.attr('id') === 'private') {
