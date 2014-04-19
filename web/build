@@ -10,6 +10,7 @@ lib/vendor/jquery.scrollto/index.js \
 lib/vendor/jquery.hotkeys/jquery.hotkeys.js \
 lib/vendor/moment/moment.js \
 lib/insert-at-caret/insert.js \
+lib/snap.js/snap.min.js \
 lib/vendor/howler/howler.min.js \
 > lib/vendors.js
 

@@ -24,6 +24,7 @@ header {
     padding-left: 10px;
     padding-right: 10px;
     border-bottom: solid 1px #e1e1e1;
+    z-index: 20;
 }
 
 header .buttons {
@@ -53,6 +54,7 @@ aside {
     overflow-y: auto;
     background-color: #fff;
     border-right: solid 1px #e1e1e1;
+    z-index: 1;
 }
 
 aside .user {
@@ -86,6 +88,7 @@ aside .user .name {
     overflow-x: hidden;
     overflow-y: scroll;
     background: #ffffff;
+    z-index: 10;
 }
 
 .chat > div {
@@ -156,12 +159,13 @@ footer {
     background-color: #fff;
     border-top: solid 1px #e1e1e1;
     padding: 10px;
+    z-index: 20;
 }
 
 footer textarea {
     box-sizing: border-box;
     width: 100%;
-    height: 42px;
+    height: 45px;
     padding: 10px;
 
     font-family: inherit;
@@ -180,6 +184,10 @@ footer textarea:focus {
 
 footer .buttons {
     min-height: 35px;
+}
+
+footer .buttons .other {
+    display: inline-block;
 }
 
 footer .buttons .send {
@@ -241,7 +249,7 @@ footer .buttons .send {
 .profile .avatar {
     width: 64px;
     height: 64px;
-    box-shadow: 0 2px 2px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
     border-radius: 4px;
     background-color: #dadada;
 }
@@ -282,16 +290,12 @@ footer .buttons .send {
     font-size: 10px;
 }
 
-
 /*
  * SmartPhones (portrait and landscape)
  */
 
-@media only screen
-and (min-device-width : 320px)
-and (max-device-width : 480px) {
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
     aside {
-        display: none;
     }
 
     footer {
@@ -300,10 +304,15 @@ and (max-device-width : 480px) {
 
     .chat {
         left: 0;
+        border-left: solid 1px #e1e1e1;
+    }
+
+    .buttons .other {
+        display: none;
     }
 
     .copyright,
-    .copyright a ,
+    .copyright a,
     .copyright:first-letter {
         font-size: 6px !important;
     }
