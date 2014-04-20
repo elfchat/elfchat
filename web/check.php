@@ -179,7 +179,11 @@ recommendation(
 );
 
 if ($requirements == 0) {
-    file_put_contents($open . '/config.php', '<?php return array();');
+    $configFile = $open . '/config.php';
+    if (!file_exists($configFile)) {
+        file_put_contents($configFile, '<?php return array();');
+    }
+    
     echo "<div class='done'>Everything is OK, you can continue with the installation.</div>";
     echo "<a href='../install'>Install</a>";
 }

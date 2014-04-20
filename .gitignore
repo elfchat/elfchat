@@ -4,3 +4,4 @@ upload/
 .idea/
 .DS_Store
 *.dev
+*.zip
