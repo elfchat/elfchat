@@ -52,34 +52,51 @@ function recommendation($if, $text)
     $if or print "<div class='recommendation'>$text</div>";
 }
 
-define('REQUIRED_PHP_VERSION', '5.3.3');
+function isDirectoryWriteable($dir)
+{
+    $isWriteable = is_writable($dir);
+    if ($isWriteable) {
+        file_put_contents($writeCheck = $dir . '/check', '0');
+        if (file_exists($writeCheck)) {
+            unlink($writeCheck);
+        } else {
+            $isWriteable = false;
+        }
+    }
 
-$installedPhpVersion = phpversion();
+    return $isWriteable;
+}
+
+// Config
+define('REQUIRED_PHP_VERSION', '5.3.3');
+define('OPEN_DIR', dirname(dirname(__FILE__)) . '/app/open');
+define('UPLOAD_DIR', dirname(dirname(__FILE__)) . '/upload');
+define('INSTALLED_PHP_VERSION', phpversion());
 
 requirement(
-    version_compare($installedPhpVersion, REQUIRED_PHP_VERSION, '>='),
+    version_compare(INSTALLED_PHP_VERSION, REQUIRED_PHP_VERSION, '>='),
     sprintf(
         'You are running PHP version "<strong>%s</strong>", but ElfChat needs at least PHP "<strong>%s</strong>" to run.',
-        $installedPhpVersion,
+        INSTALLED_PHP_VERSION,
         REQUIRED_PHP_VERSION
     )
 );
 
 requirement(
-    version_compare($installedPhpVersion, '5.3.16', '!='),
+    version_compare(INSTALLED_PHP_VERSION, '5.3.16', '!='),
     'PHP version must not be 5.3.16 as ElfChat won\'t work properly with it'
 );
 
-$open = dirname(__DIR__) . '/app/open';
+
 requirement(
-    is_writable($open),
-    sprintf('%s directory must be writable', $open)
+    isDirectoryWriteable(OPEN_DIR),
+    sprintf('%s directory must be writable', OPEN_DIR)
 );
 
-$open = dirname(__DIR__) . '/upload';
+
 requirement(
-    is_writable($open),
-    sprintf('%s directory must be writable', $open)
+    isDirectoryWriteable(UPLOAD_DIR),
+    sprintf('%s directory must be writable', UPLOAD_DIR)
 );
 
 $timezone = ini_get('date.timezone');
@@ -114,7 +131,7 @@ requirement(
 );
 
 if (function_exists('apc_store') && ini_get('apc.enabled')) {
-    if (version_compare($installedPhpVersion, '5.4.0', '>=')) {
+    if (version_compare(INSTALLED_PHP_VERSION, '5.4.0', '>=')) {
         requirement(
             version_compare(phpversion('apc'), '3.1.13', '>='),
             'APC version must be at least 3.1.13 when using PHP 5.4'
@@ -179,11 +196,11 @@ recommendation(
 );
 
 if ($requirements == 0) {
-    $configFile = $open . '/config.php';
+    $configFile = OPEN_DIR . '/config.php';
     if (!file_exists($configFile)) {
         file_put_contents($configFile, '<?php return array();');
     }
-    
+
     echo "<div class='done'>Everything is OK, you can continue with the installation.</div>";
     echo "<a href='../install'>Install</a>";
 }
