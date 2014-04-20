@@ -38,35 +38,6 @@
 // Based on Symfony Requirement
 $requirements = 0;
 
-function requirement($if, $text)
-{
-    global $requirements;
-    if (!$if) {
-        print "<div class='requirement'>$text</div>";
-        $requirements++;
-    }
-}
-
-function recommendation($if, $text)
-{
-    $if or print "<div class='recommendation'>$text</div>";
-}
-
-function isDirectoryWriteable($dir)
-{
-    $isWriteable = is_writable($dir);
-    if ($isWriteable) {
-        file_put_contents($writeCheck = $dir . '/check', '0');
-        if (file_exists($writeCheck)) {
-            unlink($writeCheck);
-        } else {
-            $isWriteable = false;
-        }
-    }
-
-    return $isWriteable;
-}
-
 // Config
 define('REQUIRED_PHP_VERSION', '5.3.3');
 define('OPEN_DIR', dirname(dirname(__FILE__)) . '/app/open');
@@ -89,13 +60,13 @@ requirement(
 
 
 requirement(
-    isDirectoryWriteable(OPEN_DIR),
+    is_writable(OPEN_DIR),
     sprintf('%s directory must be writable', OPEN_DIR)
 );
 
 
 requirement(
-    isDirectoryWriteable(UPLOAD_DIR),
+    is_writable(UPLOAD_DIR),
     sprintf('%s directory must be writable', UPLOAD_DIR)
 );
 
@@ -203,6 +174,22 @@ if ($requirements == 0) {
 
     echo "<div class='done'>Everything is OK, you can continue with the installation.</div>";
     echo "<a href='../install'>Install</a>";
+}
+
+// Functions
+
+function requirement($if, $text)
+{
+    global $requirements;
+    if (!$if) {
+        print "<div class='requirement'>$text</div>";
+        $requirements++;
+    }
+}
+
+function recommendation($if, $text)
+{
+    $if or print "<div class='recommendation'>$text</div>";
 }
 
 ?>
