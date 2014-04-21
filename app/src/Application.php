@@ -21,6 +21,9 @@ class Application extends Silicone\Application
     {
         $app = $this;
         require_once $app->getRootDir() . '/config/config.php';
+
+        // Boot providers
+        $this->boot();
     }
 
     /**
