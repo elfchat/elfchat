@@ -65,12 +65,47 @@ class Install extends Controller
             $config = $form->getData();
             $config->save();
 
-            return $this->app->redirect($this->app->url('install_database'));
+            return $this->app->redirect($this->app->url('install_proxy'));
         }
 
         return $this->app->render('install/config.twig', array(
             'form' => $form->createView(),
         ));
+    }
+
+    /**
+     * @Route("/proxy", name="install_proxy")
+     */
+    public function proxy()
+    {
+        $em = $this->app->entityManager();
+        $metadatas = $em->getMetadataFactory()->getAllMetadata();
+        $proxyDir = $em->getConfiguration()->getProxyDir();
+
+        if (!is_dir($proxyDir)) {
+            mkdir($proxyDir, 0777, true);
+        }
+
+        $proxyDir = realpath($proxyDir);
+
+        if (!file_exists($proxyDir)) {
+            throw new \InvalidArgumentException(
+                sprintf("Proxies destination directory '<info>%s</info>' does not exist.", $em->getConfiguration()->getProxyDir())
+            );
+        }
+
+        if (!is_writable($proxyDir)) {
+            throw new \InvalidArgumentException(
+                sprintf("Proxies destination directory '<info>%s</info>' does not have write permissions.", $proxyDir)
+            );
+        }
+
+        if (count($metadatas)) {
+            // Generating Proxies
+            $em->getProxyFactory()->generateProxyClasses($metadatas, $proxyDir);
+        }
+
+        return $this->app->redirect($this->app->url('install_database'));
     }
 
     /**
