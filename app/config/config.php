@@ -1,5 +1,9 @@
 <?php
-/** @var $app \ElfChat\Application */
+/**
+ * ElfChat Configuration
+ *
+ * @var $app \ElfChat\Application
+ */
 
 $app['version'] = ELFCHAT_VERSION . ' ' . ELFCHAT_EDITION;
 

@@ -1,0 +1,20 @@
+{
+    "name": "example",
+    "description": "Example Plugin",
+    "author": {
+        "name": "Name",
+        "email": "email@dot.com"
+    },
+    "require": {
+        "elfchat": "6.0.*"
+    },
+    "autoload": {
+        "Example\\": "src/"
+    },
+    "controllers": {
+        "/example": "example.php"
+    },
+    "views": {
+        "example": "views/"
+    }
+}

@@ -13,8 +13,8 @@
             interval: {{ app.config.get('server.interval') }}
         },
         sound: {
-            message: '{{ app.request.basePath }}/web/lib/media/sound/beep.mp3',
-            join: '{{ app.request.basePath }}/web/lib/media/sound/online.mp3'
+            message: '{{ app.request.basePath }}/web/sound/beep.mp3',
+            join: '{{ app.request.basePath }}/web/sound/online.mp3'
         }
     };
     {% endautoescape %}
