@@ -20,6 +20,10 @@
             {{ form_row(form['sqlite:path']) }}
             {{ form_row(form['sqlite:user']) }}
             {{ form_row(form['sqlite:password']) }}
+            <blockquote>
+                {{ 'Update of Database Schema does not suppored in SQLite.'|trans() }}
+                {{ 'You will need to reinstall chat for upgrade to new version.'|trans() }}
+            </blockquote>
         </fieldset>
         <fieldset class="database postgres">
             <legend>{{ 'PostgreSQL'|trans() }}</legend>
