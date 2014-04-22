@@ -108,7 +108,9 @@ class WebSocketServer extends AbstractServer implements ServerInterface, Message
     protected function privateMessage(User $user, $forId, $text)
     {
         $message = parent::privateMessage($user, $forId, $text);
-        $this->sendToUser($user->id, Protocol::message($message));
+        if ($forId !== $user->id) {
+            $this->sendToUser($user->id, Protocol::message($message));
+        }
         return $message;
     }
 
@@ -118,8 +120,10 @@ class WebSocketServer extends AbstractServer implements ServerInterface, Message
      */
     public function onClose(ConnectionInterface $conn)
     {
-        $this->sendExclude($conn->user->id, Protocol::userLeave($conn->user));
-        $this->detach($conn);
+        if (null !== $conn->user) {
+            $this->sendExclude($conn->user->id, Protocol::userLeave($conn->user));
+            $this->detach($conn);
+        }
     }
 
     /**

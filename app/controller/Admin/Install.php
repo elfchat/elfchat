@@ -26,6 +26,7 @@ class Install extends Controller
 
         $config->set('baseurl', $this->request->getSchemeAndHttpHost() . $this->request->getBasePath());
         $config->set('sqlite.path', $this->app->getOpenDir() . 'elfchat.db');
+        $config->set('server.host', $this->request->getHost());
 
         $form = $this->app->form($config)
             ->add('locale', 'choice', array(
