@@ -39,7 +39,7 @@
 $requirements = 0;
 
 // Config
-define('REQUIRED_PHP_VERSION', '5.3.3');
+define('REQUIRED_PHP_VERSION', '5.3.9');
 define('OPEN_DIR', dirname(dirname(__FILE__)) . '/app/open');
 define('UPLOAD_DIR', dirname(dirname(__FILE__)) . '/upload');
 define('INSTALLED_PHP_VERSION', phpversion());
@@ -58,6 +58,15 @@ requirement(
     'PHP version must not be 5.3.16 as ElfChat won\'t work properly with it'
 );
 
+requirement(
+    version_compare(INSTALLED_PHP_VERSION, '5.3.4', '>='),
+    'You should use at least PHP 5.3.4 due to PHP bug #52083 in earlier versions.'
+);
+
+requirement(
+    version_compare(INSTALLED_PHP_VERSION, '5.3.8', '>='),
+    'You should have at least PHP 5.3.8 due to PHP bug #55156.'
+);
 
 requirement(
     is_writable(OPEN_DIR),
@@ -148,6 +157,16 @@ recommendation(
     'Install and enable the <strong>intl</strong> extension.'
 );
 
+recommendation(
+    version_compare(INSTALLED_PHP_VERSION, '5.4.0', '!='),
+    'You should not use PHP 5.4.0 due to the PHP bug #61453.'
+);
+
+recommendation(
+    version_compare(INSTALLED_PHP_VERSION, '5.4.11', '>=') || version_compare(INSTALLED_PHP_VERSION, '5.4.0', '<'),
+    'You should have at least PHP 5.4.11 due to PHP bug #63379.'
+);
+
 $accelerator =
     (extension_loaded('eaccelerator') && ini_get('eaccelerator.enable'))
     ||
@@ -165,6 +184,8 @@ recommendation(
     $accelerator,
     'Install and enable a <strong>PHP accelerator</strong> like APC (highly recommended).'
 );
+
+// Finish
 
 if ($requirements == 0) {
     $configFile = OPEN_DIR . '/config.php';
