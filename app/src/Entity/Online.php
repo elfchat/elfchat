@@ -16,8 +16,8 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity()
  * @ORM\Table("elfchat_online", indexes={
- *     @ORM\index(name="user_idx", columns={"user_id"}),
- *     @ORM\index(name="time_idx", columns={"time"})
+ *     @ORM\Index(name="user_idx", columns={"user_id"}),
+ *     @ORM\Index(name="time_idx", columns={"time"})
  * })
  */
 class Online extends Entity

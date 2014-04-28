@@ -1,4 +1,35 @@
-Mustache.tags = ['[', ']'];
+var Flyspeck = function Flyspeck() {
+  "use strict";
+  this.values = {};
+  this.factories = {};
+};
+($traceurRuntime.createClass)(Flyspeck, {
+  set: function(name, callable) {
+    "use strict";
+    if (typeof callable === "function") {
+      this.factories[name] = callable;
+    } else {
+      this.value = callable;
+    }
+  },
+  get: function(name) {
+    "use strict";
+    if (this.values[name] === undefined) {
+      this.values[name] = this.factories[name](this);
+    }
+    return this.values[name];
+  },
+  extend: function(name, callable) {
+    "use strict";
+    var factory = this.factories[name];
+    if (factory === undefined) {
+      throw "Factory `" + name + "` does not found.";
+    }
+    this.factories[name] = function(container) {
+      return callable(factory(container), container);
+    };
+  }
+}, {});
 $.fn.exist = function() {
   return $(this).length > 0;
 };
@@ -123,30 +154,30 @@ var $WebSocketServer = WebSocketServer;
 ($traceurRuntime.createClass)(WebSocketServer, {
   connect: function() {
     "use strict";
-    var $__1 = this;
+    var $__2 = this;
     this.socket = new WebSocket('ws://' + this.server + ':' + this.port);
     this.socket.onopen = (function() {
-      $__1.onConnect();
-      clearInterval($__1.reconnect);
+      $__2.onConnect();
+      clearInterval($__2.reconnect);
     });
     this.socket.onclose = (function(event) {
       if (event.wasClean) {
-        $__1.onDisconnect();
+        $__2.onDisconnect();
         window.location.reload();
       } else {
-        $__1.onDisconnect();
-        clearInterval($__1.reconnect);
-        $__1.reconnect = setInterval((function() {
-          $__1.socket.close();
-          $__1.connect();
+        $__2.onDisconnect();
+        clearInterval($__2.reconnect);
+        $__2.reconnect = setInterval((function() {
+          $__2.socket.close();
+          $__2.connect();
         }), 1000);
       }
     });
     this.socket.onmessage = (function(receive) {
-      $__1.onData(JSON.parse(receive.data));
+      $__2.onData(JSON.parse(receive.data));
     });
     this.onerror = (function(error) {
-      $__1.onError(error.message);
+      $__2.onError(error.message);
     });
   },
   sendData: function(data) {
@@ -167,39 +198,39 @@ var $AjaxServer = AjaxServer;
 ($traceurRuntime.createClass)(AjaxServer, {
   connect: function() {
     "use strict";
-    var $__3 = this;
+    var $__4 = this;
     this.onConnect();
     this.interval = setInterval((function() {
-      $__3.pull();
+      $__4.pull();
     }), this.period);
   },
   pull: function() {
     "use strict";
-    var $__3 = this;
+    var $__4 = this;
     if (this.pulling) {
       return;
     }
     this.pulling = true;
     $.getJSON(this.api.poll, {last: this.last}).done((function(data) {
-      if (!$__3.connected) {
-        $__3.onConnect();
+      if (!$__4.connected) {
+        $__4.onConnect();
       }
-      $__3.last = data.last;
-      for (var $__5 = data.queue[Symbol.iterator](),
-          $__6; !($__6 = $__5.next()).done; ) {
-        var i = $__6.value;
+      $__4.last = data.last;
+      for (var $__6 = data.queue[Symbol.iterator](),
+          $__7; !($__7 = $__6.next()).done; ) {
+        var i = $__7.value;
         {
-          $__3.onData(i);
+          $__4.onData(i);
         }
       }
     })).fail((function(xhr, status) {
-      if ($__3.connected) {
-        $__3.onError(status);
+      if ($__4.connected) {
+        $__4.onError(status);
       }
-      $__3.onDisconnect();
+      $__4.onDisconnect();
       window.location.reload();
     })).always((function() {
-      $__3.pulling = false;
+      $__4.pulling = false;
     }));
   },
   onConnect: function() {
@@ -209,18 +240,18 @@ var $AjaxServer = AjaxServer;
   },
   sendData: function(data) {
     "use strict";
-    var $__3 = this;
+    var $__4 = this;
     $.post(this.api.send, {data: data}).done((function() {
-      $__3.pull();
+      $__4.pull();
     })).fail((function(xhr, status) {
-      $__3.onError(status);
+      $__4.onError(status);
     }));
   },
   synchronize: function() {
     "use strict";
-    var $__3 = this;
+    var $__4 = this;
     $.post(this.api.synchronize, 'json').done((function(data) {
-      $__3.onData(data);
+      $__4.onData(data);
     }));
   }
 }, {}, AbstractServer);
@@ -480,9 +511,9 @@ var MessageView = function MessageView(message) {
   },
   filter: function(text) {
     "use strict";
-    for (var $__11 = window.chat.filters[Symbol.iterator](),
-        $__12; !($__12 = $__11.next()).done; ) {
-      var filter = $__12.value;
+    for (var $__12 = window.chat.filters[Symbol.iterator](),
+        $__13; !($__13 = $__12.next()).done; ) {
+      var filter = $__13.value;
       {
         text = filter.filter(text);
       }
@@ -562,9 +593,9 @@ var Users = function Users() {
   };
   this.users = {};
   $(window).on('synchronize', $.proxy(this.onSynchronize, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('user_update', $.proxy(this.onUserUpdate, this));
-  for (var $__14 = window.recent[Symbol.iterator](),
-      $__15; !($__15 = $__14.next()).done; ) {
-    var message = $__15.value;
+  for (var $__15 = window.recent[Symbol.iterator](),
+      $__16; !($__16 = $__15.next()).done; ) {
+    var message = $__16.value;
     {
       this.addUser(message.user);
     }
@@ -574,9 +605,9 @@ var Users = function Users() {
   onSynchronize: function(event, users) {
     "use strict";
     this.dom.users.html('');
-    for (var $__14 = users[Symbol.iterator](),
-        $__15; !($__15 = $__14.next()).done; ) {
-      var user = $__15.value;
+    for (var $__15 = users[Symbol.iterator](),
+        $__16; !($__16 = $__15.next()).done; ) {
+      var user = $__16.value;
       {
         this.addUser(user);
         this.dom.users.append(new UserView(user).render());
@@ -715,9 +746,9 @@ var EmotionTabs = function EmotionTabs(catalog) {
     for (var title in this.catalog)
       if (this.catalog.hasOwnProperty(title)) {
         var tab = this.catalog[title];
-        for (var $__17 = tab[Symbol.iterator](),
-            $__18; !($__18 = $__17.next()).done; ) {
-          var emotion = $__18.value;
+        for (var $__18 = tab[Symbol.iterator](),
+            $__19; !($__19 = $__18.next()).done; ) {
+          var emotion = $__19.value;
           {
             this.emotions.push(emotion);
             if (this.n >= this.pertab - 1) {
@@ -935,9 +966,9 @@ var EmotionFilter = function EmotionFilter(list) {
     var _this = this;
     var count = 0;
     text = text.replace(/&apos;/g, "'");
-    for (var $__20 = this.list[Symbol.iterator](),
-        $__21; !($__21 = $__20.next()).done; ) {
-      var row = $__21.value;
+    for (var $__21 = this.list[Symbol.iterator](),
+        $__22; !($__22 = $__21.next()).done; ) {
+      var row = $__22.value;
       {
         var regexp = row[0];
         var src = row[1];
@@ -957,38 +988,38 @@ var EmotionFilter = function EmotionFilter(list) {
 var Application = function Application(server) {
   "use strict";
   this.server = server;
-  this.filters = [];
   this.dom = {
     chat: $('#chat'),
     textarea: $('#message'),
     body: $('body')
   };
-  var $window = $(window).on('connect', $.proxy(this.onConnect, this)).on('disconnect', $.proxy(this.onDisconnect, this)).on('message', $.proxy(this.onMessage, this)).on('log', $.proxy(this.onLog, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('error', $.proxy(this.onError, this));
-  $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this)).on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this)).on('click.private', '[data-private]', $.proxy(this.onPrivateClick, this));
-  $('[data-action="bbcode"]').on('click.bbcode', $.proxy(this.onBBCodeClick, this));
   this.filters = [new BBCodeFilter(), new UriFilter(), new ImageFilter(), new EmotionFilter(EmotionList), new RestrictionFilter()];
+  this.init();
   this.send = new SendBehavior(this);
-  if ($window.width() < 480) {
-    var snapper = new Snap({
-      element: document.getElementById('chat'),
-      disable: 'right'
-    });
-  }
 };
 ($traceurRuntime.createClass)(Application, {
+  init: function() {
+    "use strict";
+    var $window = $(window).on('connect', $.proxy(this.onConnect, this)).on('disconnect', $.proxy(this.onDisconnect, this)).on('message', $.proxy(this.onMessage, this)).on('log', $.proxy(this.onLog, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('error', $.proxy(this.onError, this));
+    $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this)).on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this)).on('click.private', '[data-private]', $.proxy(this.onPrivateClick, this));
+    $('[data-action="bbcode"]').on('click.bbcode', $.proxy(this.onBBCodeClick, this));
+    if ($window.width() < 480) {
+      var snapper = new Snap({
+        element: document.getElementById('chat'),
+        disable: 'right'
+      });
+    }
+  },
   run: function() {
     "use strict";
-    notify.connecting.start();
     this.server.connect();
     this.addRecentMessages();
   },
   onConnect: function(event) {
     "use strict";
-    notify.connecting.stop();
   },
   onDisconnect: function(event) {
     "use strict";
-    notify.connecting.start();
   },
   onMessage: function(event, message) {
     "use strict";
@@ -1005,9 +1036,9 @@ var Application = function Application(server) {
   },
   addRecentMessages: function() {
     "use strict";
-    for (var $__23 = window.recent[Symbol.iterator](),
-        $__24; !($__24 = $__23.next()).done; ) {
-      var message = $__24.value;
+    for (var $__24 = window.recent[Symbol.iterator](),
+        $__25; !($__25 = $__24.next()).done; ) {
+      var message = $__25.value;
       {
         this.addMessage(message);
       }
@@ -1067,7 +1098,6 @@ var Application = function Application(server) {
   },
   onError: function(event, error) {
     "use strict";
-    notify.error(tr(error));
   },
   onPrivateClick: function(event) {
     "use strict";
@@ -1108,7 +1138,6 @@ var SendBehavior = function SendBehavior(chat) {
     this.flood = this.flood.filter((function(date) {
       return new Date().getTime() < date.getTime() + 15 * 1000;
     }));
-    console.log(this.flood);
     if (this.flood.length > 10) {
       this.chat.addLog(tr('Flooding is prohibited.'), 'danger');
       return false;
@@ -1172,5 +1201,22 @@ var SendBehavior = function SendBehavior(chat) {
     }
   }
 }, {});
+Mustache.tags = ['[', ']'];
+container = new Flyspeck();
+container.set('scroll', (function(c) {
+  return new Scroll($('#chat'));
+}));
+container.set('sound', (function(c) {
+  return new Sound();
+}));
+container.set('users', (function(c) {
+  return new Users();
+}));
+container.set('emotion', (function(c) {
+  return new Emotion();
+}));
+container.set('app', (function(c) {
+  return new Application(c.get('server'));
+}));
 
 //# sourceMappingURL=app.map

@@ -7,7 +7,6 @@
 class Application {
     constructor(server) {
         this.server = server;
-        this.filters = [];
 
         this.dom = {
             chat: $('#chat'),
@@ -15,6 +14,20 @@ class Application {
             body: $('body')
         };
 
+        this.filters = [
+            new BBCodeFilter(),
+            new UriFilter(),
+            new ImageFilter(),
+            new EmotionFilter(EmotionList),
+            new RestrictionFilter()
+        ];
+
+        this.init();
+
+        this.send = new SendBehavior(this);
+    }
+
+    init() {
         var $window = $(window)
             .on('connect', $.proxy(this.onConnect, this))
             .on('disconnect', $.proxy(this.onDisconnect, this))
@@ -33,15 +46,6 @@ class Application {
         $('[data-action="bbcode"]')
             .on('click.bbcode', $.proxy(this.onBBCodeClick, this));
 
-        this.filters = [
-            new BBCodeFilter(),
-            new UriFilter(),
-            new ImageFilter(),
-            new EmotionFilter(EmotionList),
-            new RestrictionFilter()
-        ];
-
-        this.send = new SendBehavior(this);
 
         // Mobile
         if ($window.width() < 480) {
@@ -53,17 +57,14 @@ class Application {
     }
 
     run() {
-        notify.connecting.start();
         this.server.connect();
         this.addRecentMessages();
     }
 
     onConnect(event) {
-        notify.connecting.stop();
     }
 
     onDisconnect(event) {
-        notify.connecting.start();
     }
 
     onMessage(event, message) {
@@ -148,7 +149,6 @@ class Application {
     }
 
     onError(event, error) {
-        notify.error(tr(error));
     }
 
     onPrivateClick(event) {
@@ -196,7 +196,6 @@ class SendBehavior {
         this.flood = this.flood.filter((date) => {
             return new Date().getTime() < date.getTime() + 15 * 1000;
         });
-        console.log(this.flood);
         if (this.flood.length > 10) {
             this.chat.addLog(tr('Flooding is prohibited.'), 'danger');
             return false;

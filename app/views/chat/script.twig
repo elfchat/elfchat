@@ -33,21 +33,24 @@
     // Application
     $(function () {
         {% if app.config.get('server.type') == 'ajax' %}
-        window.server = new AjaxServer({
-            poll: '{{ url('ajax_poll') }}',
-            send: '{{ url('ajax_send') }}',
-            synchronize: '{{ url('ajax_synchronize') }}'
-        }, window.config.server.interval);
+        container.set('server', function () {
+            return new AjaxServer({
+                poll: '{{ url('ajax_poll') }}',
+                send: '{{ url('ajax_send') }}',
+                synchronize: '{{ url('ajax_synchronize') }}'
+            }, window.config.server.interval);
+        });
         {% else %}
-        window.server = new WebSocketServer(window.config.server.host, window.config.server.port);
+        container.set('server', function () {
+            return new WebSocketServer(window.config.server.host, window.config.server.port);
+        });
         {% endif %}
-        window.scroll = new Scroll($('#chat'));
-        window.sound = new Sound();
-        window.notify = new Notify();
-        window.sound = new Sound();
-        window.users = new Users();
-        window.emotion = new Emotion();
-        window.chat = new Application(window.server);
+
+        window.scroll = container.get('scroll');
+        window.sound = container.get('sound');
+        window.emotion = container.get('emotion');
+        window.users = container.get('users');
+        window.chat = container.get('app');
         window.chat.run();
     });
 </script>

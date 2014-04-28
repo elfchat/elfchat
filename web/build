@@ -18,7 +18,7 @@ lib/vendor/howler/howler.min.js \
 # java -jar lib/yuicompressor-2.4.8.jar --type js --nomunge --disable-optimizations -o lib/vendors.js lib/vendors.js
 
 /usr/local/bin/traceur --sourcemap --out app.js \
---script src/Config.js \
+--script src/Flyspeck.js \
 --script src/Helpers.js \
 --script src/Server/AbstractServer.js \
 --script src/Server/WebSocketServer.js \
@@ -31,4 +31,5 @@ lib/vendor/howler/howler.min.js \
 --script src/Users.js \
 --script src/Emotion.js \
 --script src/Filters.js \
---script src/Application.js
+--script src/Application.js \
+--script src/Config.js
