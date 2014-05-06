@@ -9,7 +9,7 @@ var Flyspeck = function Flyspeck() {
     if (typeof callable === "function") {
       this.factories[name] = callable;
     } else {
-      this.value = callable;
+      this.values[name] = callable;
     }
   },
   get: function(name) {
