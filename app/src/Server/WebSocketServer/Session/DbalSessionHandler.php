@@ -5,7 +5,7 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Session;
+namespace ElfChat\Server\WebSocketServer\Session;
 
 use Doctrine\DBAL\Connection;
 

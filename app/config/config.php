@@ -252,7 +252,7 @@ if ($app->isInstalled()) {
 
     if ($config->get('server.type') === 'websocket') {
         $app['session.storage.handler'] = $app->share(function () use ($app) {
-            return new ElfChat\Session\DbalSessionHandler(
+            return new \ElfChat\Server\WebSocketServer\Session\DbalSessionHandler(
                 $app->entityManager()->getConnection(),
                 array(
                     'db_table' => 'elfchat_session',
