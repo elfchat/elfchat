@@ -10,6 +10,7 @@ namespace ElfChat\Security\Authentication;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use ElfChat\Entity\Ban;
+use ElfChat\Entity\User;
 use ElfChat\Security\Authentication\Provider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,12 +51,12 @@ class SecurityMiddleware
 
         if (null !== $id) {
             // Ban check
-            $ban = $this->em->getRepository('ElfChat\Entity\Ban')->findActive($id, $request->getClientIp());
+            $ban = Ban::findActive($id, $request->getClientIp());
             if (!empty($ban)) {
                 return new Response($this->youAreBanned($ban[0]), Response::HTTP_FORBIDDEN);
             }
 
-            $user = $this->em->getRepository('ElfChat\Entity\User')->find($id);
+            $user = User::find($id);
             if (null !== $user) {
                 $this->provider->setUser($user);
                 $this->provider->setAuthenticated(true);
