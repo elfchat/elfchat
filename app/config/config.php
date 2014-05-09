@@ -275,6 +275,14 @@ if ($app->isInstalled()) {
                 $app->request()->headers->get('Cookie')
             );
     });
+
+
+    /**
+     * Monolog
+     */
+    $app['monolog.level'] = function () {
+        return \Monolog\Logger::INFO;
+    };
 }
 
 

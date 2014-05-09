@@ -40,6 +40,8 @@ return array(
     'remember_me' => array(
             'token' => sha1(uniqid()),
         ),
+
+    'integration_key' => sha1(uniqid()),
 );
 
  

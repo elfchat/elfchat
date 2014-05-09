@@ -5,9 +5,10 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Entity;
+namespace ElfChat\Entity\Ajax;
 
 use Doctrine\ORM\Mapping as ORM;
+use ElfChat\Entity\Entity;
 
 /**
  * @property int $id
@@ -61,7 +62,7 @@ class Online extends Entity
     public static function users($timeout = 30)
     {
         $dql = '
-        SELECT o FROM ElfChat\Entity\Online o JOIN o.user u WHERE :now < o.time + :timeout
+        SELECT o FROM ElfChat\Entity\Ajax\Online o JOIN o.user u WHERE :now < o.time + :timeout
         ORDER BY o.connected DESC
         ';
         $query = self::entityManager()->createQuery($dql);
@@ -78,7 +79,7 @@ class Online extends Entity
     public static function offlineUsers($timeout = 30)
     {
         $dql = '
-        SELECT o FROM ElfChat\Entity\Online o JOIN o.user u WHERE :now > o.time + :timeout
+        SELECT o FROM ElfChat\Entity\Ajax\Online o JOIN o.user u WHERE :now > o.time + :timeout
         ';
         $query = self::entityManager()->createQuery($dql);
         $query->setParameter('now', time());
@@ -92,7 +93,7 @@ class Online extends Entity
      */
     public static function findUser($userId)
     {
-        return self::entityManager()->getRepository('ElfChat\Entity\Online')->findOneBy(array(
+        return self::entityManager()->getRepository('ElfChat\Entity\Ajax\Online')->findOneBy(array(
             'user' => $userId,
         ));
     }

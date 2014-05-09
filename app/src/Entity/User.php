@@ -7,6 +7,8 @@
 namespace ElfChat\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use ElfChat\Entity\Avatar;
+use ElfChat\Entity\Entity;
 use Symfony\Component\Validator\Constraints as Assert;
 use ElfChat\Validator\Constraints\Unique;
 
@@ -20,11 +22,11 @@ use ElfChat\Validator\Constraints\Unique;
  *
  * @ORM\Entity(repositoryClass="ElfChat\Repository\UserRepository")
  * @ORM\Table("elfchat_user", indexes={
- *     @ORM\Index(name="name_idx", columns={"name"})
+ *     @ORM\Index(name="name_idx", columns={"name"}),
+ *     @ORM\Index(name="remote_idx", columns={"remoteSource", "remoteId"}),
  * })
  * @ORM\InheritanceType("SINGLE_TABLE")
- * @ORM\DiscriminatorColumn(name="type", type="string")
- * @ORM\DiscriminatorMap({"user" = "ElfChat\Entity\User", "guest" = "ElfChat\Entity\Guest"})
+ *
  * @Unique(column="name", groups={"registration"})
  * @Unique(column="email", groups={"registration"})
  */
@@ -73,50 +75,6 @@ class User extends Entity
         $this->role = 'ROLE_USER';
     }
 
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    public function setEmail($email)
-    {
-        $this->email = $email;
-    }
-
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    public function setPassword($password)
-    {
-        $this->password = $password;
-    }
-
-    public function getRole()
-    {
-        return $this->role;
-    }
-
-    public function setRole($role)
-    {
-        $this->role = $role;
-    }
 
     public function setAvatar($avatar)
     {
@@ -134,9 +92,9 @@ class User extends Entity
     public function export()
     {
         return array(
-            'id' => $this->getId(),
-            'name' => $this->getName(),
-            'avatar' => (string)$this->getAvatar(),
+            'id' => $this->id,
+            'name' => $this->name,
+            'avatar' => (string)$this->avatar,
         );
     }
 }

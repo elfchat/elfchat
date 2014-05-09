@@ -49,12 +49,12 @@ class UserEditFormType extends AbstractType
         $builder->addEventSubscriber(new PasswordEncoderSubscriber);
 
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-            /** @var $user User */
+            /** @var $user \ElfChat\Entity\User */
             $user = $event->getData();
             $form = $event->getForm();
 
             if($form->get('removeAvatar')->getData()) {
-                $user->setAvatar(null);
+                $user->avatar = null;
             }
         });
     }

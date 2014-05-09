@@ -7,7 +7,7 @@
 
 namespace ElfChat\Server;
 
-use ElfChat\Entity\Queue;
+use ElfChat\Entity\Ajax\Queue;
 use ElfChat\Entity\User;
 
 class AjaxServer extends AbstractServer implements ServerInterface
@@ -17,7 +17,7 @@ class AjaxServer extends AbstractServer implements ServerInterface
     /**
      * We use AjaxServer only on HTTP request, and every HTTP request has a specified session
      * with specified user. So we can use user in our server implementation.
-     * @param User $user
+     * @param \ElfChat\Entity\User $user
      */
     public function __construct(User $user)
     {

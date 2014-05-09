@@ -5,14 +5,15 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Entity;
+namespace ElfChat\Entity\User;
 
 use Doctrine\ORM\Mapping as ORM;
+use ElfChat\Entity\User;
 
 /**
  * @ORM\Entity
  */
-class Guest extends User
+class GuestUser extends User
 {
     public function __construct()
     {

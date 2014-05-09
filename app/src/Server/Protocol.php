@@ -49,7 +49,7 @@ class Protocol
     }
 
     /**
-     * @param User $user
+     * @param \ElfChat\Entity\User $user
      * @return string
      */
     public static function userJoin(User $user)

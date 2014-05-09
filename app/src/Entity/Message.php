@@ -63,7 +63,7 @@ class Message extends Entity
         return array(
             'id' => $this->id,
             'user' => array(
-                'id' => $this->user->getId()
+                'id' => $this->user->id
             ),
             'for' => null,
             'datetime' => $this->datetime->format(\DateTime::ISO8601),

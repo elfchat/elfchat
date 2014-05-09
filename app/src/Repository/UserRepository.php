@@ -16,7 +16,7 @@ use Doctrine\ORM\EntityRepository;
 class UserRepository extends EntityRepository
 {
     /**
-     * @return User[]
+     * @return \ElfChat\Entity\User[]
      */
     public function findAllUsers()
     {
@@ -40,7 +40,7 @@ class UserRepository extends EntityRepository
 
     /**
      * @param $name
-     * @return User
+     * @return \ElfChat\Entity\User
      */
     public function findOneByName($name)
     {

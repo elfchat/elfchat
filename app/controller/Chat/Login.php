@@ -8,7 +8,7 @@
 namespace ElfChat\Controller\Chat;
 
 use ElfChat\Controller;
-use ElfChat\Entity\Guest;
+use ElfChat\Entity\User\GuestUser;
 use ElfChat\Security\Authentication\Remember;
 use Silicone\Route;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -37,8 +37,8 @@ class Login extends Controller
             $user = $users->findOneByName($data['username']);
 
             if(null !== $user) {
-                if(password_verify($data['password'], $user->getPassword())) {
-                    $session->set('user', $saved = array($user->getId(), $user->getRole()));
+                if(password_verify($data['password'], $user->password)) {
+                    $session->set('user', $saved = array($user->id, $user->role));
 
                     $response = $this->app->redirect($this->app->url('chat'));
 
@@ -66,13 +66,13 @@ class Login extends Controller
         if($guestForm->isValid()) {
             $data = $guestForm->getData();
 
-            $guest = new Guest();
+            $guest = new GuestUser();
             $guest->setName($data['guestname']);
 
             $em->persist($guest);
             $em->flush($guest);
 
-            $session->set('user', array($guest->getId(), $guest->getRole()));
+            $session->set('user', array($guest->id, $guest->role));
 
             return $this->app->redirect($this->app->url('chat'));
         }

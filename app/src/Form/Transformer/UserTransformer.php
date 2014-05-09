@@ -24,7 +24,7 @@ class UserTransformer implements DataTransformerInterface
     /**
      * Transforms an object (user) to a string (number).
      *
-     * @param  User|null $user
+     * @param  \ElfChat\User\\ElfChat\Entity\User|null $user
      * @return string
      */
     public function transform($user)
@@ -33,7 +33,7 @@ class UserTransformer implements DataTransformerInterface
             return "";
         }
 
-        return $user->getId();
+        return $user->id;
     }
 
     /**
@@ -41,7 +41,7 @@ class UserTransformer implements DataTransformerInterface
      *
      * @param  string $id
      *
-     * @return User|null
+     * @return \ElfChat\User\\ElfChat\Entity\User|null
      *
      * @throws TransformationFailedException if object (issue) is not found.
      */

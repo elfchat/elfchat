@@ -66,7 +66,7 @@ class WebSocketServer extends AbstractServer implements ServerInterface, Message
 
             $this->send(Protocol::userJoin($user));
 
-            $this->clients[$user->getId()] = $conn;
+            $this->clients[$user->id] = $conn;
 
             $users = array();
             foreach ($this->clients as $conn) {
@@ -100,7 +100,7 @@ class WebSocketServer extends AbstractServer implements ServerInterface, Message
     /**
      * When we send to user private message, we need to send this message to author.
      *
-     * @param User $user
+     * @param \ElfChat\Entity\User $user
      * @param $forId
      * @param $text
      * @return Message

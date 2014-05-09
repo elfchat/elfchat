@@ -8,8 +8,8 @@
 namespace ElfChat\Controller\Chat;
 
 use ElfChat\Controller;
-use ElfChat\Entity\Online;
-use ElfChat\Entity\Queue;
+use ElfChat\Entity\Ajax\Online;
+use ElfChat\Entity\Ajax\Queue;
 use ElfChat\Server\AjaxServer;
 use ElfChat\Server\Protocol;
 use Silicone\Route;

@@ -35,7 +35,7 @@ class Profile extends Controller
 
         if ($form->isValid()) {
             $avatar = $form->getData();
-            $user->setAvatar($avatar);
+            $user->avatar = $avatar;
             $em->persist($avatar);
             $em->flush();
 
@@ -53,7 +53,7 @@ class Profile extends Controller
      */
     public function crop()
     {
-        $avatar = $this->app->user()->getAvatar();
+        $avatar = $this->app->user()->avatar;
 
         if (null !== $avatar) {
             $imagine = new Imagine();
@@ -90,8 +90,8 @@ class Profile extends Controller
     public function remove()
     {
         $em = $this->app->entityManager();
-        $em->remove($this->app->user()->getAvatar());
-        $this->app->user()->setAvatar(null);
+        $em->remove($this->app->user()->avatar);
+        $this->app->user()->avatar = null;
         $em->flush();
         return 'removed!';
     }

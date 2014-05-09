@@ -23,7 +23,7 @@ class PasswordEncoderSubscriber implements EventSubscriberInterface
 
     public function onSubmit(FormEvent $event)
     {
-        /** @var $user User */
+        /** @var $user \ElfChat\User\\ElfChat\Entity\User */
         $user = $event->getData();
         $form = $event->getForm();
 
@@ -34,7 +34,7 @@ class PasswordEncoderSubscriber implements EventSubscriberInterface
                 return;
             }
         } else {
-            $password = $user->getPassword();
+            $password = $user->password;
         }
 
         $user->setPassword(password_hash($password, PASSWORD_DEFAULT));

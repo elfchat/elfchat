@@ -51,7 +51,7 @@ class Users extends Controller
 
             $this->app->session()->getFlashBag()->add(
                 'success',
-                $this->app->trans('User "%name%" edited successful.', array('%name%' => $user->getName()))
+                $this->app->trans('User "%name%" edited successful.', array('%name%' => $user->name))
             );
         }
 
@@ -84,7 +84,7 @@ class Users extends Controller
                 $this->app->entityManager()->remove($user);
                 $this->app->entityManager()->flush();
 
-                $message = $this->app->trans('User "%name%" was deleted.', array('%name%' => $user->getName()));
+                $message = $this->app->trans('User "%name%" was deleted.', array('%name%' => $user->name));
                 $this->app->session()->getFlashBag()->add('success', $message);
 
                 return $this->app->redirect($this->app->url('admin_users'));
