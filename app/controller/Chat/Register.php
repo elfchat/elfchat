@@ -30,10 +30,9 @@ class Register extends Controller
 
         if ($form->isValid()) {
             $user = $form->getData();
-            $em->persist($user);
-            $em->flush();
+            $user->save();
 
-            $this->app->session()->set('user', array($user->getId(), $user->getRole()));
+            $this->app->session()->set('user', array($user->id, $user->role));
             return $this->app->redirect($this->app->url('chat'));
         }
 

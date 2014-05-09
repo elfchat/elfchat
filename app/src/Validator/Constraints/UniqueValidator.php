@@ -36,7 +36,7 @@ class UniqueValidator extends ConstraintValidator
             ->andWhere('c INSTANCE OF ' . $className)
             ->getQuery();
 
-        $query->setParameter(1, $class->{'get' . ucfirst($column)}());
+        $query->setParameter(1, $class->{$column});
         $query->setMaxResults(1);
 
         $count = count($query->getResult());

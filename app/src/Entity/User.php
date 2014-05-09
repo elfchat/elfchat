@@ -89,7 +89,7 @@ class User extends Entity
      */
     public static function findAllUsers()
     {
-        $dql = "SELECT u, a FROM ElfChat\Entity\User u LEFT JOIN u.avatar a WHERE u INSTANCE OF ElfChat\Entity\User";
+        $dql = "SELECT u, a FROM ElfChat\Entity\User u LEFT JOIN u.avatar a WHERE NOT u INSTANCE OF ElfChat\Entity\User\GuestUser";
         $query = self::entityManager()->createQuery($dql);
         return $query->getResult();
     }
