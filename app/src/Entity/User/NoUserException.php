@@ -5,9 +5,9 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Exception;
+namespace ElfChat\Entity\User;
 
-class NoUserException extends Exception
+class NoUserException extends \Exception
 {
 
 } 

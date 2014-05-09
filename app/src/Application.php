@@ -90,7 +90,7 @@ class Application extends Silicone\Application
 
     /**
      * @return \ElfChat\Entity\User
-     * @throws Exception\NoUserException
+     * @throws \ElfChat\Entity\User\NoUserException
      */
     public function user()
     {
@@ -100,7 +100,7 @@ class Application extends Silicone\Application
             return $user;
         }
 
-        throw new Exception\NoUserException();
+        throw new Entity\User\NoUserException();
     }
 
     /**
