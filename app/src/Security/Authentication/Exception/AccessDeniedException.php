@@ -7,6 +7,6 @@
 
 namespace ElfChat\Security\Authentication\Exception;
 
-class AccessDenied extends \Exception
+class AccessDeniedException extends \Exception
 {
 }

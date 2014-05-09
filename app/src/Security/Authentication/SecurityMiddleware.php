@@ -45,7 +45,7 @@ class SecurityMiddleware
         $this->provider->setRole($role);
 
         if (!$this->provider->isAllowed($request->getPathInfo())) {
-            throw new Exception\AccessDenied("Access denied to " . $request->getPathInfo());
+            throw new Exception\AccessDeniedException("Access denied to " . $request->getPathInfo());
         }
 
         if (null !== $id) {
