@@ -43,18 +43,6 @@ class Entity
         self::entityManager()->persist($this);
     }
 
-    final public function save()
-    {
-        $this->persist($this);
-        self::flush($this);
-    }
-
-    final public function delete()
-    {
-        $this->remove($this);
-        self::flush($this);
-    }
-
     final public function remove()
     {
         self::entityManager()->remove($this);
@@ -63,6 +51,18 @@ class Entity
     final public function refresh()
     {
         self::entityManager()->refresh($this);
+    }
+
+    final public function save()
+    {
+        $this->persist();
+        self::flush($this);
+    }
+
+    final public function delete()
+    {
+        $this->remove();
+        self::flush($this);
     }
 
     final public static function flush($entity = null)

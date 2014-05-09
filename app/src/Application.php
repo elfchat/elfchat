@@ -120,18 +120,6 @@ class Application extends Silicone\Application
     }
 
     /**
-     * @return \ElfChat\Repository\Manager
-     */
-    public function repository()
-    {
-        if (null === $this->repository) {
-            $this->repository = new \ElfChat\Repository\Manager($this->entityManager());
-        }
-
-        return $this->repository;
-    }
-
-    /**
      * @return \Doctrine\Common\Cache\Cache
      */
     public function cache()

@@ -30,8 +30,7 @@ class Chat extends Controller
             // Recent messages
             $recent = array();
 
-            $repository = $this->app->repository()->messages();
-            foreach ($repository->getLastMessages($user->id) as $message) {
+            foreach (Message::getLastMessages($user->id) as $message) {
                 $recent[] = $message->exportWithUser();
             }
 

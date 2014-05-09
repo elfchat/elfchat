@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @property string $room
  * @property string $text
  *
- * @ORM\Entity(repositoryClass="ElfChat\Repository\MessageRepository")
+ * @ORM\Entity
  * @ORM\Table("elfchat_message")
  */
 class Message extends Entity
@@ -83,5 +83,27 @@ class Message extends Entity
     public function setText($text)
     {
         $this->text = mb_substr($text, 0, 1000, 'UTF-8');
+    }
+
+    /**
+     * @param int $userId
+     * @return Message[]
+     */
+    public static function getLastMessages($userId)
+    {
+        $dql = "
+        SELECT m, u, for, a
+        FROM ElfChat\Entity\Message m
+        JOIN m.user u
+        LEFT JOIN m.for for
+        LEFT JOIN u.avatar a
+        WHERE m.room = :room AND (m.for IS NULL OR (m.for IS NOT NULL AND (u.id = :userId OR for.id = :userId)))
+        ORDER BY m.id DESC
+        ";
+        $query = self::entityManager()->createQuery($dql);
+        $query->setMaxResults(10);
+        $query->setParameter('room', 'main');
+        $query->setParameter('userId', $userId);
+        return $query->getResult();
     }
 }

@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @property \ElfChat\Entity\User $author
  * @property string $reason
  *
- * @ORM\Entity(repositoryClass="ElfChat\Repository\BanRepository")
+ * @ORM\Entity
  * @ORM\Table("elfchat_ban", indexes={
  *     @ORM\Index(name="ip_idx", columns={"ip"}),
  *     @ORM\Index(name="user_idx", columns={"user_id"})
@@ -89,7 +89,7 @@ class Ban extends Entity
         return $ch[$this->howLong];
     }
 
-    static public function howLongChoices()
+    public static function howLongChoices()
     {
         return array(
             60 => 'One min',
@@ -104,5 +104,30 @@ class Ban extends Entity
             60 * 60 * 24 * 31 => '31 days',
             -1 => 'Forever',
         );
+    }
+
+    public static function findAll()
+    {
+        $dql = "SELECT b FROM ElfChat\Entity\Ban b ORDER BY b.created DESC";
+
+        $query = self::entityManager()->createQuery($dql);
+
+        return $query->getResult();
+    }
+
+    public static function findActive($userId, $ip)
+    {
+        $dql = "
+        SELECT b FROM ElfChat\Entity\Ban b
+        WHERE (b.user = :userId OR b.ip = :ip) AND :now < b.created + b.howLong
+        ";
+
+        $query = self::entityManager()->createQuery($dql);
+        $query->setParameter('userId', $userId);
+        $query->setParameter('ip', $ip);
+        $query->setParameter('now', time());
+        $query->setMaxResults(1);
+
+        return $query->getResult();
     }
 } 

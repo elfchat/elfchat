@@ -9,6 +9,7 @@ namespace ElfChat\Controller\Chat;
 
 use ElfChat\Controller;
 use ElfChat\Entity\User\GuestUser;
+use ElfChat\Entity\User;
 use ElfChat\Security\Authentication\Remember;
 use Silicone\Route;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -21,7 +22,6 @@ class Login extends Controller
     public function check()
     {
         $session = $this->app->session();
-        $users = $this->app->repository()->users();
         $em = $this->app->entityManager();
 
         $form = $this->app->form()
@@ -34,7 +34,7 @@ class Login extends Controller
 
         if ($form->isValid()) {
             $data = $form->getData();
-            $user = $users->findOneByName($data['username']);
+            $user = User::findOneByName($data['username']);
 
             if(null !== $user) {
                 if(password_verify($data['password'], $user->password)) {

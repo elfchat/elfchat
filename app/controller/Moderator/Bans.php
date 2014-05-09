@@ -26,7 +26,7 @@ class Bans extends Controller
      */
     public function bans()
     {
-        $bans = $this->app->repository()->bans()->findAll();
+        $bans = Ban::findAll();
         return $this->render('moderator/ban/index.twig', array(
             'bans' => $bans,
             'howLongChoices' => Ban::howLongChoices(),
@@ -42,7 +42,7 @@ class Bans extends Controller
 
         $user = null;
         if ($id = $this->request->get('id')) {
-            if ($user = $this->app->repository()->users()->find($id)) {
+            if ($user = User::find($id)) {
                 $ban->user = $user;
             }
         }
@@ -52,14 +52,12 @@ class Bans extends Controller
         $form->handleRequest($this->request);
 
         if ($form->isValid()) {
-            $em = $this->app->entityManager();
             $ban = $form->getData();
 
             $ban->created = time();
             $ban->author = $this->app->user();
 
-            $em->persist($ban);
-            $em->flush();
+            $ban->save();
 
             if (null !== $ban->user) {
                 $this->app->server()->kill($ban->user->id);
@@ -92,9 +90,8 @@ class Bans extends Controller
      */
     public function removeBan($id)
     {
-        if ($ban = $this->app->repository()->bans()->find($id)) {
-            $this->app->entityManager()->remove($ban);
-            $this->app->entityManager()->flush();
+        if ($ban = Ban::find($id)) {
+            $ban->delete();
             $this->app->session()->getFlashBag()->add('success', $this->app->trans('Ban was deleted.'));
         }
 
@@ -106,7 +103,7 @@ class Bans extends Controller
      */
     public function users()
     {
-        $users = $this->app->repository()->users()->queryNames($this->request->get('query'));
+        $users = User::queryNames($this->request->get('query'));
         $users = array_map(function (User $user) {
             return $user->export();
         }, $users);

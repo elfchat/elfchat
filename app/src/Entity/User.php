@@ -20,7 +20,7 @@ use ElfChat\Validator\Constraints\Unique;
  * @property string $role
  * @property \ElfChat\Entity\Avatar $avatar
  *
- * @ORM\Entity(repositoryClass="ElfChat\Repository\UserRepository")
+ * @ORM\Entity
  * @ORM\Table("elfchat_user", indexes={
  *     @ORM\Index(name="name_idx", columns={"name"}),
  *     @ORM\Index(name="remote_idx", columns={"remoteSource", "remoteId"}),
@@ -75,20 +75,6 @@ class User extends Entity
         $this->role = 'ROLE_USER';
     }
 
-
-    public function setAvatar($avatar)
-    {
-        $this->avatar = $avatar;
-    }
-
-    /**
-     * @return Avatar
-     */
-    public function getAvatar()
-    {
-        return $this->avatar;
-    }
-
     public function export()
     {
         return array(
@@ -96,5 +82,40 @@ class User extends Entity
             'name' => $this->name,
             'avatar' => (string)$this->avatar,
         );
+    }
+
+    /**
+     * @return User[]
+     */
+    public static function findAllUsers()
+    {
+        $dql = "SELECT u, a FROM ElfChat\Entity\User u LEFT JOIN u.avatar a WHERE u INSTANCE OF ElfChat\Entity\User";
+        $query = self::entityManager()->createQuery($dql);
+        return $query->getResult();
+    }
+
+    /**
+     * @param $a
+     * @return array
+     */
+    public static function queryNames($a)
+    {
+        $dql = "SELECT u FROM ElfChat\Entity\User u WHERE u.name LIKE ?1";
+        $query = self::entityManager()->createQuery($dql);
+        $query->setParameter(1, $a . '%');
+        $query->setMaxResults(10);
+        return $query->getResult();
+    }
+
+    /**
+     * @param $name
+     * @return User
+     */
+    public static function findOneByName($name)
+    {
+        $dql = "SELECT u FROM ElfChat\Entity\User u WHERE u.name = ?1 AND u INSTANCE OF ElfChat\Entity\User";
+        $query = self::entityManager()->createQuery($dql);
+        $query->setParameter(1, $name);
+        return $query->getSingleResult();
     }
 }

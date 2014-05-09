@@ -47,14 +47,12 @@ class WebSocketServer extends AbstractServer implements ServerInterface, Message
      */
     public function onOpen(ConnectionInterface $conn)
     {
-        $users = $this->app->repository()->users();
-
         $userData = $conn->Session->get('user');
 
         if (count($userData) == 2 && is_int($userData[0])) {
             list($userId, $userRole) = $userData;
 
-            $user = $users->find($userId);
+            $user = User::find($userId);
 
             if (null === $user) {
                 $conn->close();

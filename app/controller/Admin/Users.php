@@ -7,6 +7,7 @@
 
 namespace ElfChat\Controller\Admin;
 
+use ElfChat\Entity\User;
 use ElfChat\Form\UserEditFormType;
 use ElfChat\Controller;
 use Silicone\Route;
@@ -22,7 +23,7 @@ class Users extends Controller
      */
     public function index()
     {
-        $users = $this->app->repository()->users()->findAllUsers();
+        $users = User::findAllUsers();
         return $this->render('admin/users/list.twig', array(
             'users' => $users,
         ));
@@ -33,7 +34,7 @@ class Users extends Controller
      */
     public function edit($id)
     {
-        $user = $this->app->repository()->users()->find($id);
+        $user = User::find($id);
 
         if (!$user) {
             throw new NotFoundHttpException($this->app->trans('User not found'));
@@ -66,7 +67,7 @@ class Users extends Controller
      */
     public function remove($id)
     {
-        $user = $this->app->repository()->users()->find($id);
+        $user = User::find($id);
 
         if (!$user) {
             throw new NotFoundHttpException($this->app->trans('User not found'));
