@@ -5,8 +5,8 @@
  * file that was distributed with this source code.
  */
 
-namespace ElfChat\Exception;
+namespace ElfChat\Security\Authentication\Exception;
 
-class AccessDenied extends Exception
+class AccessDenied extends \Exception
 {
 }

@@ -10,7 +10,6 @@ namespace ElfChat\Security\Authentication;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use ElfChat\Entity\Ban;
-use ElfChat\Exception\AccessDenied;
 use ElfChat\Security\Authentication\Provider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,7 +45,7 @@ class SecurityMiddleware
         $this->provider->setRole($role);
 
         if (!$this->provider->isAllowed($request->getPathInfo())) {
-            throw new AccessDenied("Access denied to " . $request->getPathInfo());
+            throw new Exception\AccessDenied("Access denied to " . $request->getPathInfo());
         }
 
         if (null !== $id) {
