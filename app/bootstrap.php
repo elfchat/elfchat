@@ -6,6 +6,7 @@
  */
 $loader = require_once __DIR__ . '/vendor/autoload.php';
 
+ElfChat\Config\LoaderRegistry::setLoader($loader);
 Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
 
 define('ELFCHAT_VERSION', '__VERSION__');

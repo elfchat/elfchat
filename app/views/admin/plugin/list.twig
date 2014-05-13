@@ -1,0 +1,9 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}{{ 'Plugins'|trans() }}{% endblock %}
+
+{% block content %}
+    {% for plugin in plugins %}
+        {{ plugin.pluginDir }}<br>
+    {% endfor %}
+{% endblock %}

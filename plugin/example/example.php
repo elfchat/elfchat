@@ -5,7 +5,14 @@
  * @var $app \ElfChat\Application
  * @var $plugin \Silex\ControllerCollection
  */
+$plugin = $app['controllers_factory'];
 
 $plugin->get('', function () use ($app) {
-    return $app->render('plugin:example:hello.twig');
+    $my = new \Example\MyOwnClass();
+
+    return $app->render('@example/hello.twig', array(
+        'my' => $my,
+    ));
 });
+
+return $plugin;

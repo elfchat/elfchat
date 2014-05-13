@@ -12,18 +12,20 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Application extends Silicone\Application
 {
-    protected $repository;
-
     /**
      * Configure application
      */
     protected function configure()
     {
         $app = $this;
-        require_once $app->getRootDir() . '/config/config.php';
 
-        // Boot providers
-        $this->boot();
+        // Configuration
+        require $app->getRootDir() . '/config/config.php';
+
+        // Plugins
+        if (is_readable($pluginsFile = $app->getOpenDir() . '/plugins.php')) {
+            require $pluginsFile;
+        }
     }
 
     /**
@@ -67,6 +69,15 @@ class Application extends Silicone\Application
         static $dir;
         if (empty($dir)) {
             $dir = dirname(__DIR__);
+        }
+        return $dir;
+    }
+
+    public function getPluginDir()
+    {
+        static $dir;
+        if (empty($dir)) {
+            $dir = dirname(dirname(__DIR__)) . '/plugin';
         }
         return $dir;
     }

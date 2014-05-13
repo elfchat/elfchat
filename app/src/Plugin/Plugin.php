@@ -7,27 +7,60 @@
 
 namespace ElfChat\Plugin;
 
+use Symfony\Component\Finder\SplFileInfo;
+
 class Plugin
 {
     const CONFIG_NAME = 'plugin.json';
 
-    private $path;
+    private $configFile;
 
-    public function __construct($path)
+    public $autoload = array();
+
+    public $controllers = array();
+
+    public $views = array();
+
+    public function __construct(SplFileInfo $pluginFile)
     {
-        $this->path = $path;
+        $this->configFile = $pluginFile;
+        $this->load();
     }
 
-    public function loadConfig()
+    private function load()
     {
-        $configFilePath = $this->path . '/' . self::CONFIG_NAME;
-
-        if (!is_readable($configFilePath)) {
-            throw new \RuntimeException("Plugin config \"$configFilePath\" does not readable.");
+        if (!$this->configFile->isReadable()) {
+            throw new \RuntimeException("Plugin config \"" . $this->configFile->getPathname() . "\" does not readable.");
         }
 
-        $json = json_decode(file_get_contents($configFilePath), true);
+        $json = json_decode($this->configFile->getContents(), true);
 
+        if (isset($json['autoload'])) {
+            foreach ($json['autoload'] as $namespace => $path) {
+                $this->autoload[$namespace] = $this->getPluginDir() . '/' . $path;
+            }
+        }
 
+        if (isset($json['controllers'])) {
+            foreach ($json['controllers'] as $mount => $path) {
+                $this->controllers[$mount] = $this->getPluginDir() . '/' . $path;
+            }
+        }
+
+        if (isset($json['views'])) {
+            foreach ($json['views'] as $namespace => $path) {
+                $this->views[$namespace] = $this->getPluginDir() . '/' . $path;
+            }
+        }
     }
-} 
+
+    public function getPluginFile()
+    {
+        return $this->configFile->getPathname();
+    }
+
+    public function getPluginDir()
+    {
+        return $this->configFile->getPath();
+    }
+}

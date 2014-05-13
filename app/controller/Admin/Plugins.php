@@ -8,7 +8,10 @@
 namespace ElfChat\Controller\Admin;
 
 use ElfChat\Controller;
+use ElfChat\Plugin\Installer;
+use ElfChat\Plugin\Plugin;
 use Silicone\Route;
+use Symfony\Component\Finder\Finder;
 
 /**
  * @Route("/admin/plugins")
@@ -20,6 +23,22 @@ class Plugins extends Controller
      */
     public function index()
     {
-        return 'In development.';
+        $finder = new Finder();
+        $finder->files()
+            ->depth(1)
+            ->name('plugin.json')
+            ->in($this->app->getPluginDir());
+
+        $plugins = array();
+        foreach ($finder as $file) {
+            $plugins[] = new Plugin($file);
+        }
+
+        $installer = new Installer($this->app->getOpenDir() . '/plugins.php');
+        $installer->install($plugins);
+
+        return $this->render('admin/plugin/list.twig', array(
+            'plugins' => $plugins,
+        ));
     }
 } 

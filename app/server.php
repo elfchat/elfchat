@@ -15,6 +15,7 @@ use Ratchet\WebSocket\WsServer;
 $runable = function () {
     // We need to configure application to use common parts.
     $app = new ElfChat\Application();
+    $app->boot();
 
     // Error logger.
     ElfChat\Server\WebSocketServer\ErrorLogger::register($app['logger']);
