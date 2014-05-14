@@ -1,0 +1,8 @@
+{% extends 'error/layout.twig' %}
+
+{% block content %}
+    <div class="alert alert-danger">
+        <h1>{{ 'Some error occurred'|trans() }}</h1>
+        <strong>{{ 'To determine the cause of this error, see app/open/error_log.txt file.'|trans() }}</strong>
+    </div>
+{% endblock %}

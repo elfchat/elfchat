@@ -1,0 +1,8 @@
+{% extends 'error/layout.twig' %}
+
+{% block content %}
+    <div class="alert alert-info">
+        <h1>{{ 'Access denied'|trans() }}</h1>
+        <a class="button primary" href="{{ url('login') }}">{{ 'Login'|trans() }}</a>
+    </div>
+{% endblock %}

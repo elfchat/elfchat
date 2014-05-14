@@ -98,9 +98,7 @@
 
 .alert a,
 .alert .alert-link {
-    font-weight: normal;
     color: #fff;
-    text-decoration: underline;
 }
 
 .alert .close {

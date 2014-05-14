@@ -314,4 +314,21 @@ if ($app['debug']) {
     $app['monolog.level'] = function () {
         return \Monolog\Logger::INFO;
     };
+} else {
+    /**
+     * Errors
+     */
+
+    $app->error(function (\Exception $e, $code) use ($app) {
+        if ($code === 404) {
+            $response = $app->render('error/not_fount.twig');
+        } else if ($e instanceof ElfChat\Security\Authentication\Exception\AccessDeniedException) {
+            $response = $app->render('error/access_denied.twig');
+        } else {
+            $response = $app->render('error/error.twig');
+        }
+
+        $response->setStatusCode($code);
+        return $response;
+    });
 }

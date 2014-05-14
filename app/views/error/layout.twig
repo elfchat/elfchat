@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+    <title>{{ 'Page not found'|trans() }}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    {% block style %}
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/common/common.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/common/alert.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/common/button.css') }}">
+        <style type="text/css">
+            body {
+                padding: 100px;
+            }
+        </style>
+    {% endblock %}
+</head>
+<body>
+{% block content %}
+{% endblock %}
+</body>
+</html>
