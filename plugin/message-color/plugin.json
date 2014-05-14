@@ -1,0 +1,21 @@
+{
+    "name": "elfchat/message-color",
+    "title": "Message Color",
+    "description": "This plugin adds choice color messages to users.",
+    "author": {
+        "name": "ElfChat",
+        "email": "support@elfchat.net"
+    },
+    "require": {
+        "elfchat": "6.0.*"
+    },
+    "autoload": {
+        "Example\\": "src/"
+    },
+    "controllers": {
+        "/example": "src/color.php"
+    },
+    "views": {
+        "example": "views/"
+    }
+}

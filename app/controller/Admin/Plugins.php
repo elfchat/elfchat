@@ -12,6 +12,7 @@ use ElfChat\Plugin\Installer;
 use ElfChat\Plugin\Plugin;
 use Silicone\Route;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @Route("/admin/plugins")
@@ -29,6 +30,9 @@ class Plugins extends Controller
         $finder->files()
             ->depth(1)
             ->name('plugin.json')
+            ->sort(function ($a, $b) {
+                return ($a->getMTime() < $b->getMTime());
+            })
             ->in($this->app->getPluginDir());
 
         $plugins = array();
@@ -53,12 +57,13 @@ class Plugins extends Controller
     }
 
     /**
-     * @Route("/install/{name}", name="admin_plugin_install")
+     * @Route("/install", name="admin_plugin_install")
      */
-    public function install($name)
+    public function install(Request $request)
     {
         $plugins = $this->getPlugins();
 
+        $name = $request->get('name');
         if (isset($plugins[$name])) {
             $plugins[$name]->installed = true;
         }
@@ -69,12 +74,13 @@ class Plugins extends Controller
     }
 
     /**
-     * @Route("/uninstall/{name}", name="admin_plugin_uninstall")
+     * @Route("/uninstall", name="admin_plugin_uninstall")
      */
-    public function uninstall($name)
+    public function uninstall(Request $request)
     {
         $plugins = $this->getPlugins();
 
+        $name = $request->get('name');
         if (isset($plugins[$name])) {
             $plugins[$name]->installed = false;
         }

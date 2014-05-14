@@ -25,7 +25,7 @@ class Installer
      */
     public function install($plugins)
     {
-        if(!file_exists($this->pluginFile)) {
+        if (!file_exists($this->pluginFile)) {
             file_put_contents($this->pluginFile, '');
         }
 
@@ -50,6 +50,11 @@ $app[\'plugins\'] = array(
         }
 
         $content .= ");\n";
+
+        // Nothing more
+        if (empty($plugins)) {
+            goto write;
+        }
 
         // Autoload
 
@@ -99,6 +104,7 @@ $includeController = function ($__file) use ($app) {
 }));
 ";
 
+        write:
         file_put_contents($this->pluginFile, $content);
     }
 

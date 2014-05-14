@@ -1,6 +1,7 @@
 {
-    "name": "example",
-    "description": "Example Plugin",
+    "name": "elfchat/example",
+    "title": "Example Plugin",
+    "description": "Example plugin description",
     "author": {
         "name": "Name",
         "email": "email@dot.com"

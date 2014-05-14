@@ -17,6 +17,8 @@ class Plugin
 
     public $name;
 
+    public $title;
+
     public $description;
 
     public $author = array('name' => 'NoName', 'email' => 'no_email');
@@ -65,7 +67,8 @@ class Plugin
 
         $json = json_decode($this->getContents(), true);
 
-        $this->name = isset($json['name']) ? $json['name'] : 'NoName';
+        $this->name = isset($json['name']) ? $json['name'] : 'vendor/name';
+        $this->title = isset($json['title']) ? $json['title'] : 'No title';
         $this->description = isset($json['description']) ? $json['description'] : '';
         $this->configurationRoute = isset($json['configuration_route']) ? $json['configuration_route'] : '';
 
