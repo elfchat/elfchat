@@ -147,7 +147,7 @@ if (class_exists('PDO')) {
 }
 
 recommendation(
-    !extension_loaded('xdebug'),
+    !!extension_loaded('xdebug'),
     'Disable XDebug on production for performance.'
 );
 
@@ -196,11 +196,19 @@ if (Count::$requirements == 0) {
         echo "<div class='done'>Everything is OK, you can continue with the installation.</div>";
     }
 
-    if (!file_exists('../.htaccess')) {
-        print "<div>Check if you have uploaded '.htaccess' file on server or configured server properly.</div>";
-    }
+    echo <<<HTML
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+    $.getJSON("../install/check.js1").fail(function () {
+        $('#server_check').show();
+    });
+    </script>
 
-    echo "<a href='../install'>Install</a>";
+    <div id="server_check" style="display: none" class="requirement">Check if you have uploaded '.htaccess' file on server or configured server properly.</div>
+
+    <a id="install" href="../index.php/install">Install</a>
+HTML;
+
 }
 
 // Functions

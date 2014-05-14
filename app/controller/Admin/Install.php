@@ -18,6 +18,14 @@ use Silicone\Route;
 class Install extends Controller
 {
     /**
+     * @Route("/check.js")
+     */
+    public function check()
+    {
+        return $this->app->json(true);
+    }
+
+    /**
      * @Route("", name="install_configuration")
      */
     public function configuration()
