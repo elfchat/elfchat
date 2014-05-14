@@ -22,7 +22,7 @@ class Configuration extends Controller
     {
         $config = $this->app->config();
 
-        $form = $this->app->form($config)
+        $formBuilder = $this->app->form($config)
             ->add('debug', 'checkbox', array('label' => 'Debug', 'required' => false))
             ->add('locale', 'choice', array(
                 'choices' => array(
@@ -32,17 +32,22 @@ class Configuration extends Controller
                 'label' => 'Language',
             ))
             ->add('baseurl', 'text', array('label' => 'Base URL'))
-            ->add('remember_me:token', 'text', array('label' => 'Remember me token'))
-            ->add('server:type', 'choice', array(
-                'choices' => array(
-                    'ajax' => 'Ajax Server',
-                    'websocket' => 'WebSocket Server',
-                ),
-                'label' => 'Server Type',
-            ))
-            ->add('server:host', 'text', array('label' => 'Server Host'))
-            ->add('server:port', 'text', array('label' => 'Server Port'))
-            ->getForm();
+            ->add('remember_me:token', 'text', array('label' => 'Remember me token'));
+
+        if (ELFCHAT_EDITION === 'UNLIM' || ELFCHAT_EDITION === '__EDITION__') {
+            $formBuilder
+                ->add('server:type', 'choice', array(
+                    'choices' => array(
+                        'ajax' => 'Ajax Server',
+                        'websocket' => 'WebSocket Server',
+                    ),
+                    'label' => 'Server Type',
+                ))
+                ->add('server:host', 'text', array('label' => 'Server Host'))
+                ->add('server:port', 'text', array('label' => 'Server Port'));
+        }
+
+        $form = $formBuilder->getForm();
 
         $form->handleRequest($this->request);
 
