@@ -231,6 +231,9 @@ if ($app->isOpen()) {
     $app['monolog.level'] = function () {
         return \Monolog\Logger::NOTICE;
     };
+    $app['monolog.listener'] = $app->share(function () use ($app) {
+        return new ElfChat\Util\LogListener($app['logger']);
+    });
 }
 
 
