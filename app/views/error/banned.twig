@@ -1,0 +1,8 @@
+{% extends 'error/layout.twig' %}
+
+{% block content %}
+    <div class="alert alert-danger">
+        <h1>{{ 'You are banned for %time%'|trans()|replace({'%time%': ban.howLongString}) }}</h1>
+        <pre>{{ ban.reason }}</pre>
+    </div>
+{% endblock %}

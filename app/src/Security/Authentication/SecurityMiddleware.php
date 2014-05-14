@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use ElfChat\Entity\Ban;
 use ElfChat\Entity\User;
+use ElfChat\Security\Authentication\Exception\BannedException;
 use ElfChat\Security\Authentication\Provider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,7 +54,7 @@ class SecurityMiddleware
             // Ban check
             $ban = Ban::findActive($id, $request->getClientIp());
             if (!empty($ban)) {
-                return new Response($this->youAreBanned($ban[0]), Response::HTTP_FORBIDDEN);
+                throw new BannedException($ban[0], Response::HTTP_FORBIDDEN);
             }
 
             $user = User::find($id);
@@ -62,23 +63,5 @@ class SecurityMiddleware
                 $this->provider->setAuthenticated(true);
             }
         }
-    }
-
-    private function youAreBanned(Ban $ban)
-    {
-        $long = Ban::howLongChoices();
-        return <<< HTML
-<!doctype html>
-<html>
-<head>
-    <title>You are banned</title>
-</head>
-<body>
-    <h1>You are banned for {$long[$ban->howLong]}</h1>
-    <pre>{$ban->reason}</pre>
-</body>
-</html>
-HTML;
-
     }
 }

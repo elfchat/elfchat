@@ -6,6 +6,7 @@ ElfChat 6.0.0 BETA 2,
 - Mobile version
 - Message color plugin
 - Example plugin
+- Error pages
 - Fix FireFox box-sizing
 - Fix old avatar removal
 

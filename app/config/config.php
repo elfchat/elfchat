@@ -324,6 +324,10 @@ if ($app['debug']) {
             $response = $app->render('error/not_fount.twig');
         } else if ($e instanceof ElfChat\Security\Authentication\Exception\AccessDeniedException) {
             $response = $app->render('error/access_denied.twig');
+        } else if ($e instanceof ElfChat\Security\Authentication\Exception\BannedException) {
+            $response = $app->render('error/banned.twig', array(
+                'ban' => $e->getBan(),
+            ));
         } else {
             $response = $app->render('error/error.twig');
         }
