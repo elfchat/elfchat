@@ -66,12 +66,19 @@ $loader = ElfChat\Config\LoaderRegistry::getLoader();
 
         // Controllers
 
-        $content .= "\n";
+        $content .= '
+$includeController = function ($__file) use ($app) {
+    $plugin = $app[\'controllers_factory\'];
+    $obtain = include $__file;
+    return $obtain == 1 ? $plugin : $obtain;
+};
+
+';
 
         foreach ($plugins as $plugin) {
             foreach ($plugin->controllers as $mount => $path) {
 
-                $content .= "\$app->mount('" . addslashes($mount) . "', include '$path');\n";
+                $content .= "\$app->mount('" . addslashes($mount) . "', \$includeController('$path'));\n";
             }
         }
 

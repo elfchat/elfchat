@@ -5,7 +5,6 @@
  * @var $app \ElfChat\Application
  * @var $plugin \Silex\ControllerCollection
  */
-$plugin = $app['controllers_factory'];
 
 $plugin->get('', function () use ($app) {
     $my = new \Example\MyOwnClass();
@@ -14,5 +13,3 @@ $plugin->get('', function () use ($app) {
         'my' => $my,
     ));
 });
-
-return $plugin;

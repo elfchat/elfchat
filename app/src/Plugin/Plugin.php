@@ -15,6 +15,10 @@ class Plugin
 
     private $configFile;
 
+    public $author = array('name' => 'NoName', 'email' => 'no_email');
+
+    public $require = array();
+
     public $autoload = array();
 
     public $controllers = array();
@@ -34,6 +38,19 @@ class Plugin
         }
 
         $json = json_decode($this->configFile->getContents(), true);
+
+        if (isset($json['author'])) {
+            $this->author = array(
+                'name' => isset($json['author']['name']) ? $json['author']['name'] : 'NoName',
+                'email' => isset($json['author']['email']) ? $json['author']['email'] : 'no_email',
+            );
+        }
+
+        if (isset($json['require'])) {
+            foreach ($json['require'] as $what => $version) {
+                $this->require[$what] = $version;
+            }
+        }
 
         if (isset($json['autoload'])) {
             foreach ($json['autoload'] as $namespace => $path) {
@@ -62,5 +79,32 @@ class Plugin
     public function getPluginDir()
     {
         return $this->configFile->getPath();
+    }
+
+    public function checkRequirements()
+    {
+        $installed = array(
+            'php' => PHP_VERSION,
+            'elfchat' => ELFCHAT_VERSION,
+        );
+
+        foreach ($this->require as $what => $version) {
+            if (!isset($installed[$what])) {
+                return false;
+            }
+
+            $currentVersion = $installed[$what];
+            $currentVersion = str_replace('__VERSION__', $version, $currentVersion);
+
+            $versionRegex = preg_quote($version);
+            $versionRegex = str_replace('\*', '.+?', $versionRegex);
+            $versionRegex = "/^$versionRegex$/";
+
+            if (!preg_match($versionRegex, $currentVersion)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
