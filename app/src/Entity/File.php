@@ -143,7 +143,7 @@ class File
         );
 
         // check if we have an old image
-        if (isset($this->deleteFilePath)) {
+        if (!empty($this->deleteFilePath)) {
             if (is_file($this->deleteFilePath)) {
                 unlink($this->deleteFilePath);
             }

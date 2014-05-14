@@ -276,13 +276,6 @@ if ($app->isInstalled()) {
             );
     });
 
-
-    /**
-     * Monolog
-     */
-    $app['monolog.level'] = function () {
-        return \Monolog\Logger::INFO;
-    };
 }
 
 
@@ -314,4 +307,11 @@ if ($app['debug']) {
         // Whoops
         $app->register(new Whoops\Provider\Silex\WhoopsServiceProvider);
     }
+
+    /**
+     * Monolog
+     */
+    $app['monolog.level'] = function () {
+        return \Monolog\Logger::INFO;
+    };
 }
