@@ -322,17 +322,19 @@ if ($app['debug']) {
     $app->error(function (\Exception $e, $code) use ($app) {
         if ($code === 404) {
             $response = $app->render('error/not_fount.twig');
+            $response->setStatusCode(404);
         } else if ($e instanceof ElfChat\Security\Authentication\Exception\AccessDeniedException) {
             $response = $app->render('error/access_denied.twig');
         } else if ($e instanceof ElfChat\Security\Authentication\Exception\BannedException) {
             $response = $app->render('error/banned.twig', array(
                 'ban' => $e->getBan(),
             ));
+            $response->setStatusCode($e->getCode());
         } else {
             $response = $app->render('error/error.twig');
+            $response->setStatusCode(500);
         }
 
-        $response->setStatusCode($code);
         return $response;
     });
 }
