@@ -147,7 +147,7 @@ if (class_exists('PDO')) {
 }
 
 recommendation(
-    !!extension_loaded('xdebug'),
+    !extension_loaded('xdebug'),
     'Disable XDebug on production for performance.'
 );
 
