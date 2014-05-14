@@ -36,7 +36,6 @@
 <body>
 <?php
 // Based on Symfony Requirement
-$requirements = 0;
 
 // Config
 define('REQUIRED_PHP_VERSION', '5.3.9');
@@ -187,13 +186,20 @@ recommendation(
 
 // Finish
 
-if ($requirements == 0) {
+if (Count::$requirements == 0) {
     $configFile = OPEN_DIR . '/config.php';
     if (!file_exists($configFile)) {
         file_put_contents($configFile, '<?php return array();');
     }
 
-    echo "<div class='done'>Everything is OK, you can continue with the installation.</div>";
+    if (Count::$recommendation == 0) {
+        echo "<div class='done'>Everything is OK, you can continue with the installation.</div>";
+    }
+
+    if (!file_exists('../.htaccess')) {
+        print "<div>Check if you have uploaded '.htaccess' file on server or configured server properly.</div>";
+    }
+
     echo "<a href='../install'>Install</a>";
 }
 
@@ -201,16 +207,25 @@ if ($requirements == 0) {
 
 function requirement($if, $text)
 {
-    global $requirements;
     if (!$if) {
         print "<div class='requirement'>$text</div>";
-        $requirements++;
+        Count::$requirements++;
     }
 }
 
 function recommendation($if, $text)
 {
-    $if or print "<div class='recommendation'>$text</div>";
+    if (!$if) {
+        print "<div class='recommendation'>$text</div>";
+        Count::$recommendation++;
+    }
+}
+
+class Count
+{
+    static $requirements = 0;
+
+    static $recommendation = 0;
 }
 
 ?>
