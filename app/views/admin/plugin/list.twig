@@ -4,7 +4,25 @@
 
 {% block content %}
     {% for plugin in plugins %}
-        {{ plugin.pluginDir }}<br>
-        {{ plugin.checkRequirements() }}
+        <h1>{{ plugin.name }}</h1>
+        <p>{{ plugin.description }}</p>
+        <p>
+            <strong>{{ 'Author'|trans() }}</strong>: {{ plugin.author.name }}<br>
+            <strong>{{ 'Email'|trans() }}</strong>: {{ plugin.author.email }}<br>
+        </p>
+        {% if plugin.checkRequirements() %}
+            {% if plugin.installed %}
+                <a class="button" href="{{ url('admin_plugin_uninstall', {'name': plugin.name}) }}">
+                    {{ 'Uninstall plugin'|trans() }}
+                </a>
+                {% if plugin.hasConfigurationRoute() %}
+                    <a class="button" href="{{ url(plugin.configurationRoute) }}">{{ 'Configuration'|trans() }}</a>
+                {% endif %}
+            {% else %}
+                <a class="button primary" href="{{ url('admin_plugin_install', {'name': plugin.name}) }}">
+                    {{ 'Install plugin'|trans() }}
+                </a>
+            {% endif %}
+        {% endif %}
     {% endfor %}
 {% endblock %}

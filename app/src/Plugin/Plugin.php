@@ -7,13 +7,17 @@
 
 namespace ElfChat\Plugin;
 
-use Symfony\Component\Finder\SplFileInfo;
-
 class Plugin
 {
     const CONFIG_NAME = 'plugin.json';
 
     private $configFile;
+
+    public $installed = false;
+
+    public $name;
+
+    public $description;
 
     public $author = array('name' => 'NoName', 'email' => 'no_email');
 
@@ -25,10 +29,32 @@ class Plugin
 
     public $views = array();
 
-    public function __construct(SplFileInfo $pluginFile)
+    public $configurationRoute;
+
+    public function __construct(\SplFileInfo $pluginFile)
     {
         $this->configFile = $pluginFile;
         $this->load();
+    }
+
+    /**
+     * Returns the contents of the file
+     *
+     * @return string the contents of the file
+     *
+     * @throws \RuntimeException
+     */
+    private function getContents()
+    {
+        $level = error_reporting(0);
+        $content = file_get_contents($this->configFile->getPathname());
+        error_reporting($level);
+        if (false === $content) {
+            $error = error_get_last();
+            throw new \RuntimeException($error['message']);
+        }
+
+        return $content;
     }
 
     private function load()
@@ -37,7 +63,11 @@ class Plugin
             throw new \RuntimeException("Plugin config \"" . $this->configFile->getPathname() . "\" does not readable.");
         }
 
-        $json = json_decode($this->configFile->getContents(), true);
+        $json = json_decode($this->getContents(), true);
+
+        $this->name = isset($json['name']) ? $json['name'] : 'NoName';
+        $this->description = isset($json['description']) ? $json['description'] : '';
+        $this->configurationRoute = isset($json['configuration_route']) ? $json['configuration_route'] : '';
 
         if (isset($json['author'])) {
             $this->author = array(
@@ -107,4 +137,10 @@ class Plugin
 
         return true;
     }
+
+    public function hasConfigurationRoute()
+    {
+        return is_string($this->configurationRoute) && strlen($this->configurationRoute) > 0;
+    }
+
 }

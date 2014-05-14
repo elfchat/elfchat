@@ -46,7 +46,7 @@ $app[\'plugins\'] = array(
 ';
 
         foreach ($plugins as $plugin) {
-            $content .= "    '{$plugin->getPluginFile()}',\n";
+            $content .= "    '{$plugin->name}' => '{$plugin->getPluginFile()}',\n";
         }
 
         $content .= ");\n";

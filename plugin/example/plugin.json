@@ -13,9 +13,11 @@
         "Example\\": "src/"
     },
     "controllers": {
-        "/example": "src/example.php"
+        "/example": "src/example.php",
+        "/admin": "src/admin.php"
     },
     "views": {
         "example": "views/"
-    }
+    },
+    "configuration_route": "plugin_example_config"
 }
