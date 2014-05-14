@@ -199,7 +199,7 @@ if (Count::$requirements == 0) {
     echo <<<HTML
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script>
-    $.getJSON("../install/check.js1").fail(function () {
+    $.getJSON("../install/check.js").fail(function () {
         $('#server_check').show();
     });
     </script>
