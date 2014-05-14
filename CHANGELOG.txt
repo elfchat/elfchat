@@ -1,8 +1,13 @@
 ElfChat 6.0.0 BETA 2,
 --------------------------------
+- Plugin system
+- Api integration
 - Flood control
 - Mobile version
+- Message color plugin
+- Example plugin
 - Fix FireFox box-sizing
+- Fix old avatar removal
 
 ElfChat 6.0.0 BETA 1, 2014-04-19
 --------------------------------
