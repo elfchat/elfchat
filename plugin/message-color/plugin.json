@@ -9,13 +9,10 @@
     "require": {
         "elfchat": "6.0.*"
     },
-    "autoload": {
-        "Example\\": "src/"
-    },
     "controllers": {
-        "/example": "src/color.php"
+        "": "src/color.php"
     },
     "views": {
-        "example": "views/"
+        "message-color": "views/"
     }
 }

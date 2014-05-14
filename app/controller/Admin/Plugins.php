@@ -90,6 +90,16 @@ class Plugins extends Controller
         return $this->app->redirect($this->app->url('admin_plugins'));
     }
 
+    /**
+     * @Route("/update", name="admin_plugin_update")
+     */
+    public function update(Request $request)
+    {
+        $this->installPlugins($this->getPlugins());
+
+        return $this->app->redirect($request->get('next', $this->app->url('admin_plugins')));
+    }
+
     private function installPlugins($plugins)
     {
         $installer = new Installer($this->app->getOpenDir() . '/plugins.php');

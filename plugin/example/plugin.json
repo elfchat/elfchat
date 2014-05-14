@@ -3,8 +3,8 @@
     "title": "Example Plugin",
     "description": "Example plugin description",
     "author": {
-        "name": "Name",
-        "email": "email@dot.com"
+        "name": "ElfChat",
+        "email": "support@elfchat.net"
     },
     "require": {
         "php": "5.*",
