@@ -67,7 +67,7 @@ class Login extends Controller
             $data = $guestForm->getData();
 
             $guest = new GuestUser();
-            $guest->setName($data['guestname']);
+            $guest->name = $data['guestname'];
 
             $em->persist($guest);
             $em->flush($guest);
