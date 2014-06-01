@@ -1,0 +1,25 @@
+.show-users-button {
+    display: inline-block;
+}
+
+aside {
+}
+
+footer {
+    left: 0;
+}
+
+.chat {
+    left: 0;
+    border-left: solid 1px #e1e1e1;
+}
+
+.buttons .other {
+    display: none !important;
+}
+
+.copyright,
+.copyright a,
+.copyright:first-letter {
+    font-size: 6px !important;
+}

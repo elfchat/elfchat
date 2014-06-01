@@ -7,8 +7,10 @@ ElfChat 6.0.0 BETA 2,
 - Message color plugin
 - Example plugin
 - Error pages
+- Add mobile config
 - Fix FireFox box-sizing
 - Fix old avatar removal
+- Fix guest login
 
 ElfChat 6.0.0 BETA 1, 2014-04-19
 --------------------------------

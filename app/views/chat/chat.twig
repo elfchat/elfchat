@@ -1,18 +1,23 @@
 {% extends 'base.twig' %}
 
 {% block style %}
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     {{ parent() }}
     <link rel="stylesheet" type="text/css" href="{{ asset('css/chat.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('icons/css/icons.css') }}">
+    {% if app.config.get('mobile_enable') %}
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <link rel="stylesheet" type="text/css" media="only screen and (min-device-width: 320px) and (max-device-width: 480px)" href="{{ asset('css/mobile.css') }}">
+    {% endif %}
 {% endblock style %}
 
 {% block body %}
     <div class="box">
         <header>
+            <button class="show-users-button" data-action="users"><i class="icon-menu"></i></button>
             ElfChat
             <div class="buttons">
                 <!--<a class="button" target="_blank" href="#">{{ 'Archive'|trans() }}</a>-->
-                <button data-popover="settings">{{ 'Settings'|trans() }}</button>
+                <button data-popover="settings"><i class="icon-config"></i> {{ 'Settings'|trans() }}</button>
             </div>
         </header>
 
@@ -24,14 +29,14 @@
         <footer>
             <div class="buttons">
                 <div class="other">
-                    <button data-popover="emotions">{{ 'Emotions'|trans() }}</button>
+                    <button data-popover="emotions"><i class="icon-emotion"></i> {{ 'Emotions'|trans() }}</button>
                     <button data-popover="bbcode">{{ 'BBCode'|trans() }}</button>
                 </div>
                 <div class="send">
                     <div id="privateGroup" class="button-group" style="display: none">
                         <button id="private" data-action="send"></button><button data-action="close">✘</button>
                     </div>
-                    <button id="send" class="primary" data-action="send">{{ 'Send'|trans() }}</button>
+                    <button id="send" class="primary" data-action="send"><i class="icon-send"></i> {{ 'Send'|trans() }}</button>
                 </div>
             </div>
 

@@ -31,6 +31,10 @@ header .buttons {
     float: right;
 }
 
+.show-users-button {
+    display: none;
+}
+
 /* Name */
 
 .name {
@@ -289,32 +293,4 @@ footer .buttons .send {
 .copyright a {
     color: #9b9b9b;
     font-size: 10px;
-}
-
-/*
- * SmartPhones (portrait and landscape)
- */
-
-@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
-    aside {
-    }
-
-    footer {
-        left: 0;
-    }
-
-    .chat {
-        left: 0;
-        border-left: solid 1px #e1e1e1;
-    }
-
-    .buttons .other {
-        display: none !important;
-    }
-
-    .copyright,
-    .copyright a,
-    .copyright:first-letter {
-        font-size: 6px !important;
-    }
 }

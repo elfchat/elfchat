@@ -48,11 +48,13 @@ class Application {
 
 
         // Mobile
-        if ($window.width() < 480) {
-            var snapper = new Snap({
-                element: document.getElementById('chat'),
-                disable: 'right'
-            });
+        if (window.config.mobile_enable) {
+            if ($window.width() < 480) {
+                var snapper = new Snap({
+                    element: document.getElementById('chat'),
+                    disable: 'right'
+                });
+            }
         }
     }
 

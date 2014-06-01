@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html{{ app.config.get('mobile_enable') ? ' class="mobile"' : '' }}>
 <head>
     <title>{% block title %}ElfChat{% endblock %}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">

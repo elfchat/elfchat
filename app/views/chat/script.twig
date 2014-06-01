@@ -15,7 +15,8 @@
         sound: {
             message: '{{ app.request.basePath }}/web/sound/beep.mp3',
             join: '{{ app.request.basePath }}/web/sound/online.mp3'
-        }
+        },
+        mobile_enable: {{ app.config.get('mobile_enable') ? 'true' : 'false' }}
     };
     {% endautoescape %}
 
