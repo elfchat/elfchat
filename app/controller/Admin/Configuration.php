@@ -23,6 +23,7 @@ class Configuration extends Controller
         $config = $this->app->config();
 
         $formBuilder = $this->app->form($config)
+            ->add('chat_title', 'text', array('label' => 'Chat title'))
             ->add('debug', 'checkbox', array('label' => 'Debug', 'required' => false))
             ->add('locale', 'choice', array(
                 'choices' => array(

@@ -14,7 +14,7 @@
     <div class="box">
         <header>
             <button class="show-users-button" data-action="users"><i class="icon-menu"></i></button>
-            ElfChat
+            {{ app.config.get('chat_title') }}
             <div class="buttons">
                 <!--<a class="button" target="_blank" href="#">{{ 'Archive'|trans() }}</a>-->
                 <button data-popover="settings"><i class="icon-config"></i> {{ 'Settings'|trans() }}</button>

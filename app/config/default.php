@@ -44,6 +44,7 @@ return array(
     'integration_key' => sha1(uniqid()),
 
     'mobile_enable' => true,
+    'chat_title' => 'ElfChat',
 );
 
  
