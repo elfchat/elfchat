@@ -70,12 +70,12 @@ class Entity
         self::entityManager()->flush($entity);
     }
 
-    final public static function reference($id)
+    public static function reference($id)
     {
         return self::entityManager()->getPartialReference(get_called_class(), $id);
     }
 
-    final public static function find($id)
+    public static function find($id)
     {
         return self::entityManager()->find(get_called_class(), $id);
     }

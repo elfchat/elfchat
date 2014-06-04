@@ -44,6 +44,7 @@ class Bans extends Controller
         if ($id = $this->request->get('id')) {
             if ($user = User::find($id)) {
                 $ban->user = $user;
+                $ban->ip = $user->ip;
             }
         }
 

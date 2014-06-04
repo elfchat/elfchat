@@ -19,6 +19,9 @@ use ElfChat\Validator\Constraints\Unique;
  * @property string $email
  * @property string $role
  * @property \ElfChat\Entity\Avatar $avatar
+ * @property string ip
+ *
+ * @method static User find()
  *
  * @ORM\Entity
  * @ORM\Table("elfchat_user", indexes={
@@ -69,6 +72,11 @@ class User extends Entity
      * @var Avatar
      */
     protected $avatar;
+
+    /**
+     * @ORM\Column(nullable=true)
+     */
+    protected $ip;
 
     public function __construct()
     {

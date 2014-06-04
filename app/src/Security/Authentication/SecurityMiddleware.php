@@ -52,13 +52,19 @@ class SecurityMiddleware
 
         if (null !== $id) {
             // Ban check
-            $ban = Ban::findActive($id, $request->getClientIp());
+            $clientIp = $request->getClientIp();
+            $ban = Ban::findActive($id, $clientIp);
             if (!empty($ban)) {
                 throw new BannedException($ban[0], Response::HTTP_FORBIDDEN);
             }
 
+            // User loading.
             $user = User::find($id);
+
             if (null !== $user) {
+                $user->ip = $clientIp;
+                $user->save();
+
                 $this->provider->setUser($user);
                 $this->provider->setAuthenticated(true);
             }
