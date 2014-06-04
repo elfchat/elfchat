@@ -1009,6 +1009,9 @@ var Application = function Application(server) {
           element: document.getElementById('chat'),
           disable: 'right'
         });
+        $(document).on('click.show-users', '[data-action="show-users"]', (function() {
+          snapper.open('left');
+        }));
       }
     }
   },

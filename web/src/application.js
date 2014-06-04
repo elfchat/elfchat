@@ -54,6 +54,10 @@ class Application {
                     element: document.getElementById('chat'),
                     disable: 'right'
                 });
+
+                $(document).on('click.show-users', '[data-action="show-users"]', () => {
+                    snapper.open('left');
+                });
             }
         }
     }

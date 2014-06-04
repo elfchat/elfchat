@@ -8,6 +8,8 @@ ElfChat 6.0.0 BETA 2,
 - Example plugin
 - Error pages
 - Add mobile config
+- Add ban IP detection
+- Add "Show online users" in mobile
 - Fix FireFox box-sizing
 - Fix old avatar removal
 - Fix guest login
