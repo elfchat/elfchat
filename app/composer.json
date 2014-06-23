@@ -37,7 +37,7 @@
         "gabrielelana/graceful-death": "*@dev"
     },
     "require-dev": {
-        "phpunit/phpunit": "3.7.*",
+        "phpunit/phpunit": "3.*",
         "rych/bytesize": "*"
     }
 }

@@ -117,6 +117,28 @@ $app['twig'] = $app->share($app->extend('twig', function (\Twig_Environment $twi
     return $twig;
 }));
 
+/**
+ * Theme and Views
+ */
+
+$app['twig.loader.theme'] = $app->share(function () use ($app, $config) {
+    return new ElfChat\Twig\LevelLoader(
+        array(
+            // Order of keys is really matter.
+            'plugin' => $app->getOpenDir() . '/plugin',
+            'theme' => $config->get('theme_path'),
+            'base' => $app->getRootDir() . '/views/',
+        )
+    );
+});
+$app['twig.loader'] = $app->share(function () use ($app) {
+    return new \Twig_Loader_Chain(array(
+        $app['twig.loader.theme'],
+        $app['twig.loader.filesystem'],
+    ));
+});
+
+
 // Translation
 $app->register(new Silicone\Provider\TranslationServiceProvider());
 $app['translator.resource'] = $app->getRootDir() . '/lang/';

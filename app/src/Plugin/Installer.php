@@ -69,6 +69,14 @@ $loader = ElfChat\Config\LoaderRegistry::getLoader();
             }
         }
 
+        // Plugin file
+
+        foreach ($plugins as $plugin) {
+            if (null !== $plugin->file) {
+                $content .= "require_once \"$plugin->file\";\n";
+            }
+        }
+
         // Controllers
 
         $content .= '

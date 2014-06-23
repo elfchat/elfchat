@@ -27,6 +27,8 @@ class Plugin
 
     public $autoload = array();
 
+    public $file;
+
     public $controllers = array();
 
     public $views = array();
@@ -90,6 +92,8 @@ class Plugin
                 $this->autoload[$namespace] = $this->getPluginDir() . '/' . $path;
             }
         }
+
+        $this->file = isset($json['file']) ? $this->getPluginDir() . '/' . $json['file'] : null;
 
         if (isset($json['controllers'])) {
             foreach ($json['controllers'] as $mount => $path) {

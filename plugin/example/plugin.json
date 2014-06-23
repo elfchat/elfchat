@@ -13,8 +13,9 @@
     "autoload": {
         "Example\\": "src/"
     },
+    "file": "src/plugin.php",
     "controllers": {
-        "/example": "src/example.php",
+        "/example": "src/controller.php",
         "/admin": "src/admin.php"
     },
     "views": {
