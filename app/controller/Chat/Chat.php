@@ -23,7 +23,7 @@ class Chat extends Controller
         $em = $this->app->entityManager();
 
         if (!$this->app->isAuthenticated()) {
-            return $this->render('chat/index.twig');
+            return $this->render('index.twig');
         } else {
             $user = $this->app->user();
 

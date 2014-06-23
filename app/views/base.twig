@@ -1,18 +1,23 @@
 <!doctype html>
-<html{{ app.config.get('mobile_enable') ? ' class="mobile"' : '' }}>
+<html{% block html_attr %}{{ app.config.get('mobile_enable') ? ' class="mobile"' : '' }}{% endblock %}>
 <head>
-    <title>{% block title %}{{ app.config.get('chat_title') }}{% endblock %}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    {% block style %}
-        <link rel="stylesheet" type="text/css" href="{{ asset('css/common/common.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('css/common/popover.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('css/common/button.css') }}">
+    {% block head %}
+        <title>{% block title %}{{ app.config.get('chat_title') }}{% endblock %}</title>
+        {% block meta %}
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        {% endblock %}
+        {% block style %}
+            <link rel="stylesheet" type="text/css" href="{{ asset('css/common/common.css') }}">
+            <link rel="stylesheet" type="text/css" href="{{ asset('css/common/popover.css') }}">
+            <link rel="stylesheet" type="text/css" href="{{ asset('css/common/button.css') }}">
+        {% endblock %}
+        <script src="{{ asset('lib/vendor/jquery/jquery.min.js') }}"></script>
     {% endblock %}
-    <script src="{{ asset('lib/vendor/jquery/jquery.min.js') }}"></script>
 </head>
 <body>
 {% block body %}
 {% endblock %}
+
 {% block script %}
 {% endblock %}
 </body>
