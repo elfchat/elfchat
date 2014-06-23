@@ -45,6 +45,7 @@ return array(
 
     'mobile_enable' => true,
     'chat_title' => 'ElfChat',
+    'theme' => 'elfchat/theme',
     'theme_path' => null,
 );
 

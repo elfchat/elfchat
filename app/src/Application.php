@@ -82,6 +82,15 @@ class Application extends Silicone\Application
         return $dir;
     }
 
+    public function getThemeDir()
+    {
+        static $dir;
+        if (empty($dir)) {
+            $dir = dirname(dirname(__DIR__)) . '/theme';
+        }
+        return $dir;
+    }
+
     /**
      * @return \Symfony\Component\HttpFoundation\Request
      */

@@ -1,0 +1,14 @@
+{
+    "name": "elfchat/theme",
+    "title": "Default Theme",
+    "description": "Default ElfChat Theme",
+    "author": {
+        "name": "ElfChat",
+        "email": "support@elfchat.net"
+    },
+    "require": {
+        "php": "5.*",
+        "elfchat": "6.0.*"
+    },
+    "views": "views/"
+}

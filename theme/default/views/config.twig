@@ -1,0 +1,16 @@
+{% extends 'admin/layout.twig' %}
+
+{% set title = 'Example Plugin Configuration'|trans() %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+    <form class="form" action="" {{ form_enctype(form) }} method="post">
+        {{ form_widget(form) }}
+        <div class="actions">
+            <button class="primary" type="submit">{{ 'Save'|trans() }}</button>
+            <button type="reset">{{ 'Cancel'|trans() }}</button>
+        </div>
+    </form>
+{% endblock %}

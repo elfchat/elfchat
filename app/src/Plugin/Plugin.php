@@ -69,6 +69,11 @@ class Plugin
 
         $json = json_decode($this->getContents(), true);
 
+        $this->parse($json);
+    }
+
+    protected function parse(array $json)
+    {
         $this->name = isset($json['name']) ? $json['name'] : 'vendor/name';
         $this->title = isset($json['title']) ? $json['title'] : 'No title';
         $this->description = isset($json['description']) ? $json['description'] : '';
