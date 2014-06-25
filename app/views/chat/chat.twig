@@ -29,8 +29,10 @@
         <footer>
             <div class="buttons">
                 <div class="other">
+                    {% block buttons %}
                     <button data-popover="emotions"><i class="icon-emotion"></i> {{ 'Emotions'|trans() }}</button>
                     <button data-popover="bbcode">{{ 'BBCode'|trans() }}</button>
+                    {% endblock %}
                 </div>
                 <div class="send">
                     <div id="privateGroup" class="button-group" style="display: none">

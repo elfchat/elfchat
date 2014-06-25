@@ -14,5 +14,6 @@
     },
     "views": {
         "message-color": "views/"
-    }
+    },
+    "install_script": "src/install.php"
 }

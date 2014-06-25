@@ -35,6 +35,8 @@ class Plugin
 
     public $configurationRoute;
 
+    public $installScript;
+
     public function __construct(\SplFileInfo $pluginFile)
     {
         $this->configFile = $pluginFile;
@@ -78,6 +80,7 @@ class Plugin
         $this->title = isset($json['title']) ? $json['title'] : 'No title';
         $this->description = isset($json['description']) ? $json['description'] : '';
         $this->configurationRoute = isset($json['configuration_route']) ? $json['configuration_route'] : '';
+        $this->installScript = isset($json['install_script']) ? $this->getPluginDir() . '/' . $json['install_script'] : '';
 
         if (isset($json['author'])) {
             $this->author = array(

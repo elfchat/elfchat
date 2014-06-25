@@ -11,12 +11,16 @@ class Installer
 {
     private $pluginFile;
 
+    private $pluginViewPath;
+
     /**
      * @param $pluginFile string
+     * @param $pluginViewPath string
      */
-    public function __construct($pluginFile)
+    public function __construct($pluginFile, $pluginViewPath)
     {
         $this->pluginFile = $pluginFile;
+        $this->pluginViewPath = $pluginViewPath;
     }
 
 
@@ -112,9 +116,69 @@ $includeController = function ($__file) use ($app) {
 }));
 ";
 
+        $this->createPluginViews($plugins);
+
         write:
         file_put_contents($this->pluginFile, $content);
     }
 
+    /**
+     * @param Plugin[] $plugins
+     */
+    private function createPluginViews($plugins)
+    {
+        $collector = new InstallScript\Collector();
+        Hook::setCollector($collector);
 
+        foreach ($plugins as $plugin) {
+            if(!empty($plugin->installScript)) {
+                include $plugin->installScript;
+            }
+        }
+
+        foreach ($collector->views as $view => $blocks) {
+            $content = "{% extends 'theme:$view' %}\n";
+
+            foreach($blocks as $block => $where) {
+                $content .= "{% block $block %}\n";
+                // Prepend
+                if(isset($where['prepend'])) {
+                    foreach ($where['prepend'] as $file) {
+                        $content .= "{# File: $file #}\n";
+                        $content .= file_get_contents($file);
+                        $content .= "\n";
+                    }
+                }
+
+                // Replace
+                if(isset($where['replace'])) {
+                    foreach ($where['replace'] as $file) {
+                        $content .= "{# File: $file #}\n";
+                        $content .= file_get_contents($file);
+                        $content .= "\n";
+                    }
+                } else {
+                    $content .= "{{ parent() }}\n";
+                }
+
+                // Append
+                if(isset($where['append'])) {
+                    foreach ($where['append'] as $file) {
+                        $content .= "{# File: $file #}\n";
+                        $content .= file_get_contents($file);
+                        $content .= "\n";
+                    }
+                }
+                $content .= "{% endblock %}\n";
+            }
+
+            $viewFile = $this->pluginViewPath . '/' . $view;
+            $viewDir = dirname($viewFile);
+            if (!is_dir($viewDir)) {
+                mkdir($viewDir);
+            }
+
+            file_put_contents($viewFile, $content);
+        }
+    }
 }

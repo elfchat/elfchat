@@ -57,17 +57,21 @@
 </script>
 
 {# Views #}
-{% autoescape false %}
-{{ view('chat/tab/user.view') }}
-{{ view('chat/board/log.view') }}
-{{ view('chat/board/message.view') }}
-{{ view('chat/emotion/tab.view') }}
-{{ view('chat/emotion/image.view') }}
-{{ view('chat/popover/profile.view') }}
-{% endautoescape %}
+{% block views %}
+    {% autoescape false %}
+    {{ view('chat/tab/user.view') }}
+    {{ view('chat/board/log.view') }}
+    {{ view('chat/board/message.view') }}
+    {{ view('chat/emotion/tab.view') }}
+    {{ view('chat/emotion/image.view') }}
+    {{ view('chat/popover/profile.view') }}
+    {% endautoescape %}
+{% endblock %}
 
 {# Popovers #}
-{% include 'chat/popover/emotion.twig' %}
-{% include 'chat/popover/settings.twig' %}
-{% include 'chat/popover/bbcode.twig' %}
+{% block popovers %}
+    {% include 'chat/popover/emotion.twig' %}
+    {% include 'chat/popover/settings.twig' %}
+    {% include 'chat/popover/bbcode.twig' %}
+{% endblock %}
 

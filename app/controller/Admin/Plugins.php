@@ -102,7 +102,7 @@ class Plugins extends Controller
 
     private function installPlugins($plugins)
     {
-        $installer = new Installer($this->app->getOpenDir() . '/plugins.php');
+        $installer = new Installer($this->app->getOpenDir() . '/plugins.php', $this->app['plugin_view_path']);
         $installer->install(array_filter($plugins, function (Plugin $plugin) {
             return $plugin->installed;
         }));

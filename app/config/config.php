@@ -120,12 +120,12 @@ $app['twig'] = $app->share($app->extend('twig', function (\Twig_Environment $twi
 /**
  * Theme and Views
  */
-
+$app['plugin_view_path'] = $app->getOpenDir() . '/plugin';
 $app['twig.loader.theme'] = $app->share(function () use ($app, $config) {
     return new ElfChat\Twig\LevelLoader(
         array(
             // Order of keys is really matter.
-            'plugin' => $app->getOpenDir() . '/plugin',
+            'plugin' => $app['plugin_view_path'],
             'theme' => $config->get('theme_path'),
             'base' => $app->getRootDir() . '/views/',
         )
