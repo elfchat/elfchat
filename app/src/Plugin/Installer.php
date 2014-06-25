@@ -127,11 +127,14 @@ $includeController = function ($__file) use ($app) {
      */
     private function createPluginViews($plugins)
     {
+        // Drop old plugin hooks.
+        $this->deleteDirectory($this->pluginViewPath);
+
         $collector = new InstallScript\Collector();
         Hook::setCollector($collector);
 
         foreach ($plugins as $plugin) {
-            if(!empty($plugin->installScript)) {
+            if (!empty($plugin->installScript)) {
                 include $plugin->installScript;
             }
         }
@@ -139,34 +142,28 @@ $includeController = function ($__file) use ($app) {
         foreach ($collector->views as $view => $blocks) {
             $content = "{% extends 'theme:$view' %}\n";
 
-            foreach($blocks as $block => $where) {
+            foreach ($blocks as $block => $where) {
                 $content .= "{% block $block %}\n";
                 // Prepend
-                if(isset($where['prepend'])) {
+                if (isset($where['prepend'])) {
                     foreach ($where['prepend'] as $file) {
-                        $content .= "{# File: $file #}\n";
-                        $content .= file_get_contents($file);
-                        $content .= "\n";
+                        $content .= "{% include '$file' %}\n";
                     }
                 }
 
                 // Replace
-                if(isset($where['replace'])) {
+                if (isset($where['replace'])) {
                     foreach ($where['replace'] as $file) {
-                        $content .= "{# File: $file #}\n";
-                        $content .= file_get_contents($file);
-                        $content .= "\n";
+                        $content .= "{% include '$file' %}\n";
                     }
                 } else {
                     $content .= "{{ parent() }}\n";
                 }
 
                 // Append
-                if(isset($where['append'])) {
+                if (isset($where['append'])) {
                     foreach ($where['append'] as $file) {
-                        $content .= "{# File: $file #}\n";
-                        $content .= file_get_contents($file);
-                        $content .= "\n";
+                        $content .= "{% include '$file' %}\n";
                     }
                 }
                 $content .= "{% endblock %}\n";
@@ -175,10 +172,34 @@ $includeController = function ($__file) use ($app) {
             $viewFile = $this->pluginViewPath . '/' . $view;
             $viewDir = dirname($viewFile);
             if (!is_dir($viewDir)) {
-                mkdir($viewDir);
+                mkdir($viewDir, 0777, true);
             }
 
             file_put_contents($viewFile, $content);
         }
+    }
+
+    /**
+     * @param $dir string
+     */
+    private function deleteDirectory($dir)
+    {
+        if (!is_dir($dir)) {
+            return;
+        }
+
+        $it = new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS);
+        $files = new \RecursiveIteratorIterator($it, \RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($files as $file) {
+            if ($file->getFilename() === '.' || $file->getFilename() === '..') {
+                continue;
+            }
+            if ($file->isDir()) {
+                rmdir($file->getRealPath());
+            } else {
+                unlink($file->getRealPath());
+            }
+        }
+        rmdir($dir);
     }
 }
