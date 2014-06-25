@@ -18,11 +18,6 @@ class View
         $this->file = $file;
     }
 
-    public function __invoke($file)
-    {var_dump($file);die;
-        return new self($this->collector, $file);
-    }
-
     public function block($name)
     {
         return new Block($this->collector, $this->file, $name);
