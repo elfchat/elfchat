@@ -221,6 +221,12 @@ class SendBehavior {
             return false;
         }
 
+        var sendData = {
+            message: message
+        };
+        $(window).trigger('send', sendData);
+        message = sendData.message;
+
         if (!this.isPrivate) {
             this.chat.server.send(message);
         } else {

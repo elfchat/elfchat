@@ -1,7 +1,9 @@
-<script src="{{ asset('lib/vendors.js') }}"></script>
-<script src="{{ asset('app.js') }}"></script>
-<script src="{{ asset('emotion/catalog.js') }}"></script>
-<script src="{{ asset('emotion/list.js') }}"></script>
+{% block script %}
+    <script src="{{ asset('lib/vendors.js') }}"></script>
+    <script src="{{ asset('app.js') }}"></script>
+    <script src="{{ asset('emotion/catalog.js') }}"></script>
+    <script src="{{ asset('emotion/list.js') }}"></script>
+{% endblock %}
 <script type="text/javascript">
     // Config
     {% autoescape false %}
