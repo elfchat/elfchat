@@ -1,6 +1,8 @@
 ElfChat 6.0.0 BETA 2,
 --------------------------------
 - Plugin system
+- Theme system
+- View hooks system
 - Api integration
 - Flood control
 - Mobile version
