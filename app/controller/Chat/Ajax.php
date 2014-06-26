@@ -12,6 +12,7 @@ use ElfChat\Entity\Ajax\Online;
 use ElfChat\Entity\Ajax\Queue;
 use ElfChat\Server\AjaxServer;
 use ElfChat\Server\Protocol;
+use Monolog\Logger;
 use Silicone\Route;
 
 /**
@@ -92,6 +93,7 @@ class Ajax extends Controller
         $data = json_decode($this->request->request->get('data'));
 
         if (JSON_ERROR_NONE !== json_last_error() || !is_array($data) || count($data) < 0) {
+            $this->app->log('Error in Ajax::onSend controller. Error in request data.', $data, Logger::ERROR);
             return $this->app->json(false);
         }
 
@@ -103,6 +105,7 @@ class Ajax extends Controller
             return $this->app->json($message !== null);
         }
 
+        $this->app->log('Error in Ajax::onSend controller. Unknown error.', array(), Logger::ERROR);
         return $this->app->json(false);
     }
 
