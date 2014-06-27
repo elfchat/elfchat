@@ -155,6 +155,10 @@ class Application extends Silicone\Application
         return $this['server'];
     }
 
+    /**
+     * @param $role
+     * @return bool
+     */
     public function isGranted($role)
     {
         return $this['security.provider']->isGranted($role);
@@ -181,7 +185,7 @@ class Application extends Silicone\Application
      */
     public function isModerator()
     {
-        return $this->isGranted('ROLE_MODERATOR');
+        return $this->isGranted(ROLE_MODERATOR);
     }
 
     /**
@@ -189,7 +193,7 @@ class Application extends Silicone\Application
      */
     public function isUser()
     {
-        return $this->isGranted('ROLE_USER');
+        return $this->isGranted(ROLE_USER);
     }
 
     /**
@@ -197,7 +201,15 @@ class Application extends Silicone\Application
      */
     public function isGuest()
     {
-        return $this->isGranted('ROLE_GUEST');
+        return $this->isGranted(ROLE_GUEST);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAnonymous()
+    {
+        return $this->isGranted(ROLE_ANONYMOUS);
     }
 
     // TODO: Move next code to Silicone

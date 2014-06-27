@@ -200,11 +200,18 @@ $app['validator.unique'] = function () use ($app) {
  * Security
  */
 
+define('ROLE_ANONYMOUS', 'ROLE_ANONYMOUS');
+define('ROLE_GUEST', 'ROLE_GUEST');
+define('ROLE_USER', 'ROLE_USER');
+define('ROLE_MODERATOR', 'ROLE_MODERATOR');
+define('ROLE_ADMIN', 'ROLE_ADMIN');
+
 $app['security.role_hierarchy'] = array(
-    'ROLE_GUEST' => array(),
-    'ROLE_USER' => array('ROLE_GUEST'),
-    'ROLE_MODERATOR' => array('ROLE_USER', 'ROLE_GUEST'),
-    'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_MODERATOR', 'ROLE_GUEST'),
+    'ROLE_ANONYMOUS' => array(),
+    'ROLE_GUEST' => array('ROLE_ANONYMOUS'),
+    'ROLE_USER' => array('ROLE_GUEST', 'ROLE_ANONYMOUS'),
+    'ROLE_MODERATOR' => array('ROLE_USER', 'ROLE_GUEST', 'ROLE_ANONYMOUS'),
+    'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_MODERATOR', 'ROLE_GUEST', 'ROLE_ANONYMOUS'),
 );
 
 $app['security.access_rules'] = array(
@@ -216,7 +223,7 @@ $app['security.access_rules'] = array(
 
     // Next rule must be at the end of list,
     // otherwise access rules will not work.
-    array('^/', 'ROLE_GUEST'),
+    array('^/', 1 ? 'ROLE_ADMIN' : 'ROLE_ANONYMOUS'),
 );
 
 $app['security.provider'] = $app->share(function () use ($app) {

@@ -35,7 +35,7 @@ class SecurityMiddleware
     {
         $session = $request->getSession();
 
-        list($id, $role) = $session->get('user', array(null, 'ROLE_GUEST'));
+        list($id, $role) = $session->get('user', array(null, 'ROLE_ANONYMOUS'));
 
         if (null === $id && $request->cookies->has(Remember::REMEMBER_ME)) {
             if ($this->remember->check($request->cookies->get(Remember::REMEMBER_ME))) {

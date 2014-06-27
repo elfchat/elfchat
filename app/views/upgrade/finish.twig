@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+    <title>{{ 'ElfChat Upgrade'|trans() }}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    {% block style %}
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/common/common.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/common/alert.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/common/form.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/common/button.css') }}">
+        <style>
+            .container {
+                margin: 50px 200px;
+            }
+        </style>
+    {% endblock %}
+    <script src="{{ asset('lib/vendor/jquery/jquery.min.js') }}"></script>
+</head>
+<body>
+<div class="container">
+    <div class="alert alert-success">
+        {{ 'ElfChat upgraded successful.'|trans() }}
+    </div>
+</div>
+</body>
+</html>
