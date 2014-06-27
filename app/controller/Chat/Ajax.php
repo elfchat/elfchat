@@ -92,8 +92,9 @@ class Ajax extends Controller
     {
         $data = json_decode($this->request->request->get('data'));
 
-        if (JSON_ERROR_NONE !== json_last_error() || !is_array($data) || count($data) < 0) {
-            $this->app->log('Error in Ajax::onSend controller. Error in request data.', array($data), Logger::ERROR);
+        $error = json_last_error();
+        if (JSON_ERROR_NONE !== $error|| !is_array($data) || count($data) < 0) {
+            $this->app->log('Error in Ajax::onSend controller. ' . (JSON_ERROR_NONE !== $error ? $this->getJsonErrorMessage($error) : 'Unknown error in data.'), array($data), Logger::ERROR);
             return $this->app->json(false);
         }
 
@@ -120,5 +121,19 @@ class Ajax extends Controller
         }
 
         return $this->app->json(Protocol::synchronize($users));
+    }
+
+    private function getJsonErrorMessage($error)
+    {
+        static $errors = array(
+            JSON_ERROR_NONE => null,
+            JSON_ERROR_DEPTH => 'Maximum stack depth exceeded.',
+            JSON_ERROR_STATE_MISMATCH => 'Underflow or the modes mismatch.',
+            JSON_ERROR_CTRL_CHAR => 'Unexpected control character found.',
+            JSON_ERROR_SYNTAX => 'Syntax error, malformed JSON.',
+            JSON_ERROR_UTF8 => 'Malformed UTF-8 characters, possibly incorrectly encoded.'
+        );
+        $error = json_last_error();
+        return array_key_exists($error, $errors) ? $errors[$error] : "Unknown error ({$error}).";
     }
 }
