@@ -30,6 +30,7 @@ class Install extends Controller
      */
     public function configuration()
     {
+        $this->clearCache();
         $config = $this->app->config();
 
         $config->set('baseurl', $this->request->getSchemeAndHttpHost() . $this->request->getBasePath());
@@ -168,5 +169,21 @@ class Install extends Controller
         return $this->app->render('install/admin.twig', array(
             'form' => $form->createView(),
         ));
+    }
+
+    public function clearCache()
+    {
+        $it = new \RecursiveDirectoryIterator($this->app->getCacheDir());
+        $files = new \RecursiveIteratorIterator($it, \RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($files as $file) {
+            if ($file->getFilename() === '.' || $file->getFilename() === '..') {
+                continue;
+            }
+            if ($file->isDir()) {
+                rmdir($file->getRealPath());
+            } else {
+                unlink($file->getRealPath());
+            }
+        }
     }
 } 

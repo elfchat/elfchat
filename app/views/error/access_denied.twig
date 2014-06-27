@@ -1,5 +1,7 @@
 {% extends 'error/layout.twig' %}
 
+{% block title %}{{ 'Access denied'|trans() }}{% endblock %}
+
 {% block content %}
     {% if app.config.get('is_chat_open') %}
         <div class="alert alert-info">

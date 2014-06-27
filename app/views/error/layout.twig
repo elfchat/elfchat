@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>{{ 'Page not found'|trans() }}</title>
+    <title>{% block title %}{% endblock %}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     {% block style %}
         <link rel="stylesheet" type="text/css" href="{{ asset('css/common/common.css') }}">

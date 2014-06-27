@@ -1,5 +1,7 @@
 {% extends 'error/layout.twig' %}
 
+{% block title %}{{ 'Error'|trans() }}{% endblock %}
+
 {% block content %}
     <div class="alert alert-danger">
         <h1>{{ 'Some error occurred'|trans() }}</h1>
