@@ -259,7 +259,8 @@ $app['plugin_manager'] = $app->share(function () use ($app) {
         $app->getPluginDir(),
         $app->getOpenDir() . '/plugins.php',
         $app['plugin_view_dir'],
-        $app['installed_plugins']);
+        isset($app['installed_plugins']) ? $app['installed_plugins'] : array()
+    );
 });
 
 // Things to do not use then directory "open" does not writeable.
