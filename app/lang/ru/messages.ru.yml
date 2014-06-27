@@ -15,6 +15,7 @@ Emotions: Смайлики
 Send: Отправить
 Send private message: Отправить личное сообщение
 Created: Создан
+Guest: Гость
 
 Moderator Center: Модератор-Центр
 Moderator: Модератор
@@ -41,3 +42,54 @@ One day: Один день
 14 days: 14 дней
 31 days: 31 день
 Forever: Навсегда
+
+BBCode: ББКоды
+Color: Цвет
+for: для
+
+Change avatar: Сменить аватар
+Upload: Загрузить
+Upload avatar: Загрузка аватара
+Crop avatar: Обрезка аватара
+Crop: Обрезать
+
+All system operational.: Все системы работает нормально.
+Configuration: Настройки
+Users: Пользователи
+Themes: Темы
+Plugins: Плагины
+
+Chat title: Название чата
+Is chat open: Открыть чат?
+Debug: Режим отладки
+Language: Язык
+Base URL: Базовый URL
+Enable mobile: Включить моб. версию?
+Server Type: Тип сервера
+Server Host: Хост
+Server Port: Порт
+
+Save: Сохранить
+Reset: Восстановить
+Edit: Редактировать
+Delete: Удалить
+Cancel: Отменить
+
+ID: ID
+E-Mail: E-Mail
+Author: Автор
+Role: Роль
+Remove avatar: Удалить аватар?
+
+Install plugin: Установить плагин
+Uninstall plugin: Удалить глагин
+Update plugins: Обновить плагины
+
+Access denied: Доступ запрещён
+Chat is closed: Чат закрыт
+You are banned for %time%: Вы забаннены на %time%
+You are banned: Вы забаненны
+Error: Ошибка
+Some error occurred: Произошла какая-то ошибка
+To determine the cause of this error, see app/open/error_log.txt file.: Чтобы определить причину ошибки, смотрите лог ошибок в файле app/open/error_log.txt.
+Page not found: Страница не найдена
