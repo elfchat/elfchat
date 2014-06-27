@@ -1,4 +1,5 @@
-<div class="message" id="message-[id]">
+<div class="message" id="message-[id]" {% block message_attr %}{% endblock %}>{% block message %}
+    {% block avatar %}
     [#user.avatar]
     <img class="avatar" data-user-id="[user.id]" src="[user.avatar]">
     [/user.avatar]
@@ -6,11 +7,13 @@
     [^user.avatar]
     <img class="avatar" data-user-id="[user.id]" src="{{ asset('/img/avatar.png') }}">
     [/user.avatar]
+    {% endblock %}
 
-    <span class="time">
-        [time]
+    <span class="time" {% block time_attr %}{% endblock %}>
+        {% block time %}[time]{% endblock time %}
     </span>
-    <span class="user">
+    <span class="user" {% block user_attr %}{% endblock %}>
+        {% block user %}
         [#for]
         <span class="name" data-user-name="[user.name]">[user.name]</span> {{ 'for'|trans() }}
         <span class="name" data-user-name="[for.name]">[for.name]</span>:&nbsp;
@@ -19,6 +22,7 @@
         [^for]
         <span class="name" data-user-name="[user.name]">[user.name]</span>:&nbsp;
         [/for]
+        {% endblock %}
     </span>
     <span class="text" {% block text_attr %}{% endblock %}>{% block text %}[&text]{% endblock %}</span>
-</div>
+{% endblock %}</div>
