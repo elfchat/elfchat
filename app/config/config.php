@@ -238,6 +238,11 @@ $app['security.remember'] = $app->share(function () use ($app) {
     return new ElfChat\Security\Authentication\Remember($app->config()->get('remember_me.token'));
 });
 
+/**
+ * IP Trusted proxy
+ */
+\Symfony\Component\HttpFoundation\Request::setTrustedProxies($config->get('trusted_proxies', array()));
+
 // Things to do not use then directory "open" does not writeable.
 if ($app->isOpen()) {
 
