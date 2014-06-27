@@ -1,5 +1,6 @@
-ElfChat 6.0.0 BETA 2,
+ElfChat 6.0.0 BETA 3,
 --------------------------------
+- Fix magic quotes error
 - Fix IP detection
 
 ElfChat 6.0.0 BETA 2, 2014-06-25

@@ -4,7 +4,7 @@ use \Rych\ByteSize\ByteSize;
 
 require __DIR__ . '/app/vendor/autoload.php';
 
-$version = '6.0.0 BETA 2';
+$version = '6.0.0 BETA 3';
 
 $finder = new Symfony\Component\Finder\Finder();
 $finder->files()
