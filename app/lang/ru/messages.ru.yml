@@ -16,6 +16,7 @@ Send: Отправить
 Send private message: Отправить личное сообщение
 Created: Создан
 Guest: Гость
+Admin: Администратор
 
 Moderator Center: Модератор-Центр
 Moderator: Модератор
@@ -82,7 +83,7 @@ Role: Роль
 Remove avatar: Удалить аватар?
 
 Install plugin: Установить плагин
-Uninstall plugin: Удалить глагин
+Uninstall plugin: Удалить плагин
 Update plugins: Обновить плагины
 
 Access denied: Доступ запрещён
