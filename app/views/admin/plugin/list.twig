@@ -27,4 +27,7 @@
             <strong>{{ 'Can not install this plugin, as it does not match chat requirements.'|trans() }}</strong>
         {% endif %}
     {% endfor %}
+    <br>
+    <br>
+    <a class="button" href="{{ url('admin_plugin_update') }}">{{ 'Update plugins'|trans() }}</a>
 {% endblock %}
