@@ -11,16 +11,16 @@ class Installer
 {
     private $pluginFile;
 
-    private $pluginViewPath;
+    private $pluginViewDir;
 
     /**
      * @param $pluginFile string
-     * @param $pluginViewPath string
+     * @param $pluginViewDir string
      */
-    public function __construct($pluginFile, $pluginViewPath)
+    public function __construct($pluginFile, $pluginViewDir)
     {
         $this->pluginFile = $pluginFile;
-        $this->pluginViewPath = $pluginViewPath;
+        $this->pluginViewDir = $pluginViewDir;
     }
 
 
@@ -46,7 +46,7 @@ class Installer
 
         // Plugins list
         $content .= '
-$app[\'plugins\'] = array(
+$app[\'installed_plugins\'] = array(
 ';
 
         foreach ($plugins as $plugin) {
@@ -128,7 +128,7 @@ $includeController = function ($__file) use ($app) {
     private function createPluginViews($plugins)
     {
         // Drop old plugin hooks.
-        $this->deleteDirectory($this->pluginViewPath);
+        $this->deleteDirectory($this->pluginViewDir);
 
         $collector = new InstallScript\Collector();
         Hook::setCollector($collector);
@@ -169,7 +169,7 @@ $includeController = function ($__file) use ($app) {
                 $content .= "{% endblock %}\n";
             }
 
-            $viewFile = $this->pluginViewPath . '/' . $view;
+            $viewFile = $this->pluginViewDir . '/' . $view;
             $viewDir = dirname($viewFile);
             if (!is_dir($viewDir)) {
                 mkdir($viewDir, 0777, true);

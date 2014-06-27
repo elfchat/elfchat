@@ -120,12 +120,12 @@ $app['twig'] = $app->share($app->extend('twig', function (\Twig_Environment $twi
 /**
  * Theme and Views
  */
-$app['plugin_view_path'] = $app->getOpenDir() . '/plugin';
+$app['plugin_view_dir'] = $app->getOpenDir() . '/plugin';
 $app['twig.loader.theme'] = $app->share(function () use ($app, $config) {
     return new ElfChat\Twig\LevelLoader(
         array(
             // Order of keys is really matter.
-            'plugin' => $app['plugin_view_path'],
+            'plugin' => $app['plugin_view_dir'],
             'theme' => $config->get('theme_path'),
             'base' => $app->getRootDir() . '/views/',
         )
@@ -217,6 +217,7 @@ $app['security.role_hierarchy'] = array(
 $app['security.access_rules'] = array(
     array('^/admin', 'ROLE_ADMIN'),
     array('^/install', 'ROLE_ADMIN'),
+    array('^/upgrade', 'ROLE_ADMIN'),
     array('^/moderator', 'ROLE_MODERATOR'),
     array('^/profile', 'ROLE_USER'),
     array('^/ajax', 'ROLE_GUEST'),
@@ -248,7 +249,18 @@ $app['security.remember'] = $app->share(function () use ($app) {
 /**
  * IP Trusted proxy
  */
-\Symfony\Component\HttpFoundation\Request::setTrustedProxies($config->get('trusted_proxies', array()));
+Symfony\Component\HttpFoundation\Request::setTrustedProxies($config->get('trusted_proxies', array()));
+
+/**
+ * Plugins
+ */
+$app['plugin_manager'] = $app->share(function () use ($app) {
+    return new ElfChat\Plugin\PluginManager(
+        $app->getPluginDir(),
+        $app->getOpenDir() . '/plugins.php',
+        $app['plugin_view_dir'],
+        $app['installed_plugins']);
+});
 
 // Things to do not use then directory "open" does not writeable.
 if ($app->isOpen()) {

@@ -22,6 +22,7 @@ class Upgrade extends Controller
      */
     public function start()
     {
+        $this->openChat(false);
         return $this->app->redirect($this->app->url('upgrade_finish'));
     }
 
@@ -33,7 +34,16 @@ class Upgrade extends Controller
         $this->clearCache();
         $this->database();
         $this->proxy();
+        $this->plugins();
+        $this->openChat(true);
         return $this->app->render('upgrade/finish.twig');
+    }
+
+    public function openChat($open)
+    {
+        $config = $this->app->config();
+        $config->set('is_chat_open', $open);
+        $config->save();
     }
 
     public function clearCache()
@@ -87,5 +97,11 @@ class Upgrade extends Controller
             // Generating Proxies
             $em->getProxyFactory()->generateProxyClasses($metadatas, $proxyDir);
         }
+    }
+
+    public function plugins()
+    {
+        $pm = $this->app['plugin_manager'];
+        $pm->install();
     }
 } 

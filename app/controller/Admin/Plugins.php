@@ -8,8 +8,9 @@
 namespace ElfChat\Controller\Admin;
 
 use ElfChat\Controller;
-use ElfChat\Plugin\Installer;
 use ElfChat\Plugin\Plugin;
+use ElfChat\Plugin\PluginManager;
+use Silicone\Application;
 use Silicone\Route;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,29 +21,14 @@ use Symfony\Component\HttpFoundation\Request;
 class Plugins extends Controller
 {
     /**
-     * @return Plugin[]
+     * @var PluginManager
      */
-    private function getPlugins()
+    private $plugins;
+
+    public function __construct(Application $app)
     {
-        $installed = isset($this->app['plugins']) ? $this->app['plugins'] : array();
-
-        $finder = new Finder();
-        $finder->files()
-            ->depth(1)
-            ->name('plugin.json')
-            ->sort(function ($a, $b) {
-                return ($a->getMTime() < $b->getMTime());
-            })
-            ->in($this->app->getPluginDir());
-
-        $plugins = array();
-        foreach ($finder as $file) {
-            $plugin = new Plugin($file);
-            $plugin->installed = isset($installed[$plugin->name]);
-            $plugins[$plugin->name] = $plugin;
-        }
-
-        return $plugins;
+        parent::__construct($app);
+        $this->plugins = $app['plugin_manager'];
     }
 
     /**
@@ -50,9 +36,8 @@ class Plugins extends Controller
      */
     public function index()
     {
-
         return $this->render('admin/plugin/list.twig', array(
-            'plugins' => $this->getPlugins(),
+            'plugins' => $this->plugins->getPlugins(),
         ));
     }
 
@@ -61,14 +46,7 @@ class Plugins extends Controller
      */
     public function install(Request $request)
     {
-        $plugins = $this->getPlugins();
-
-        $name = $request->get('name');
-        if (isset($plugins[$name])) {
-            $plugins[$name]->installed = true;
-        }
-
-        $this->installPlugins($plugins);
+        $this->plugins->forPlugin($request->get('name'), true);
 
         return $this->app->redirect($this->app->url('admin_plugins'));
     }
@@ -78,14 +56,7 @@ class Plugins extends Controller
      */
     public function uninstall(Request $request)
     {
-        $plugins = $this->getPlugins();
-
-        $name = $request->get('name');
-        if (isset($plugins[$name])) {
-            $plugins[$name]->installed = false;
-        }
-
-        $this->installPlugins($plugins);
+        $this->plugins->forPlugin($request->get('name'), false);
 
         return $this->app->redirect($this->app->url('admin_plugins'));
     }
@@ -95,16 +66,8 @@ class Plugins extends Controller
      */
     public function update(Request $request)
     {
-        $this->installPlugins($this->getPlugins());
+        $this->plugins->install();
 
         return $this->app->redirect($request->get('next', $this->app->url('admin_plugins')));
-    }
-
-    private function installPlugins($plugins)
-    {
-        $installer = new Installer($this->app->getOpenDir() . '/plugins.php', $this->app['plugin_view_path']);
-        $installer->install(array_filter($plugins, function (Plugin $plugin) {
-            return $plugin->installed;
-        }));
     }
 } 
