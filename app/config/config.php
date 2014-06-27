@@ -223,7 +223,7 @@ $app['security.access_rules'] = array(
 
     // Next rule must be at the end of list,
     // otherwise access rules will not work.
-    array('^/', 1 ? 'ROLE_ADMIN' : 'ROLE_ANONYMOUS'),
+    array('^/', $config->get('is_chat_open') ? ROLE_ANONYMOUS : ROLE_ADMIN),
 );
 
 $app['security.provider'] = $app->share(function () use ($app) {
