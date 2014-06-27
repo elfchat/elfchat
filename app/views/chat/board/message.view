@@ -20,5 +20,5 @@
         <span class="name" data-user-name="[user.name]">[user.name]</span>:&nbsp;
         [/for]
     </span>
-    <span class="text">[&text]</span>
+    <span class="text" {% block text_attr %}{% endblock %}>{% block text %}[&text]{% endblock %}</span>
 </div>

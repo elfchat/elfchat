@@ -28,6 +28,11 @@
             "script": {
                 "append": ["@message-color/script.twig"]
             }
+        },
+        "chat/board/message.view": {
+            "text_attr": {
+                "append": ["@message-color/style.twig"]
+            }
         }
     }
 }

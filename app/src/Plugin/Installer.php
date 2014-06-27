@@ -31,9 +31,14 @@ class Installer
      */
     public function install($plugins)
     {
+        $fs = new Filesystem();
+
         if (!file_exists($this->pluginFile)) {
             file_put_contents($this->pluginFile, '');
         }
+
+        // Drop old plugin hooks.
+        $fs->remove($this->pluginViewDir);
 
         if (!is_writable($this->pluginFile)) {
             throw new \RuntimeException("Plugin file does not writeable.");
@@ -130,9 +135,6 @@ $includeController = function ($__file) use ($app) {
     private function createPluginViews($plugins)
     {
         $fs = new Filesystem();
-
-        // Drop old plugin hooks.
-        $fs->remove($this->pluginViewDir);
 
         foreach ($plugins as $plugin) {
             if (!empty($plugin->hooks)) {

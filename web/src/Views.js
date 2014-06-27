@@ -41,7 +41,6 @@ class UserView extends View {
 
 class MessageView extends View {
     constructor(message) {
-        console.log(message);
         this.data = message.data;
         this.id = message.id;
         this.time = moment(message.datetime).format('HH:mm:ss');

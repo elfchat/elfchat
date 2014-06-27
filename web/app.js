@@ -487,7 +487,6 @@ var UserView = function UserView(user) {
   }}, {}, View);
 var MessageView = function MessageView(message) {
   "use strict";
-  console.log(message);
   this.data = message.data;
   this.id = message.id;
   this.time = moment(message.datetime).format('HH:mm:ss');
