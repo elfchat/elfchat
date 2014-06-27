@@ -33,12 +33,12 @@ class AbstractServer {
         // You need to implement this.
     }
 
-    send(text) {
-        this.sendData(JSON.stringify([this.MESSAGE, text]));
+    send(message) {
+        this.sendData(JSON.stringify([this.MESSAGE, message]));
     }
 
-    sendPrivate(userId, text) {
-        this.sendData(JSON.stringify([this.PRIVATE_MESSAGE, userId, text]));
+    sendPrivate(userId, message) {
+        this.sendData(JSON.stringify([this.PRIVATE_MESSAGE, userId, message]));
     }
 
     onData(json) {

@@ -41,9 +41,11 @@ class UserView extends View {
 
 class MessageView extends View {
     constructor(message) {
+        console.log(message);
+        this.data = message.data;
         this.id = message.id;
         this.time = moment(message.datetime).format('HH:mm:ss');
-        this.text = this.filter(this.escape(message.text));
+        this.text = this.filter(this.escape(message.data.text));
         this.user = message.user;
         this.for = message.for;
 
@@ -74,7 +76,12 @@ class MessageView extends View {
 
 class LogView extends MessageView {
     constructor(text, level = 'default') {
-        super({id: 0, time: new Date(), user: null, text});
+        super({
+            id: 0,
+            time: new Date(),
+            user: null,
+            data: {text: text}
+        });
         this.level = level;
     }
 

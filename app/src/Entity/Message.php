@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @property \ElfChat\Entity\User $for
  * @property \DateTime $datetime
  * @property string $room
- * @property string $text
+ * @property mixed $data
  *
  * @ORM\Entity
  * @ORM\Table("elfchat_message")
@@ -49,9 +49,9 @@ class Message extends Entity
     protected $room;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="json_array")
      */
-    protected $text;
+    protected $data;
 
     public function __construct()
     {
@@ -68,7 +68,7 @@ class Message extends Entity
             'for' => null,
             'datetime' => $this->datetime->format(\DateTime::ISO8601),
             'room' => $this->room,
-            'text' => $this->text,
+            'data' => $this->data,
         );
     }
 
@@ -78,11 +78,6 @@ class Message extends Entity
         $export['user'] = $this->user->export();
         $export['for'] = empty($this->for) ? null : $this->for->export();
         return $export;
-    }
-
-    public function setText($text)
-    {
-        $this->text = mb_substr($text, 0, 1000, 'UTF-8');
     }
 
     /**

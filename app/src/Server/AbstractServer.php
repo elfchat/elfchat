@@ -23,12 +23,12 @@ abstract class AbstractServer implements ServerInterface
         return null;
     }
 
-    protected function publicMessage(User $user, $text)
+    protected function publicMessage(User $user, $data)
     {
         $message = new Message();
         $message->user = $user;
         $message->datetime = new \DateTime();
-        $message->text = $text;
+        $message->data = $data;
         $message->save();
 
         $this->send(Protocol::message($message));
@@ -36,13 +36,13 @@ abstract class AbstractServer implements ServerInterface
         return $message;
     }
 
-    protected function privateMessage(User $user, $forId, $text)
+    protected function privateMessage(User $user, $forId, $data)
     {
         $message = new Message();
         $message->user = $user;
         $message->for = User::find($forId);
         $message->datetime = new \DateTime();
-        $message->text = $text;
+        $message->data = $data;
         $message->save();
 
         $this->sendToUser($forId, Protocol::message($message));

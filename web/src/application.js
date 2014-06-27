@@ -195,7 +195,7 @@ class SendBehavior {
 
     onSend(event) {
         event.stopPropagation();
-        var message, userId, button;
+        var button;
 
         // Flood: more than 10 messages in 15 seconds.
         this.flood.push(new Date());
@@ -217,15 +217,13 @@ class SendBehavior {
             }
         }
 
-        if ('' === (message = this.chat.dom.textarea.val())) {
+        var message = {};
+
+        if ('' === (message.text = this.chat.dom.textarea.val())) {
             return false;
         }
 
-        var sendData = {
-            message: message
-        };
-        $(window).trigger('send', sendData);
-        message = sendData.message;
+        $(window).trigger('send', message);
 
         if (!this.isPrivate) {
             this.chat.server.send(message);

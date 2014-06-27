@@ -100,12 +100,12 @@ class WebSocketServer extends AbstractServer implements ServerInterface, Message
      *
      * @param \ElfChat\Entity\User $user
      * @param $forId
-     * @param $text
+     * @param $data
      * @return Message
      */
-    protected function privateMessage(User $user, $forId, $text)
+    protected function privateMessage(User $user, $forId, $data)
     {
-        $message = parent::privateMessage($user, $forId, $text);
+        $message = parent::privateMessage($user, $forId, $data);
         if ($forId !== $user->id) {
             $this->sendToUser($user->id, Protocol::message($message));
         }

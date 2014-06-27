@@ -66,13 +66,13 @@ var AbstractServer = function AbstractServer() {
   sendData: function() {
     "use strict";
   },
-  send: function(text) {
+  send: function(message) {
     "use strict";
-    this.sendData(JSON.stringify([this.MESSAGE, text]));
+    this.sendData(JSON.stringify([this.MESSAGE, message]));
   },
-  sendPrivate: function(userId, text) {
+  sendPrivate: function(userId, message) {
     "use strict";
-    this.sendData(JSON.stringify([this.PRIVATE_MESSAGE, userId, text]));
+    this.sendData(JSON.stringify([this.PRIVATE_MESSAGE, userId, message]));
   },
   onData: function(json) {
     "use strict";
@@ -487,9 +487,11 @@ var UserView = function UserView(user) {
   }}, {}, View);
 var MessageView = function MessageView(message) {
   "use strict";
+  console.log(message);
+  this.data = message.data;
   this.id = message.id;
   this.time = moment(message.datetime).format('HH:mm:ss');
-  this.text = this.filter(this.escape(message.text));
+  this.text = this.filter(this.escape(message.data.text));
   this.user = message.user;
   this.for = message.for;
   this.spirit = false;
@@ -528,7 +530,7 @@ var LogView = function LogView(text) {
     id: 0,
     time: new Date(),
     user: null,
-    text: text
+    data: {text: text}
   }]);
   this.level = level;
 };
@@ -1136,9 +1138,7 @@ var SendBehavior = function SendBehavior(chat) {
   onSend: function(event) {
     "use strict";
     event.stopPropagation();
-    var message,
-        userId,
-        button;
+    var button;
     this.flood.push(new Date());
     this.flood = this.flood.filter((function(date) {
       return new Date().getTime() < date.getTime() + 15 * 1000;
@@ -1155,12 +1155,11 @@ var SendBehavior = function SendBehavior(chat) {
         this.setPublicButtonActive();
       }
     }
-    if ('' === (message = this.chat.dom.textarea.val())) {
+    var message = {};
+    if ('' === (message.text = this.chat.dom.textarea.val())) {
       return false;
     }
-    var sendData = {message: message};
-    $(window).trigger('send', sendData);
-    message = sendData.message;
+    $(window).trigger('send', message);
     if (!this.isPrivate) {
       this.chat.server.send(message);
     } else {
