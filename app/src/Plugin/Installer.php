@@ -7,6 +7,8 @@
 
 namespace ElfChat\Plugin;
 
+use Symfony\Component\Filesystem\Filesystem;
+
 class Installer
 {
     private $pluginFile;
@@ -127,79 +129,52 @@ $includeController = function ($__file) use ($app) {
      */
     private function createPluginViews($plugins)
     {
-        // Drop old plugin hooks.
-        $this->deleteDirectory($this->pluginViewDir);
+        $fs = new Filesystem();
 
-        $collector = new InstallScript\Collector();
-        Hook::setCollector($collector);
+        // Drop old plugin hooks.
+        $fs->remove($this->pluginViewDir);
 
         foreach ($plugins as $plugin) {
-            if (!empty($plugin->installScript)) {
-                include $plugin->installScript;
-            }
-        }
+            if (!empty($plugin->hooks)) {
 
-        foreach ($collector->views as $view => $blocks) {
-            $content = "{% extends 'theme:$view' %}\n";
 
-            foreach ($blocks as $block => $where) {
-                $content .= "{% block $block %}\n";
-                // Prepend
-                if (isset($where['prepend'])) {
-                    foreach ($where['prepend'] as $file) {
-                        $content .= "{% include '$file' %}\n";
+                foreach ($plugin->hooks as $view => $blocks) {
+                    $content = "{% extends 'theme:$view' %}\n";
+
+                    foreach ($blocks as $block => $where) {
+                        $content .= "{% block $block %}\n";
+                        // Prepend
+                        if (isset($where['prepend'])) {
+                            foreach ($where['prepend'] as $file) {
+                                $content .= "{% include '$file' %}\n";
+                            }
+                        }
+
+                        // Replace
+                        if (isset($where['replace'])) {
+                            foreach ($where['replace'] as $file) {
+                                $content .= "{% include '$file' %}\n";
+                            }
+                        } else {
+                            $content .= "{{ parent() }}\n";
+                        }
+
+                        // Append
+                        if (isset($where['append'])) {
+                            foreach ($where['append'] as $file) {
+                                $content .= "{% include '$file' %}\n";
+                            }
+                        }
+                        $content .= "{% endblock %}\n";
                     }
+
+                    $viewFile = $this->pluginViewDir . '/' . $view;
+                    $viewDir = dirname($viewFile);
+                    $fs->mkdir($viewDir);
+
+                    file_put_contents($viewFile, $content);
                 }
-
-                // Replace
-                if (isset($where['replace'])) {
-                    foreach ($where['replace'] as $file) {
-                        $content .= "{% include '$file' %}\n";
-                    }
-                } else {
-                    $content .= "{{ parent() }}\n";
-                }
-
-                // Append
-                if (isset($where['append'])) {
-                    foreach ($where['append'] as $file) {
-                        $content .= "{% include '$file' %}\n";
-                    }
-                }
-                $content .= "{% endblock %}\n";
-            }
-
-            $viewFile = $this->pluginViewDir . '/' . $view;
-            $viewDir = dirname($viewFile);
-            if (!is_dir($viewDir)) {
-                mkdir($viewDir, 0777, true);
-            }
-
-            file_put_contents($viewFile, $content);
-        }
-    }
-
-    /**
-     * @param $dir string
-     */
-    private function deleteDirectory($dir)
-    {
-        if (!is_dir($dir)) {
-            return;
-        }
-
-        $it = new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS);
-        $files = new \RecursiveIteratorIterator($it, \RecursiveIteratorIterator::CHILD_FIRST);
-        foreach ($files as $file) {
-            if ($file->getFilename() === '.' || $file->getFilename() === '..') {
-                continue;
-            }
-            if ($file->isDir()) {
-                rmdir($file->getRealPath());
-            } else {
-                unlink($file->getRealPath());
             }
         }
-        rmdir($dir);
     }
 }

@@ -9,11 +9,25 @@
     "require": {
         "elfchat": "6.0.*"
     },
-    "controllers": {
-        "": "src/color.php"
-    },
     "views": {
         "message-color": "views/"
     },
-    "install_script": "src/install.php"
+    "hooks": {
+        "chat/chat.twig": {
+            "head": {
+                "append": ["@message-color/head.twig"]
+            },
+            "buttons": {
+                "append": ["@message-color/button.twig"]
+            }
+        },
+        "chat/script.twig": {
+            "popovers": {
+                "append": ["@message-color/popover.twig"]
+            },
+            "script": {
+                "append": ["@message-color/script.twig"]
+            }
+        }
+    }
 }

@@ -35,7 +35,7 @@ class Plugin
 
     public $configurationRoute;
 
-    public $installScript;
+    public $hooks = array();
 
     public function __construct(\SplFileInfo $pluginFile)
     {
@@ -80,7 +80,6 @@ class Plugin
         $this->title = isset($json['title']) ? $json['title'] : 'No title';
         $this->description = isset($json['description']) ? $json['description'] : '';
         $this->configurationRoute = isset($json['configuration_route']) ? $json['configuration_route'] : '';
-        $this->installScript = isset($json['install_script']) ? $this->getPluginDir() . '/' . $json['install_script'] : '';
 
         if (isset($json['author'])) {
             $this->author = array(
@@ -113,6 +112,10 @@ class Plugin
             foreach ($json['views'] as $namespace => $path) {
                 $this->views[$namespace] = $this->getPluginDir() . '/' . $path;
             }
+        }
+
+        if (isset($json['hooks'])) {
+            $this->hooks = $json['hooks'];
         }
     }
 
