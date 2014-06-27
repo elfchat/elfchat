@@ -1,8 +1,10 @@
 ElfChat 6.0.0 BETA 3,
 --------------------------------
+- Russian language
 - Upgrade system
 - Add is_chat_open config option
 - Refactor hooks system
+- Refactor message-color plugin
 - Fix magic quotes error
 - Fix IP detection
 
