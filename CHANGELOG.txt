@@ -1,5 +1,6 @@
 ElfChat 6.0.0 BETA 3,
 --------------------------------
+- Upgrade system
 - Add is_chat_open config option
 - Fix magic quotes error
 - Fix IP detection
