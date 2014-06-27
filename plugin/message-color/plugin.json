@@ -29,7 +29,7 @@
                 "append": ["@message-color/script.twig"]
             }
         },
-        "chat/board/message.view": {
+        "chat/board/message.twig": {
             "text_attr": {
                 "append": ["@message-color/style.twig"]
             }

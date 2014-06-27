@@ -61,12 +61,12 @@
 {# Views #}
 {% block views %}
     {% autoescape false %}
-    {{ view('chat/tab/user.view') }}
-    {{ view('chat/board/log.view') }}
-    {{ view('chat/board/message.view') }}
-    {{ view('chat/emotion/tab.view') }}
-    {{ view('chat/emotion/image.view') }}
-    {{ view('chat/popover/profile.view') }}
+    {{ view('chat/tab/user.twig') }}
+    {{ view('chat/board/log.twig') }}
+    {{ view('chat/board/message.twig') }}
+    {{ view('chat/emotion/tab.twig') }}
+    {{ view('chat/emotion/image.twig') }}
+    {{ view('chat/popover/profile.twig') }}
     {% endautoescape %}
 {% endblock %}
 
