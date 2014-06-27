@@ -93,8 +93,8 @@ Update plugins: Обновить плагины
 
 Access denied: Доступ запрещён
 Chat is closed: Чат закрыт
-You are banned for %time%: Вы забаннены на %time%
-You are banned: Вы забаненны
+You are banned for %time%: Вы забанены на %time%
+You are banned: Вы забанены
 Error: Ошибка
 Some error occurred: Произошла какая-то ошибка
 To determine the cause of this error, see app/open/error_log.txt file.: Чтобы определить причину ошибки, смотрите лог ошибок в файле app/open/error_log.txt.
