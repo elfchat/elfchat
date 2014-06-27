@@ -146,6 +146,13 @@ if (class_exists('PDO')) {
     );
 }
 
+/* optional recommendations follow */
+
+requirement(
+    !ini_get('magic_quotes_gpc'),
+    'Parameter magic_quotes_gpc must be Off in php.ini.'
+);
+
 recommendation(
     !extension_loaded('xdebug'),
     'Disable XDebug on production for performance.'
