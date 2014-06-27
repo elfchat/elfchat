@@ -34,9 +34,7 @@ class Configuration extends Controller
                 'label' => 'Language',
             ))
             ->add('baseurl', 'text', array('label' => 'Base URL'))
-            ->add('mobile_enable', 'checkbox', array('label' => 'Enable mobile', 'required' => false))
-            ->add('remember_me:token', 'text', array('label' => 'Remember me token'));
-
+            ->add('mobile_enable', 'checkbox', array('label' => 'Enable mobile', 'required' => false));
 
         if (ELFCHAT_EDITION === 'UNLIM' || ELFCHAT_EDITION === '__EDITION__') {
             $formBuilder
