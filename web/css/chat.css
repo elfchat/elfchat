@@ -46,8 +46,6 @@ header {
     width: auto;
     height: 50px;
     line-height: 50px;
-    background-color: #fcfcfc;
-    color: #181818;
     vertical-align: middle;
     padding-left: 10px;
     padding-right: 10px;
@@ -80,7 +78,6 @@ aside {
     width: 300px;
     overflow-x: hidden;
     overflow-y: auto;
-    background-color: #fff;
     border-right: solid 1px #e1e1e1;
     z-index: 1;
 }
@@ -116,7 +113,6 @@ aside .user .name {
     bottom: 0;
     overflow-x: hidden;
     overflow-y: scroll;
-    background: #ffffff;
     z-index: 10;
 }
 
@@ -175,7 +171,6 @@ footer {
     left: 300px; /* users width */
     right: 0;
     bottom: 0;
-    background-color: #fff;
     border-top: solid 1px #e1e1e1;
     padding: 10px;
     z-index: 20;
