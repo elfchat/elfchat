@@ -27,7 +27,7 @@ class Profile extends Controller
         $em = $this->app->entityManager();
         $user = $this->app->user();
 
-        $form = $this->app->form($user->avatar, array('validation_groups' => array('avatar')))
+        $form = $this->app->form(new Avatar(), array('validation_groups' => array('avatar')))
             ->add('file', 'file')
             ->getForm();
 
