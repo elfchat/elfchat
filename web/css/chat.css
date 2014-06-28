@@ -35,6 +35,10 @@ html, body {
     vertical-align: middle;
 }
 
+.popover {
+    max-width: none;
+}
+
 /* Header */
 
 header {
@@ -57,7 +61,6 @@ header .button-show-userlist {
 
 header .buttons-right {
     float: right;
-    margin-top: 7px;
 }
 
 header .title {

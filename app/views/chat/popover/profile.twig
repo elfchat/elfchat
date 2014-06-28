@@ -8,12 +8,12 @@
         <img class="avatar" src="[user.avatar]">
     </div>
     <div class="popover-content">
-        <div class="buttons">
-            <button data-private="[user.id]">{{ 'Send private message'|trans() }}</button>
+        <div>
+            <button class="btn btn-default" data-private="[user.id]">{{ 'Send private message'|trans() }}</button>
         </div>
         {% if app.isModerator() %}
             <div class="buttons">
-                <a class="button" href="{{ url('add_ban') }}?id=[user.id]"
+                <a class="btn btn-default" href="{{ url('add_ban') }}?id=[user.id]"
                    target="_blank">{{ 'Ban'|trans() }}</a>
                 <!--<a class="button" href="{{ '' }}?id=[user.id]"
                    target="_blank">{{ 'Quiet'|trans() }}</a>-->

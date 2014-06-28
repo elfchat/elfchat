@@ -243,22 +243,22 @@ class SendBehavior {
         this.isPrivate = false;
 
         this.dom.privateGroup.hide();
-        this.dom.privateButton.removeClass('primary');
-        this.dom.sendButton.addClass('primary');
+        this.dom.privateButton.removeClass('btn-primary');
+        this.dom.sendButton.addClass('btn-primary');
         this.chat.dom.textarea.focus();
         return false;
     }
 
     setPrivateButtonActive() {
         this.isPrivate = true;
-        this.dom.sendButton.removeClass('primary');
-        this.dom.privateButton.addClass('primary');
+        this.dom.sendButton.removeClass('btn-primary');
+        this.dom.privateButton.addClass('btn-primary');
     }
 
     setPublicButtonActive() {
         this.isPrivate = false;
-        this.dom.sendButton.addClass('primary');
-        this.dom.privateButton.removeClass('primary');
+        this.dom.sendButton.addClass('btn-primary');
+        this.dom.privateButton.removeClass('btn-primary');
     }
 
     getPrivateUserId() {

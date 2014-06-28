@@ -17,8 +17,11 @@
             <span class="title">
                 {{ app.config.get('chat_title') }}
             </span>
-            <div class="btn-group buttons-right">
-                <button class="btn btn-default button-settings" data-popover="settings"><i class="icon-config"></i> {{ 'Settings'|trans() }}</button>
+            <div class="buttons-right">
+                <div class="btn-group">
+                    <button class="btn btn-default button-settings" data-toggle="dropdown"><i class="icon-config"></i> {{ 'Settings'|trans() }}</button>
+                    {% include 'chat/menu/settings.twig' %}
+                </div>
             </div>
         </header>
 
@@ -39,7 +42,7 @@
                     <div id="privateGroup" class="btn-group" style="display: none">
                         <button class="btn btn-default" id="private" data-action="send"></button><button class="btn btn-default" data-action="close">✘</button>
                     </div>
-                    <button class="btn btn-default" id="send" class="primary" data-action="send"><i class="icon-send"></i> {{ 'Send'|trans() }}</button>
+                    <button class="btn btn-default btn-primary" id="send" class="primary" data-action="send"><i class="icon-send"></i> {{ 'Send'|trans() }}</button>
                 </div>
             </div>
 

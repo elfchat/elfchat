@@ -1173,22 +1173,22 @@ var SendBehavior = function SendBehavior(chat) {
     event.stopPropagation();
     this.isPrivate = false;
     this.dom.privateGroup.hide();
-    this.dom.privateButton.removeClass('primary');
-    this.dom.sendButton.addClass('primary');
+    this.dom.privateButton.removeClass('btn-primary');
+    this.dom.sendButton.addClass('btn-primary');
     this.chat.dom.textarea.focus();
     return false;
   },
   setPrivateButtonActive: function() {
     "use strict";
     this.isPrivate = true;
-    this.dom.sendButton.removeClass('primary');
-    this.dom.privateButton.addClass('primary');
+    this.dom.sendButton.removeClass('btn-primary');
+    this.dom.privateButton.addClass('btn-primary');
   },
   setPublicButtonActive: function() {
     "use strict";
     this.isPrivate = false;
-    this.dom.sendButton.addClass('primary');
-    this.dom.privateButton.removeClass('primary');
+    this.dom.sendButton.addClass('btn-primary');
+    this.dom.privateButton.removeClass('btn-primary');
   },
   getPrivateUserId: function() {
     "use strict";
