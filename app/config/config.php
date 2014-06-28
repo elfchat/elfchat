@@ -195,6 +195,10 @@ $app['validator.unique'] = function () use ($app) {
     return new ElfChat\Validator\Constraints\UniqueValidator($app['em']);
 };
 
+$app['validator.username'] = function () use ($app) {
+    return new ElfChat\Validator\Constraints\UserNameValidator($app['em']);
+};
+
 
 /**
  * Security

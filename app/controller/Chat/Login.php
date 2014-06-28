@@ -11,6 +11,7 @@ use ElfChat\Controller;
 use ElfChat\Entity\User\GuestUser;
 use ElfChat\Entity\User;
 use ElfChat\Security\Authentication\Remember;
+use ElfChat\Validator\Constraints\UserName;
 use Silicone\Route;
 use Symfony\Component\HttpFoundation\Cookie;
 
@@ -58,7 +59,9 @@ class Login extends Controller
         }
 
         $guestForm = $this->app->form()
-            ->add('guestname')
+            ->add('guestname', 'text', array(
+                'constraints' => new UserName(),
+            ))
             ->getForm();
 
         $guestForm->handleRequest($this->request);

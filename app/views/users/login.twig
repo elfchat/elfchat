@@ -41,6 +41,7 @@
         <div class="form-group">
             <label for="guestname">{{ 'Name'|trans({}) }}</label>
             {{ form_widget(guestForm.guestname, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(guestForm.guestname) }}
         </div>
 
         <button class="primary" type="submit">{{ 'Login'|trans() }}</button>

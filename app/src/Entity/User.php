@@ -20,6 +20,7 @@ use ElfChat\Validator\Constraints\Unique;
  * @property string $role
  * @property \ElfChat\Entity\Avatar $avatar
  * @property string ip
+ * @property \DateTime $registered
  *
  * @method static User find()
  *
@@ -78,9 +79,15 @@ class User extends Entity
      */
     protected $ip;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    protected $registered;
+
     public function __construct()
     {
         $this->role = 'ROLE_USER';
+        $this->registered = new \DateTime();
     }
 
     public function export()

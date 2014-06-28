@@ -17,6 +17,7 @@ class GuestUser extends User
 {
     public function __construct()
     {
+        parent::__construct();
         $this->role = 'ROLE_GUEST';
     }
 } 
