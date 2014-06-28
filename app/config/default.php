@@ -47,7 +47,7 @@ return array(
     'chat_title' => 'ElfChat',
     'theme' => 'elfchat/theme',
     'theme_path' => null,
-    'trusted_proxies' => array(),
+    'trusted_proxies' => array('127.0.0.1'),
     'is_chat_open' => true,
 );
 
