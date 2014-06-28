@@ -1,5 +1,5 @@
 /*!
- *  howler.js v1.1.18
+ *  howler.js v1.1.21
  *  howlerjs.com
  *
  *  (c) 2013-2014, James Simpson of GoldFire Studios
@@ -147,8 +147,9 @@
       opus: !!audioTest.canPlayType('audio/ogg; codecs="opus"').replace(/^no$/, ''),
       ogg: !!audioTest.canPlayType('audio/ogg; codecs="vorbis"').replace(/^no$/, ''),
       wav: !!audioTest.canPlayType('audio/wav; codecs="1"').replace(/^no$/, ''),
-      m4a: !!(audioTest.canPlayType('audio/x-m4a;') || audioTest.canPlayType('audio/aac;')).replace(/^no$/, ''),
-      mp4: !!(audioTest.canPlayType('audio/x-mp4;') || audioTest.canPlayType('audio/aac;')).replace(/^no$/, ''),
+      aac: !!audioTest.canPlayType('audio/aac;').replace(/^no$/, ''),
+      m4a: !!(audioTest.canPlayType('audio/x-m4a;') || audioTest.canPlayType('audio/m4a;') || audioTest.canPlayType('audio/aac;')).replace(/^no$/, ''),
+      mp4: !!(audioTest.canPlayType('audio/x-mp4;') || audioTest.canPlayType('audio/mp4;') || audioTest.canPlayType('audio/aac;')).replace(/^no$/, ''),
       weba: !!audioTest.canPlayType('audio/webm; codecs="vorbis"').replace(/^no$/, '')
     };
   }
@@ -170,6 +171,11 @@
     self._volume = o.volume !== undefined ? o.volume : 1;
     self._urls = o.urls || [];
     self._rate = o.rate || 1;
+
+    // allow forcing of a specific panningModel ('equalpower' or 'HRTF'),
+    // if none is specified, defaults to 'equalpower' and switches to 'HRTF'
+    // if 3d sound is used
+    self._model = o.model || null;
 
     // setup event functions
     self._onload = [o.onload || function() {}];
@@ -257,7 +263,7 @@
             HowlerGlobal.noAudio = true;
           }
 
-          self.on('loaderror', {type: newNode.error.code});
+          self.on('loaderror', {type: newNode.error ? newNode.error.code : 0});
         }, false);
 
         self._audioNode.push(newNode);
@@ -361,8 +367,18 @@
         node._sprite = sprite;
 
         // determine where to start playing from
-        var pos = (node._pos > 0) ? node._pos : self._sprite[sprite][0] / 1000,
+        var pos = (node._pos > 0) ? node._pos : self._sprite[sprite][0] / 1000;
+
+        // determine how long to play for
+        var duration = 0;
+        if (self._webAudio) {
           duration = self._sprite[sprite][1] / 1000 - node._pos;
+          if (node._pos > 0) {
+            pos = self._sprite[sprite][0] / 1000 + pos;
+          }
+        } else {
+          duration = self._sprite[sprite][1] / 1000 - (pos - self._sprite[sprite][0] / 1000);
+        }
 
         // determine if this sound should be looped
         var loop = !!(self._loop || self._sprite[sprite][2]);
@@ -379,7 +395,7 @@
           timerId = setTimeout(function() {
             // if looping, restart the track
             if (!self._webAudio && loop) {
-              self.stop(data.id, data.timer).play(sprite, data.id);
+              self.stop(data.id).play(sprite, data.id);
             }
 
             // set web audio node to paused at end
@@ -390,7 +406,7 @@
 
             // end the track if it is HTML audio and a sprite
             if (!self._webAudio && !loop) {
-              self.stop(data.id, data.timer);
+              self.stop(data.id);
             }
 
             // fire ended event
@@ -398,10 +414,7 @@
           }, duration * 1000);
 
           // store the reference to the timer
-          self._onendTimer.push(timerId);
-
-          // remember which timer to cancel
-          data.timer = self._onendTimer[self._onendTimer.length - 1];
+          self._onendTimer.push({timer: timerId, id: data.id});
         })();
 
         if (self._webAudio) {
@@ -421,14 +434,15 @@
             node.bufferSource.start(0, pos, duration);
           }
         } else {
-          if (node.readyState === 4) {
+          if (node.readyState === 4 || !node.readyState && navigator.isCocoonJS) {
+            node.readyState = 4;
             node.id = soundId;
             node.currentTime = pos;
             node.muted = Howler._muted || node.muted;
             node.volume = self._volume * Howler.volume();
             setTimeout(function() { node.play(); }, 0);
           } else {
-            self._clearEndTimer(timerId);
+            self._clearEndTimer(soundId);
 
             (function(){
               var sound = self,
@@ -461,10 +475,9 @@
     /**
      * Pause playback and save the current position.
      * @param {String} id (optional) The play instance ID.
-     * @param {String} timerId (optional) Clear the correct timeout ID.
      * @return {Howl}
      */
-    pause: function(id, timerId) {
+    pause: function(id) {
       var self = this;
 
       // if the sound hasn't been loaded, add it to the event queue
@@ -477,7 +490,7 @@
       }
 
       // clear 'onend' timer
-      self._clearEndTimer(timerId || 0);
+      self._clearEndTimer(id);
 
       var activeNode = (id) ? self._nodeById(id) : self._activeNode();
       if (activeNode) {
@@ -508,10 +521,9 @@
     /**
      * Stop playback and reset to start.
      * @param  {String} id  (optional) The play instance ID.
-     * @param  {String} timerId  (optional) Clear the correct timeout ID.
      * @return {Howl}
      */
-    stop: function(id, timerId) {
+    stop: function(id) {
       var self = this;
 
       // if the sound hasn't been loaded, add it to the event queue
@@ -524,7 +536,7 @@
       }
 
       // clear 'onend' timer
-      self._clearEndTimer(timerId || 0);
+      self._clearEndTimer(id);
 
       var activeNode = (id) ? self._nodeById(id) : self._activeNode();
       if (activeNode) {
@@ -543,7 +555,7 @@
           } else {
             activeNode.bufferSource.stop(0);
           }
-        } else {
+        } else if (!isNaN(activeNode.duration)) {
           activeNode.pause();
           activeNode.currentTime = 0;
         }
@@ -765,6 +777,7 @@
           if (activeNode) {
             self._pos3d = [x, y, z];
             activeNode.panner.setPosition(x, y, z);
+            activeNode.panner.panningModel = self._model || 'HRTF';
           }
         }
       } else {
@@ -903,6 +916,7 @@
       // find first inactive node to recycle
       for (var i=0; i<self._audioNode.length; i++) {
         if (self._audioNode[i].paused && self._audioNode[i].readyState === 4) {
+          // send the node back for use by the new play instance
           callback(self._audioNode[i]);
           node = true;
           break;
@@ -924,9 +938,14 @@
       } else {
         self.load();
         newNode = self._audioNode[self._audioNode.length - 1];
-        newNode.addEventListener('loadedmetadata', function() {
+
+        // listen for the correct load event and fire the callback
+        var listenerEvent = navigator.isCocoonJS ? 'canplaythrough' : 'loadedmetadata';
+        var listener = function() {
+          newNode.removeEventListener(listenerEvent, listener, false);
           callback(newNode);
-        });
+        };
+        newNode.addEventListener(listenerEvent, listener, false);
       }
     },
 
@@ -965,18 +984,24 @@
 
     /**
      * Clear 'onend' timeout before it ends.
-     * @param  {Number} timerId The ID of the sound to be cancelled.
+     * @param  {String} soundId  The play instance ID.
      */
-    _clearEndTimer: function(timerId) {
+    _clearEndTimer: function(soundId) {
       var self = this,
-        timer = self._onendTimer.indexOf(timerId);
+        index = 0;
 
-      // make sure the timer gets cleared
-      timer = timer >= 0 ? timer : 0;
+      // loop through the timers to find the one associated with this sound
+      for (var i=0; i<self._onendTimer.length; i++) {
+        if (self._onendTimer[i].id === soundId) {
+          index = i;
+          break;
+        }
+      }
 
-      if (self._onendTimer[timer]) {
-        clearTimeout(self._onendTimer[timer]);
-        self._onendTimer.splice(timer, 1);
+      var timer = self._onendTimer[index];
+      if (timer) {
+        clearTimeout(timer.timer);
+        self._onendTimer.splice(index, 1);
       }
     },
 
@@ -999,6 +1024,7 @@
 
       // create the panner
       node[index].panner = ctx.createPanner();
+      node[index].panner.panningModel = self._model || 'equalpower';
       node[index].panner.setPosition(self._pos3d[0], self._pos3d[1], self._pos3d[2]);
       node[index].panner.connect(node[index]);
 
@@ -1068,12 +1094,17 @@
         }
 
         if (!self._webAudio) {
-           // remove the source if using HTML5 Audio
+          // remove the source if using HTML5 Audio
           nodes[i].src = '';
         } else {
           // disconnect the output from the master gain
           nodes[i].disconnect(0);
         }
+      }
+
+      // make sure all timeouts are cleared
+      for (i=0; i<self._onendTimer.length; i++) {
+        clearTimeout(self._onendTimer[i].timer);
       }
 
       // remove the reference in the global Howler object
@@ -1213,7 +1244,10 @@
   }
 
   // define globally in case AMD is not available or available but not used
-  window.Howler = Howler;
-  window.Howl = Howl;
+
+  if (typeof window !== 'undefined') {
+    window.Howler = Howler;
+    window.Howl = Howl;
+  }
 
 })();

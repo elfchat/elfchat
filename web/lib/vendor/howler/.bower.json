@@ -1,12 +1,14 @@
 {
-  "name": "howler",
+  "name": "howler.js",
+  "version": "1.1.21",
+  "description": "Javascript audio library for the modern web.",
+  "main": "howler.js",
   "homepage": "https://github.com/goldfire/howler.js",
-  "version": "1.1.18",
-  "_release": "1.1.18",
+  "_release": "1.1.21",
   "_resolution": {
     "type": "version",
-    "tag": "v1.1.18",
-    "commit": "f3f6135c4eff743a2a9140c0199ba5d474789ea0"
+    "tag": "v1.1.21",
+    "commit": "4d9d07ba9339ad5a23d9ebca5ca8cae209a52da0"
   },
   "_source": "git://github.com/goldfire/howler.js.git",
   "_target": "*",

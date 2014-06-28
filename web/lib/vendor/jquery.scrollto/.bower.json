@@ -1,12 +1,11 @@
 {
   "name": "jquery.scrollto",
   "_cacheHeaders": {
-    "ETag": "\"9cc069231ed2ac7ac3d0eabbf4c69853\"",
-    "Content-Length": "2590",
-    "Content-Type": "text/plain; charset=utf-8",
-    "Content-Disposition": "inline"
+    "ETag": "\"73e0f050fd0e1661069c05690bc297dcbecf0ea5\"",
+    "Content-Length": "2602",
+    "Content-Type": "text/plain; charset=utf-8"
   },
-  "_release": "e-tag:9cc069231",
+  "_release": "e-tag:73e0f050f",
   "main": "index.js",
   "_source": "https://raw.github.com/flesler/jquery.scrollTo/master/jquery.scrollTo.min.js",
   "_target": "*",
