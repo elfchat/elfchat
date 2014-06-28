@@ -7,6 +7,7 @@ ElfChat 6.0.0 BETA 3,
 - Refactor message-color plugin
 - Fix magic quotes error
 - Fix IP detection
+- Fix avatar upload input
 
 ElfChat 6.0.0 BETA 2, 2014-06-25
 --------------------------------

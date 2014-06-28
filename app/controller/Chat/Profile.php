@@ -28,7 +28,7 @@ class Profile extends Controller
         $user = $this->app->user();
 
         $form = $this->app->form($user->avatar, array('validation_groups' => array('avatar')))
-            ->add('file')
+            ->add('file', 'file')
             ->getForm();
 
         $form->handleRequest($this->request);
