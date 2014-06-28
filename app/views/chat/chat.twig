@@ -13,11 +13,12 @@
 {% block body %}
     <div class="box">
         <header>
-            <button class="show-users-button" data-action="show-users"><i class="icon-menu"></i></button>
-            {{ app.config.get('chat_title') }}
-            <div class="buttons">
-                <!--<a class="button" target="_blank" href="#">{{ 'Archive'|trans() }}</a>-->
-                <button data-popover="settings"><i class="icon-config"></i> {{ 'Settings'|trans() }}</button>
+            <button class="btn btn-default button-show-userlist" data-action="show-users"><i class="icon-menu"></i></button>
+            <span class="title">
+                {{ app.config.get('chat_title') }}
+            </span>
+            <div class="btn-group buttons-right">
+                <button class="btn btn-default button-settings" data-popover="settings"><i class="icon-config"></i> {{ 'Settings'|trans() }}</button>
             </div>
         </header>
 
@@ -28,21 +29,21 @@
 
         <footer>
             <div class="buttons">
-                <div class="other">
+                <div class="buttons-other">
                     {% block buttons %}
-                    <button data-popover="emotions"><i class="icon-emotion"></i> {{ 'Emotions'|trans() }}</button>
-                    <button data-popover="bbcode">{{ 'BBCode'|trans() }}</button>
+                    <button class="btn btn-default" data-popover="emotions"><i class="icon-emotion"></i> {{ 'Emotions'|trans() }}</button>
+                    <button class="btn btn-default" data-popover="bbcode">{{ 'BBCode'|trans() }}</button>
                     {% endblock %}
                 </div>
-                <div class="send">
-                    <div id="privateGroup" class="button-group" style="display: none">
-                        <button id="private" data-action="send"></button><button data-action="close">✘</button>
+                <div class="buttons-send">
+                    <div id="privateGroup" class="btn-group" style="display: none">
+                        <button class="btn btn-default" id="private" data-action="send"></button><button class="btn btn-default" data-action="close">✘</button>
                     </div>
-                    <button id="send" class="primary" data-action="send"><i class="icon-send"></i> {{ 'Send'|trans() }}</button>
+                    <button class="btn btn-default" id="send" class="primary" data-action="send"><i class="icon-send"></i> {{ 'Send'|trans() }}</button>
                 </div>
             </div>
 
-            <textarea id="message" tabindex="1"></textarea>
+            <textarea class="form-control" id="message" tabindex="1"></textarea>
         </footer>
     </div>
 

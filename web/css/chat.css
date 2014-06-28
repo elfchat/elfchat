@@ -11,6 +11,30 @@ html, body {
     margin: 0;
 }
 
+.name {
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    color: #24ad1b;
+}
+
+.avatar {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    font-size: 32px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    border-radius: 3px;
+}
+
+.emotion {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+}
+
 /* Header */
 
 header {
@@ -27,25 +51,22 @@ header {
     z-index: 20;
 }
 
-header .buttons {
-    float: right;
-}
-
-.show-users-button {
+header .button-show-userlist {
     display: none;
 }
 
-/* Name */
-
-.name {
-    white-space: nowrap;
-    text-decoration: none;
-    cursor: pointer;
-    font-size: 16px;
-    color: #24ad1b;
+header .buttons-right {
+    float: right;
+    margin-top: 7px;
 }
 
-/* User list */
+header .title {
+    font-size: 16px;
+}
+
+/**
+ * User list
+ */
 
 aside {
     box-sizing: border-box;
@@ -78,17 +99,18 @@ aside .user .avatar {
 aside .user .name {
     display: inline-block;
     color: #000000;
-    font-size: 14px;
 }
 
-/* Chats */
+/**
+ * Chat Board
+ */
 
 .chat {
     position: absolute;
     top: 50px; /* header height */
     left: 300px; /* users width */
     right: 0;
-    bottom: 110px; /* footer height */
+    bottom: 0;
     overflow-x: hidden;
     overflow-y: scroll;
     background: #ffffff;
@@ -104,18 +126,15 @@ aside .user .name {
 }
 
 .chat .user {
-    display: table-cell;
     white-space: nowrap;
 }
 
 .chat .avatar {
-    display: table-cell;
     float: left;
     margin-right: 5px;
 }
 
 .chat .time {
-    display: table-cell;
     text-decoration: none;
     float: right;
     font-size: 10px;
@@ -130,7 +149,6 @@ aside .user .name {
     display: block;
     margin-left: 37px; /* Avatar margin. */
     white-space: pre-wrap;
-    font-size: 14px;
 }
 
 .chat img.external {
@@ -143,15 +161,9 @@ aside .user .name {
     color: #ffffff;
 }
 
-/* Emotions */
-
-.emotion {
-    width: 24px;
-    height: 24px;
-    vertical-align: middle;
-}
-
-/* Controls */
+/**
+ * Controls
+ */
 
 footer {
     display: block;
@@ -166,40 +178,30 @@ footer {
     z-index: 20;
 }
 
-footer textarea {
-    box-sizing: border-box;
+footer textarea.form-control {
     width: 100%;
     height: 45px;
     padding: 10px;
-
-    font-family: inherit;
     font-size: 16px;
     line-height: 18px;
     outline: none;
-
-    border-radius: 10px;
-    border: solid 1px #a2dff4;
-}
-
-footer textarea:focus {
-    border-color: #9ecaed;
-    box-shadow: 0 0 10px #9ecaed;
 }
 
 footer .buttons {
-    min-height: 35px;
+    margin-bottom: 5px;
+    min-height: 36px;
 }
 
-footer .buttons .other {
+footer .buttons .buttons-other {
     display: inline-block;
 }
 
-footer .buttons .send {
+footer .buttons .buttons-send {
     float: right;
 }
 
-/*
- * Popovers
+/**
+ * Emotions
  */
 
 #emotions {
@@ -245,7 +247,9 @@ footer .buttons .send {
     max-height: 24px;
 }
 
-/* Profiles */
+/**
+ * Profiles
+ */
 
 .profile {
 }

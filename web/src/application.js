@@ -60,6 +60,9 @@ class Application {
                 });
             }
         }
+
+        // Correct chat size
+        this.dom.chat.css({'bottom': $('footer').outerHeight()});
     }
 
     run() {

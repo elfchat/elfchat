@@ -1015,6 +1015,7 @@ var Application = function Application(server) {
         }));
       }
     }
+    this.dom.chat.css({'bottom': $('footer').outerHeight()});
   },
   run: function() {
     "use strict";

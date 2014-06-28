@@ -1,4 +1,4 @@
-.show-users-button {
+header .button-show-userlist {
     display: inline-block;
 }
 
@@ -14,12 +14,12 @@ footer {
     border-left: solid 1px #e1e1e1;
 }
 
-.buttons .other {
+.buttons .buttons-other {
     display: none !important;
 }
 
 .copyright,
 .copyright a,
 .copyright:first-letter {
-    font-size: 6px !important;
+    font-size: 4px !important;
 }
