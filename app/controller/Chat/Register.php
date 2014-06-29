@@ -36,7 +36,7 @@ class Register extends Controller
             return $this->app->redirect($this->app->url('chat'));
         }
 
-        $response = $this->render('users/register.twig', array(
+        $response = $this->render('login/register.twig', array(
             'form' => $form->createView(),
         ));
 

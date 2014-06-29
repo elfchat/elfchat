@@ -78,7 +78,7 @@ class Install extends Controller
             return $this->app->redirect($this->app->url('install_proxy'));
         }
 
-        return $this->app->render('install/config.twig', array(
+        return $this->app->render('admin/install/config.twig', array(
             'form' => $form->createView(),
         ));
     }
@@ -130,11 +130,11 @@ class Install extends Controller
             $schemaTool->createSchema($em->getMetadataFactory()->getAllMetadata());
 
         } catch (ToolsException $e) {
-            return $this->app->render('install/error.twig', array(
+            return $this->app->render('admin/install/error.twig', array(
                 'message' => $e->getMessage(),
             ));
         } catch (\PDOException $e) {
-            return $this->app->render('install/error.twig', array(
+            return $this->app->render('admin/install/error.twig', array(
                 'message' => $e->getMessage(),
             ));
         }
@@ -166,7 +166,7 @@ class Install extends Controller
             return $this->app->redirect($this->app->url('chat'));
         }
 
-        return $this->app->render('install/admin.twig', array(
+        return $this->app->render('admin/install/admin.twig', array(
             'form' => $form->createView(),
         ));
     }

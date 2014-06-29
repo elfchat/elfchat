@@ -7,6 +7,7 @@
 
 namespace ElfChat\Controller\Chat;
 
+use Doctrine\ORM\NoResultException;
 use ElfChat\Controller;
 use ElfChat\Entity\User\GuestUser;
 use ElfChat\Entity\User;
@@ -35,15 +36,20 @@ class Login extends Controller
 
         if ($form->isValid()) {
             $data = $form->getData();
-            $user = User::findOneByName($data['username']);
 
-            if(null !== $user) {
-                if(password_verify($data['password'], $user->password)) {
+            try {
+                $user = User::findOneByName($data['username']);
+            } catch (NoResultException $e) {
+                $user = null;
+            }
+
+            if (null !== $user) {
+                if (password_verify($data['password'], $user->password)) {
                     $session->set('user', $saved = array($user->id, $user->role));
 
                     $response = $this->app->redirect($this->app->url('chat'));
 
-                    if($data['remember_me']) {
+                    if ($data['remember_me']) {
                         $remember = $this->app['security.remember']->encode($saved);
 
                         $response->headers->setCookie(
@@ -66,7 +72,7 @@ class Login extends Controller
 
         $guestForm->handleRequest($this->request);
 
-        if($guestForm->isValid()) {
+        if ($guestForm->isValid()) {
             $data = $guestForm->getData();
 
             $guest = new GuestUser();
@@ -80,7 +86,7 @@ class Login extends Controller
             return $this->app->redirect($this->app->url('chat'));
         }
 
-        $response = $this->render('users/login.twig', array(
+        $response = $this->render('login/login.twig', array(
             'error' => isset($error) ? $error : null,
             'form' => $form->createView(),
             'guestForm' => $guestForm->createView(),

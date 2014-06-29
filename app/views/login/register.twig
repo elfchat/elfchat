@@ -1,0 +1,16 @@
+{% extends 'login/layout.twig' %}
+{% form_theme form 'form_vertical.twig' %}
+
+{% block content %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h2 class="panel-title">{{ 'Register'|trans() }}</h2>
+        </div>
+        <div class="panel-body">
+            <form action="{{ url('register') }}" {{ form_enctype(form) }} method="post">
+                {{ form_widget(form) }}
+                <button class="btn btn-primary" type="submit">{{ 'Register'|trans() }}</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

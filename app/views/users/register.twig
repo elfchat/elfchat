@@ -1,9 +1,0 @@
-{% extends 'users/layout.twig' %}
-
-{% block content %}
-    <form class="form" action="{{ url('register') }}" {{ form_enctype(form) }} method="POST">
-        <h1>{{ 'Register'|trans() }}</h1>
-        {{ form_widget(form) }}
-        <button class="primary" type="submit">{{ 'Register'|trans() }}</button>
-    </form>
-{% endblock %}

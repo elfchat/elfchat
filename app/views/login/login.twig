@@ -1,0 +1,59 @@
+{% extends 'login/layout.twig' %}
+
+{% block content %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h2 class="panel-title">{{ 'Login'|trans() }}</h2>
+        </div>
+        <div class="panel-body">
+            <form action="{{ path('login') }}" method="post">
+                {{ form_widget(form._token) }}
+
+                {% if error is not empty %}
+                    <div class="alert alert-danger">
+                        {{ error|trans({}) }}
+                    </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="username">{{ 'Name'|trans({}) }}</label>
+                    {{ form_widget(form.username, {'attr': {'class': 'form-control' }}) }}
+                </div>
+
+                <div class="form-group">
+                    <label for="password">{{ 'Password'|trans() }}</label>
+                    {{ form_widget(form.password, {'attr': {'class': 'form-control' }}) }}
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        {{ form_widget(form.remember_me) }}
+                        {{ 'Remember me'|trans() }}
+                    </label>
+                </div>
+
+                <button class="btn btn-primary" type="submit">{{ 'Login'|trans() }}</button>
+                <a class="btn btn-default" href="{{ url('register') }}">{{ 'Register'|trans() }}</a>
+            </form>
+        </div>
+    </div>
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h2 class="panel-title">{{ 'Guest login'|trans() }}</h2>
+        </div>
+        <div class="panel-body">
+            <form action="{{ path('login') }}" method="post">
+                {{ form_widget(guestForm._token) }}
+
+                <div class="form-group">
+                    <label for="guestname">{{ 'Name'|trans({}) }}</label>
+                    {{ form_widget(guestForm.guestname, {'attr': {'class': 'form-control' }}) }}
+                    {{ form_errors(guestForm.guestname) }}
+                </div>
+
+                <button class="btn btn-primary" type="submit">{{ 'Login'|trans() }}</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

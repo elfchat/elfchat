@@ -36,7 +36,7 @@ class Upgrade extends Controller
         $this->proxy();
         $this->plugins();
         $this->openChat(true);
-        return $this->app->render('upgrade/finish.twig');
+        return $this->app->render('admin/upgrade/finish.twig');
     }
 
     public function openChat($open)

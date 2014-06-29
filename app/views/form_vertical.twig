@@ -1,0 +1,35 @@
+{% extends 'form_div_layout.html.twig' %}
+
+{% block form_row %}
+    {% spaceless %}
+        <div class="form-group {{ errors|length > 0 ? 'has-error' : '' }}">
+            {{ form_label(form, null, {'label_attr': {'class': 'control-label' }}) }}
+            {{ form_widget(form, {'attr': {'class': 'form-control' }}) }}
+            {{ form_errors(form) }}
+        </div>
+    {% endspaceless %}
+{% endblock form_row %}
+
+{% block form_errors %}
+    {% spaceless %}
+        {% if errors|length > 0 %}
+            <div class="help-block">
+                <ul>
+                    {% for error in errors %}
+                        <li>{{ error.message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endspaceless %}
+{% endblock form_errors %}
+
+{% block checkbox_widget %}
+    {% set attr = {} %}
+    {{ parent() }}
+{% endblock checkbox_widget %}
+
+{% block radio_widget %}
+    {% set attr = {} %}
+    {{ parent() }}
+{% endblock radio_widget %}
