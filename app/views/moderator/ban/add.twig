@@ -2,10 +2,8 @@
 
 {% block content %}
     <h1>{{ 'Ban %user%'|trans()|replace({'%user%': user is empty ? '' : user.name}) }}</h1>
-    <form action="{{ url('add_ban') }}" method="post">
+    <form action="{{ url('add_ban') }}" method="post" class="form-horizontal">
         {{ form_widget(form) }}
-        <div class="actions">
-            <button type="submit" class="danger">{{ 'Ban'|trans() }}</button>
-        </div>
+        <button type="submit" class="btn btn-danger">{{ 'Ban'|trans() }}</button>
     </form>
 {% endblock %}

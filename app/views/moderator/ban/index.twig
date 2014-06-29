@@ -1,7 +1,9 @@
 {% extends 'moderator/layout.twig' %}
 
 {% block content %}
-    <a class="button" href="{{ url('add_ban') }}">{{ 'Add ban'|trans() }}</a>
+    <div class="well well-sm">
+        <a class="btn btn-default" href="{{ url('add_ban') }}">{{ 'Add ban'|trans() }}</a>
+    </div>
     <table class="table">
         <thead>
         <tr>
@@ -26,7 +28,7 @@
                 <td>{{ ban.author.name }}</td>
                 <td>{{ ban.reason }}</td>
                 <td>
-                    <a href="{{ url('remove_ban', {'id': ban.id}) }}" class="button">{{ 'Delete'|trans() }}</a>
+                    <a class="btn btn-default" href="{{ url('remove_ban', {'id': ban.id}) }}">{{ 'Delete'|trans() }}</a>
                 </td>
             </tr>
         {% endfor %}

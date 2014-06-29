@@ -1,30 +1,48 @@
 {% extends 'base.twig' %}
 
-{% block title %}{{ 'Moderator Center'|trans() }}{% endblock %}
-
-{% block style %}
-    {{ parent() }}
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/common/form.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/admin/layout.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/admin/table.css') }}">
-{% endblock style %}
+{% block title %}{{ 'Moderator Center'|trans() }} - {{ parent() }}{% endblock %}
 
 {% block body %}
-    <div class="navbar">
-        <a href="{{ path('moderator_bans') }}">{{ 'Bans'|trans() }}</a>
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ path('admin') }}">{{ 'ElfChat'|trans() }}</a>
+            </div>
 
-        <a class="pull-right" href="{{ path('logout') }}">{{ 'Exit'|trans() }}</a>
-    </div>
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                    <li><a href="{{ path('moderator_bans') }}">{{ 'Bans'|trans() }}</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="{{ path('logout') }}">{{ 'Exit'|trans() }}</a></li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
 
-    <div class="content">
+    <div class="container-fluid">
         {% for message in app.session.flashBag.get('success') %}
-            <div class="alert alert-success">{{ message|trans() }}</div>
+            <div class="alert alert-success alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
+                {{ message|trans() }}
+            </div>
         {% endfor %}
         {% for message in app.session.flashBag.get('error') %}
-            <div class="alert alert-error">{{ message|trans() }}</div>
+            <div class="alert alert-error alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
+                {{ message|trans() }}
+            </div>
         {% endfor %}
         {% for message in app.session.flashBag.get('info') %}
-            <div class="alert alert-info">{{ message|trans() }}</div>
+            <div class="alert alert-info alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
+                {{ message|trans() }}
+            </div>
         {% endfor %}
 
         {% block content %}
@@ -44,7 +62,7 @@
                 if (href) {
                     var regex = new RegExp('^' + href, 'i');
                     if (regex.test(window.location.pathname)) {
-                        $(this).addClass('active');
+                        $(this).parent().addClass('active');
                     }
                 }
             });
