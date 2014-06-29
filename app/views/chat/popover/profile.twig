@@ -8,16 +8,17 @@
         <img class="avatar" src="[user.avatar]">
     </div>
     <div class="popover-content">
-        <div class="btn-group-vertical">
-            <button class="btn btn-default" data-private="[user.id]">{{ 'Send private message'|trans() }}</button>
-            {% if app.isModerator() %}
-                <div class="buttons">
-                    <a class="btn btn-default" href="{{ url('add_ban') }}?id=[user.id]"
-                       target="_blank">{{ 'Ban'|trans() }}</a>
-                    <!--<a class="button" href="{{ '' }}?id=[user.id]"
-                       target="_blank">{{ 'Quiet'|trans() }}</a>-->
-                </div>
-            {% endif %}
+        <div class="btn-group">
+            <button class="btn btn-default" data-private="[user.id]">{{ 'Private'|trans() }}</button>
+            <button class="btn btn-default" data-ignore="[user.id]">{{ 'Ignore'|trans() }}</button>
         </div>
+        {% if app.isModerator() %}
+            <div>
+                <a class="btn btn-default" href="{{ url('add_ban') }}?id=[user.id]"
+                   target="_blank">{{ 'Ban'|trans() }}</a>
+                <!--<a class="button" href="{{ '' }}?id=[user.id]"
+                       target="_blank">{{ 'Quiet'|trans() }}</a>-->
+            </div>
+        {% endif %}
     </div>
 </div>
