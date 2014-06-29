@@ -1,6 +1,21 @@
 {% extends 'admin/layout.twig' %}
 
-{% block title %}{{ 'Users'|trans() }}{% endblock %}
+{% block title %}{{ 'Users'|trans() }} - {{ parent() }}{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+    <style type="text/css">
+        .avatar {
+            width: 32px;
+            height: 32px;
+        }
+    </style>
+{% endblock %}
+
+{% set roles = {'ROLE_GUEST': 'Guest',
+'ROLE_USER': 'User',
+'ROLE_MODERATOR': 'Moderator',
+'ROLE_ADMIN': 'Admin'} %}
 
 {% block content %}
     <table class="table table-hover">
@@ -18,14 +33,16 @@
             <tr>
                 <td>{{ user.id }}</td>
                 <td>
-                    <img src="{{ user.avatar }}" class="avatar">
+                    <img src="{{ user.avatar }}" class="avatar img-thumbnail">
                     <span>{{ user.name }}</span>
                 </td>
                 <td>{{ user.email }}</td>
-                <td>{{ user.role }}</td>
+                <td>{{ roles[user.role]|trans() }}</td>
                 <td>
-                    <a href="{{ path('admin_users_edit', {'id': user.id}) }}" class="button">{{ 'Edit'|trans() }}</a>
-                    <a href="{{ path('admin_users_delete', {'id': user.id}) }}" class="button">{{ 'Delete'|trans() }}</a>
+                    <div class="btn-group">
+                        <a href="{{ path('admin_users_edit', {'id': user.id}) }}" class="btn btn-default">{{ 'Edit'|trans() }}</a>
+                        <a href="{{ path('admin_users_delete', {'id': user.id}) }}" class="btn btn-danger">{{ 'Delete'|trans() }}</a>
+                    </div>
                 </td>
             </tr>
         {% endfor %}

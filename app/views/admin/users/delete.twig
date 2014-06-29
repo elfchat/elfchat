@@ -5,12 +5,14 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <form class="form-horizontal" action="" {{ form_enctype(form) }} method="post">
-        {{ form_widget(form._token) }}
-        <fieldset>
-            <legend>{{ title }}</legend>
-            {{ form_widget(form.delete, {'attr': {'class': 'danger'}}) }}
-            <a href="{{ path('admin_users') }}" class="button">{{ 'Cancel'|trans() }}</a>
-        </fieldset>
-    </form>
+    <div class="panel panel-default">
+        <div class="panel-heading">{{ title }}</div>
+        <div class="panel-body">
+            <form action="" {{ form_enctype(form) }} method="post" class="form-horizontal">
+                {{ form_widget(form._token) }}
+                {{ form_widget(form.delete, {'attr': {'class': 'btn btn-danger' }}) }}
+                <a class="btn btn-default" href="{{ path('admin_users') }}">{{ 'Cancel'|trans() }}</a>
+            </form>
+        </div>
+    </div>
 {% endblock %}

@@ -1,5 +1,7 @@
 {% extends 'admin/layout.twig' %}
 
+{% block title %}{{ 'Configuration'|trans() }} - {{ parent() }}{% endblock %}
+
 {% block content %}
     <form action="{{ url('admin_config') }}" method="post" class="form-horizontal">
         {{ form_widget(form) }}

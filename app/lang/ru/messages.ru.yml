@@ -34,6 +34,9 @@ Ban was deleted.: Бан был удалён.
 User %user% was banned for %time%.: Пользователь %user% забанен на %time%.
 "Reason: %reason%": "Причина: %reason%"
 Configuration saved.: Настройки сохранены.
+Edit user %name%: Редактирование пользователя %name%
+Delete user "%name%"?: Удалить пользователя %name%?
+User "%name%" edited successful.: Пользователь %name% успешно отредактирован.
 
 One min: Одна минута
 5 min: 5 минут
