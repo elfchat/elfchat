@@ -2,7 +2,7 @@
 
 {% block form_row %}
     {% spaceless %}
-        <div class="form-group">
+        <div class="form-group {{ errors|length > 0 ? 'has-error' : '' }}">
             {{ form_label(form, null, {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
             <div class="col-sm-10">
                 {{ form_widget(form, {'attr': {'class': 'form-control'}}) }}
@@ -15,11 +15,13 @@
 {% block form_errors %}
     {% spaceless %}
         {% if errors|length > 0 %}
-            <ul class="errors">
-                {% for error in errors %}
-                    <li>{{ error.message }}</li>
-                {% endfor %}
-            </ul>
+            <div class="col-sm-offset-2 col-sm-10 help-block">
+                <ul>
+                    {% for error in errors %}
+                        <li>{{ error.message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
         {% endif %}
     {% endspaceless %}
 {% endblock form_errors %}

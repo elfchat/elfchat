@@ -9,6 +9,7 @@ namespace ElfChat\Controller\Admin;
 
 use ElfChat\Controller;
 use Silicone\Route;
+use Symfony\Component\Validator\Constraints\Url;
 
 /**
  * @Route("/admin/config")
@@ -33,7 +34,7 @@ class Configuration extends Controller
                 ),
                 'label' => 'Language',
             ))
-            ->add('baseurl', 'text', array('label' => 'Base URL'))
+            ->add('baseurl', 'text', array('label' => 'Base URL', 'constraints' => new Url()))
             ->add('mobile_enable', 'checkbox', array('label' => 'Enable mobile', 'required' => false))
             ->add('integration_key', 'text', array('label' => 'Integration key'));
 
