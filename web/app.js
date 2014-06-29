@@ -1008,7 +1008,7 @@ var Application = function Application(server) {
       var snapper = new Snap({
         element: document.getElementById('chat'),
         disable: 'right',
-        dragger: ($window.width() < 480) ? document.getElementById('chat') : null
+        dragger: ($window.width() < 480) ? document.getElementById('chat') : document.getElementById('do-drag')
       });
       var open = false;
       $(document).on('click.show-users', '[data-action="show-users"]', (function() {

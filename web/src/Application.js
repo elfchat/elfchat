@@ -52,7 +52,9 @@ class Application {
             var snapper = new Snap({
                 element: document.getElementById('chat'),
                 disable: 'right',
-                dragger: ($window.width() < 480) ? document.getElementById('chat') : null
+                dragger: ($window.width() < 480)
+                    ? document.getElementById('chat')
+                    : document.getElementById('do-drag')
             });
 
             var open = false;
