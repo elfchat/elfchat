@@ -2,9 +2,11 @@
 
 {% block form_row %}
     {% spaceless %}
-        <div>
-            {{ form_label(form) }}
-            {{ form_widget(form) }}
+        <div class="form-group">
+            {{ form_label(form, null, {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+            <div class="col-sm-10">
+                {{ form_widget(form, {'attr': {'class': 'form-control'}}) }}
+            </div>
             {{ form_errors(form) }}
         </div>
     {% endspaceless %}
@@ -21,3 +23,15 @@
         {% endif %}
     {% endspaceless %}
 {% endblock form_errors %}
+
+{% block checkbox_widget %}
+    {% spaceless %}
+        <input type="checkbox" {% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+    {% endspaceless %}
+{% endblock checkbox_widget %}
+
+{% block radio_widget %}
+    {% spaceless %}
+        <input type="radio" {% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+    {% endspaceless %}
+{% endblock radio_widget %}

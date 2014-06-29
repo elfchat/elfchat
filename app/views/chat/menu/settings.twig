@@ -1,5 +1,5 @@
 <ul class="dropdown-menu dropdown-menu-right">
-    <li><a id="avatarButton" target="_blank" href="{{ url('profile_avatar') }}">{{ 'Avatar'|trans() }}</a></li>
+    <li><a id="avatarButton" target="_blank" href="{{ url('user_avatar') }}">{{ 'Avatar'|trans() }}</a></li>
     {% if app.isAdmin() %}
         <li><a target="_blank" href="{{ url('admin') }}">{{ 'Admin Center'|trans() }}</a></li>
     {% endif %}
