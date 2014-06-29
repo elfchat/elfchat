@@ -15,7 +15,6 @@ html, body {
     white-space: nowrap;
     text-decoration: none;
     cursor: pointer;
-    color: #24ad1b;
 }
 
 .avatar {
@@ -98,7 +97,6 @@ aside .user .avatar {
 
 aside .user .name {
     display: inline-block;
-    color: #000000;
 }
 
 /**
@@ -137,7 +135,7 @@ aside .user .name {
     text-decoration: none;
     float: right;
     font-size: 10px;
-    color: #898989;
+
 }
 
 .chat .name {

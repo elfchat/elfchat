@@ -5,7 +5,9 @@
         <title>{% block title %}{{ app.config.get('chat_title') }}{% endblock %}</title>
         {% block meta %}
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
+            {% if app.config.get('mobile_enable') %}
+                <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+            {% endif %}
         {% endblock %}
         {% block style %}
             <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">

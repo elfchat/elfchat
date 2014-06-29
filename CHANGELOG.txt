@@ -1,5 +1,6 @@
 ElfChat 6.0.0 BETA 3,
 --------------------------------
+- Refactor to using bootstrap.
 - Russian language
 - Upgrade system
 - Add is_chat_open config option
