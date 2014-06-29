@@ -49,16 +49,22 @@ class Application {
 
         // Mobile
         if (window.config.mobile_enable) {
-            if ($window.width() < 480) {
-                var snapper = new Snap({
-                    element: document.getElementById('chat'),
-                    disable: 'right'
-                });
+            var snapper = new Snap({
+                element: document.getElementById('chat'),
+                disable: 'right',
+                dragger: ($window.width() < 480) ? document.getElementById('chat') : null
+            });
 
-                $(document).on('click.show-users', '[data-action="show-users"]', () => {
+            var open = false;
+            $(document).on('click.show-users', '[data-action="show-users"]', () => {
+                if (!open) {
                     snapper.open('left');
-                });
-            }
+                    open = true;
+                } else {
+                    snapper.close('left');
+                    open = false;
+                }
+            });
         }
 
         // Correct chat size

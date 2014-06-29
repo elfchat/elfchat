@@ -1005,15 +1005,21 @@ var Application = function Application(server) {
     $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this)).on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this)).on('click.private', '[data-private]', $.proxy(this.onPrivateClick, this));
     $('[data-action="bbcode"]').on('click.bbcode', $.proxy(this.onBBCodeClick, this));
     if (window.config.mobile_enable) {
-      if ($window.width() < 480) {
-        var snapper = new Snap({
-          element: document.getElementById('chat'),
-          disable: 'right'
-        });
-        $(document).on('click.show-users', '[data-action="show-users"]', (function() {
+      var snapper = new Snap({
+        element: document.getElementById('chat'),
+        disable: 'right',
+        dragger: ($window.width() < 480) ? document.getElementById('chat') : null
+      });
+      var open = false;
+      $(document).on('click.show-users', '[data-action="show-users"]', (function() {
+        if (!open) {
           snapper.open('left');
-        }));
-      }
+          open = true;
+        } else {
+          snapper.close('left');
+          open = false;
+        }
+      }));
     }
     this.dom.chat.css({'bottom': $('footer').outerHeight()});
   },
