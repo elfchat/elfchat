@@ -13,6 +13,8 @@ class Theme extends Plugin
 {
     const CONFIG_NAME = 'theme.json';
 
+    public $thumbnail;
+
     private $themeViewsPath;
 
     protected function parse(array $json)

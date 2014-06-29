@@ -1,26 +1,52 @@
 {% extends 'admin/layout.twig' %}
 
-{% block title %}{{ 'Themes'|trans() }}{% endblock %}
+{% block title %}{{ 'Themes'|trans() }} - {{ parent() }}{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+    <style type="text/css">
+        .thumbnail {
+            width: 300px;
+            min-height: 200px;
+        }
+    </style>
+{% endblock %}
 
 {% block content %}
     {% for theme in themes %}
-        <h1>{{ theme.title }}</h1>
-        <p>
-            <strong>{{ 'Author'|trans() }}</strong>: {{ theme.author.name }}<br>
-            <strong>{{ 'Email'|trans() }}</strong>: {{ theme.author.email }}<br>
-        </p>
-        {% if theme.checkRequirements() %}
-            {% if theme.installed %}
-                {% if theme.hasConfigurationRoute() %}
-                    <a class="button" href="{{ url(theme.configurationRoute) }}">{{ 'Configuration'|trans() }}</a>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+
+                <h2 class="panel-title">{{ theme.title|trans() }}</h2>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-7">
+                        <img class="img-thumbnail thumbnail" src="{{ theme.thumbnail }}">
+                    </div>
+                    <div class="col-sm-5">
+                        <ul>
+                            <li><strong>{{ 'Author'|trans() }}</strong>: {{ theme.author.name }}</li>
+                            <li><strong>{{ 'Email'|trans() }}</strong>: {{ theme.author.email }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                {% if theme.checkRequirements() %}
+                    {% if theme.installed %}
+                        <a class="btn btn-default" disabled="disabled" href="">
+                            {{ 'Install theme'|trans() }}
+                        </a>
+                    {% else %}
+                        <a class="btn btn-primary" href="{{ url('admin_theme_install', {'name': theme.name}) }}">
+                            {{ 'Install theme'|trans() }}
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <strong>{{ 'Can not install this theme, as it does not match chat requirements.'|trans() }}</strong>
                 {% endif %}
-            {% else %}
-                <a class="button primary" href="{{ url('admin_theme_install', {'name': theme.name}) }}">
-                    {{ 'Install theme'|trans() }}
-                </a>
-            {% endif %}
-        {% else %}
-            <strong>{{ 'Can not install this theme, as it does not match chat requirements.'|trans() }}</strong>
-        {% endif %}
+            </div>
+        </div>
     {% endfor %}
 {% endblock %}
