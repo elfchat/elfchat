@@ -1,21 +1,17 @@
-<!doctype html>
-<html>
-<head>
-    <title>{% block title %}{% endblock %}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    {% block style %}
-        <link rel="stylesheet" type="text/css" href="{{ asset('css/common/common.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('css/common/alert.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('css/common/button.css') }}">
-        <style type="text/css">
-            body {
-                padding: 100px;
-            }
-        </style>
-    {% endblock %}
-</head>
-<body>
-{% block content %}
+{% extends 'base.twig' %}
+
+{% block style %}
+    {{ parent() }}
+    <style type="text/css">
+        body {
+            padding: 100px;
+        }
+    </style>
 {% endblock %}
-</body>
-</html>
+
+{% block body %}
+    <div class="container-fluid">
+        {% block content %}
+        {% endblock %}
+    </div>
+{% endblock %}
