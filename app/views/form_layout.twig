@@ -25,13 +25,11 @@
 {% endblock form_errors %}
 
 {% block checkbox_widget %}
-    {% spaceless %}
-        <input type="checkbox" {% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
-    {% endspaceless %}
+    {% set attr = {} %}
+    {{ parent() }}
 {% endblock checkbox_widget %}
 
 {% block radio_widget %}
-    {% spaceless %}
-        <input type="radio" {% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
-    {% endspaceless %}
+    {% set attr = {} %}
+    {{ parent() }}
 {% endblock radio_widget %}

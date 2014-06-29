@@ -58,7 +58,7 @@ class Configuration extends Controller
             $config = $form->getData();
             $config->save();
 
-            $this->app->session()->getFlashBag()->set('success', 'Configuration saved');
+            $this->app->session()->getFlashBag()->set('success', 'Configuration saved.');
         }
 
 
