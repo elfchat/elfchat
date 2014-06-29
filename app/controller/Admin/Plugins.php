@@ -68,6 +68,8 @@ class Plugins extends Controller
     {
         $this->plugins->install();
 
+        $this->app->session()->getFlashBag()->add('success', $this->app->trans('Plugins reinstalled.'));
+
         return $this->app->redirect($request->get('next', $this->app->url('admin_plugins')));
     }
 } 

@@ -37,6 +37,7 @@ Configuration saved.: Настройки сохранены.
 Edit user %name%: Редактирование пользователя %name%
 Delete user "%name%"?: Удалить пользователя %name%?
 User "%name%" edited successful.: Пользователь %name% успешно отредактирован.
+Plugins reinstalled.: Плагины переустановленны.
 
 One min: Одна минута
 5 min: 5 минут
@@ -97,7 +98,7 @@ Remove avatar: Удалить аватар?
 
 Install plugin: Установить плагин
 Uninstall plugin: Удалить плагин
-Update plugins: Обновить плагины
+Reinstall plugins: Переустановить плагины
 
 Access denied: Доступ запрещён
 Chat is closed: Чат закрыт

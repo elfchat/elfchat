@@ -1,33 +1,54 @@
 {% extends 'admin/layout.twig' %}
 
-{% block title %}{{ 'Plugins'|trans() }}{% endblock %}
+{% block title %}{{ 'Plugins'|trans() }} - {{ parent() }}{% endblock %}
 
 {% block content %}
+    <div class="well well-sm">
+        <a class="btn btn-success pull-right" href="{{ url('admin_plugin_update') }}">{{ 'Reinstall plugins'|trans() }}</a>
+        <div class="clearfix"></div>
+    </div>
+
     {% for plugin in plugins %}
-        <h1>{{ plugin.title }}</h1>
-        <p>{{ plugin.description }}</p>
-        <p>
-            <strong>{{ 'Author'|trans() }}</strong>: {{ plugin.author.name }}<br>
-            <strong>{{ 'Email'|trans() }}</strong>: {{ plugin.author.email }}<br>
-        </p>
-        {% if plugin.checkRequirements() %}
-            {% if plugin.installed %}
-                <a class="button" href="{{ url('admin_plugin_uninstall', {'name': plugin.name}) }}">
-                    {{ 'Uninstall plugin'|trans() }}
-                </a>
-                {% if plugin.hasConfigurationRoute() %}
-                    <a class="button" href="{{ url(plugin.configurationRoute) }}">{{ 'Configuration'|trans() }}</a>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+
+                <h2 class="panel-title">{{ plugin.title|trans() }}</h2>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-7">
+                        {{ plugin.description|trans() }}
+                    </div>
+                    <div class="col-sm-5">
+                        <ul>
+                            <li><strong>{{ 'Author'|trans() }}</strong>: {{ plugin.author.name }}</li>
+                            <li><strong>{{ 'Email'|trans() }}</strong>: {{ plugin.author.email }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                {% if plugin.checkRequirements() %}
+                    {% if plugin.installed %}
+                        <a class="btn btn-default"
+                           href="{{ url('admin_plugin_uninstall', {'name': plugin.name}) }}">
+                            {{ 'Uninstall plugin'|trans() }}
+                        </a>
+                        {% if plugin.hasConfigurationRoute() %}
+                            <a class="btn btn-primary"
+                               href="{{ url(plugin.configurationRoute) }}">{{ 'Configuration'|trans() }}</a>
+                        {% endif %}
+                    {% else %}
+                        <a class="btn btn-primary"
+                           href="{{ url('admin_plugin_install', {'name': plugin.name}) }}">
+                            {{ 'Install plugin'|trans() }}
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <strong>{{ 'Can not install this plugin, as it does not match chat requirements.'|trans() }}</strong>
                 {% endif %}
-            {% else %}
-                <a class="button primary" href="{{ url('admin_plugin_install', {'name': plugin.name}) }}">
-                    {{ 'Install plugin'|trans() }}
-                </a>
-            {% endif %}
-        {% else %}
-            <strong>{{ 'Can not install this plugin, as it does not match chat requirements.'|trans() }}</strong>
-        {% endif %}
+            </div>
+        </div>
     {% endfor %}
-    <br>
-    <br>
-    <a class="button" href="{{ url('admin_plugin_update') }}">{{ 'Update plugins'|trans() }}</a>
+
 {% endblock %}

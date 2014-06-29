@@ -5,12 +5,9 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <h1>{{ title }}</h1>
-    <form class="form" action="" {{ form_enctype(form) }} method="post">
+    <h3>{{ title }}</h3>
+    <form action="" {{ form_enctype(form) }} method="post" class="form-horizontal">
         {{ form_widget(form) }}
-        <div class="actions">
-            <button class="primary" type="submit">{{ 'Save'|trans() }}</button>
-            <button type="reset">{{ 'Cancel'|trans() }}</button>
-        </div>
+        <button class="btn btn-primary" type="submit">{{ 'Save'|trans() }}</button>
     </form>
 {% endblock %}
