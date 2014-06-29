@@ -1,4 +1,4 @@
-{% extends 'profile/layout.twig' %}
+{% extends 'user/layout.twig' %}
 
 {% block title %}{{ 'Crop avatar'|trans() }}{% endblock %}
 
@@ -17,11 +17,10 @@
 
         .previewBox {
             display: inline-block;
+            vertical-align: top;
             width: 100px;
             height: 100px;
             overflow: hidden;
-            border-radius: 10px;
-            box-shadow: 1px 1px 1px 1px #747474;
         }
 
         #preview {
@@ -37,11 +36,11 @@
         <div class="avatarBox thumbnail">
             <img id="avatar" src="{{ app.user.avatar }}">
         </div>
-        <div class="previewBox">
+        <div class="previewBox thumbnail">
             <img id="preview" src="{{ app.user.avatar }}">
         </div>
     </div>
-    <button id="crop" class="primary">{{ 'Crop'|trans() }}</button>
+    <button id="crop" class="btn btn-primary">{{ 'Crop'|trans() }}</button>
 {% endblock %}
 
 {% block script %}
@@ -80,7 +79,7 @@
                 var m = Math.min(avatar.width(), avatar.height()) - 10;
 
                 if (m <= 50) {
-                    window.location.href = '{{ url('profile_update_user') }}';
+                    window.location.href = '{{ url('user_update') }}';
                 }
 
                 avatar.Jcrop({
@@ -94,8 +93,8 @@
             });
 
             button.click(function () {
-                $.post('{{ url('profile_avatar_crop') }}', cropSize, function () {
-                    window.location.href = '{{ url('profile_update_user') }}';
+                $.post('{{ url('user_avatar_crop') }}', cropSize, function () {
+                    window.location.href = '{{ url('user_update') }}';
                 });
             });
         });

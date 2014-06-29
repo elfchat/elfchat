@@ -15,12 +15,12 @@ use Imagine\Image\Point;
 use Silicone\Route;
 
 /**
- * @Route("/profile")
+ * @Route("/user")
  */
-class Profile extends Controller
+class User extends Controller
 {
     /**
-     * @Route("/avatar", name="profile_avatar")
+     * @Route("/avatar", name="user_avatar")
      */
     public function avatar()
     {
@@ -39,17 +39,17 @@ class Profile extends Controller
             $em->persist($avatar);
             $em->flush();
 
-            return $this->render('profile/avatar/crop.twig');
+            return $this->render('user/avatar/crop.twig');
         }
 
 
-        return $this->render('profile/avatar/change.twig', array(
+        return $this->render('user/avatar/change.twig', array(
             'form' => $form->createView(),
         ));
     }
 
     /**
-     * @Route("/avatar/crop", methods="POST", name="profile_avatar_crop")
+     * @Route("/avatar/crop", methods="POST", name="user_avatar_crop")
      */
     public function crop()
     {
@@ -75,13 +75,13 @@ class Profile extends Controller
     }
 
     /**
-     * @Route("/update_user", methods="get", name="profile_update_user")
+     * @Route("/update", methods="get", name="user_update")
      */
-    public function updateAvatar()
+    public function update()
     {
         $this->app->server()->updateUser();
 
-        return $this->app->redirect($this->app->url('profile_avatar'));
+        return $this->app->redirect($this->app->url('user_avatar'));
     }
 
     /**

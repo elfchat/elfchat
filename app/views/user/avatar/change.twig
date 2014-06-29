@@ -1,0 +1,29 @@
+{% extends 'user/layout.twig' %}
+
+{% block title %}{{ 'Change avatar'|trans() }}{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+    <style type="text/css">
+        .avatar {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+        <div class="">
+            <img class="avatar img-thumbnail" src="{{ app.user.avatar }}">
+        </div>
+        <div>
+            <h4>{{ 'Upload avatar'|trans() }}</h4>
+
+            <form action="{{ url('user_avatar') }}" {{ form_enctype(form) }} method="post">
+                {{ form_widget(form._token) }}
+                {{ form_widget(form.file) }}
+                {{ form_errors(form.file) }}
+                <button class="btn btn-primary" type="submit">{{ 'Upload'|trans() }}</button>
+            </form>
+        </div>
+{% endblock %}
