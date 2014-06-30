@@ -102,7 +102,9 @@ $app->register(new Silex\Provider\SessionServiceProvider(), array(
     )
 ));
 
-// Twig
+/**
+ * Twig
+ */
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
     'twig.options' => $app->isOpen() ? array(
             'cache' => $app->getCacheDir() . '/twig/',
@@ -114,8 +116,24 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
 $app->register(new Silicone\Provider\TwigServiceProviderExtension());
 $app['twig'] = $app->share($app->extend('twig', function (\Twig_Environment $twig, $app) {
     $twig->addExtension(new ElfChat\Twig\ViewExtension());
+    $twig->addExtension(new \Assetic\Extension\Twig\AsseticExtension($app['asset.factory']));
     return $twig;
 }));
+
+/**
+ * Assetic
+ */
+$app['asset.manager'] = $app->share(function () use ($app) {
+    $am = new \Assetic\AssetManager();
+    $am->set('base', new \Assetic\Asset\GlobAsset($app->getRootDir() . '/../web/'));
+    return $am;
+});
+
+$app['asset.factory'] = $app->share(function () use ($app) {
+    $factory = new \Assetic\Factory\AssetFactory($app->getRootDir() . '/../web/');
+    $factory->setAssetManager($app['asset.manager']);
+    return $factory;
+});
 
 /**
  * Theme and Views
@@ -253,7 +271,7 @@ $app['security.remember'] = $app->share(function () use ($app) {
 /**
  * IP Trusted proxy
  */
-Symfony\Component\HttpFoundation\Request::setTrustedProxies($config->get('trusted_proxies', array()));
+Symfony\Component\HttpFoundation\Request::setTrustedProxies(array($config->get('trusted_proxy', '127.0.0.1')));
 
 /**
  * Plugins

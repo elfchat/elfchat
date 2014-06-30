@@ -7,32 +7,81 @@
 
 namespace ElfChat\Theme;
 
-use ElfChat\Plugin\Plugin;
+use ElfChat\Plugin\AbstractPlugin;
 
-class Theme extends Plugin
+class Theme extends AbstractPlugin
 {
     const CONFIG_NAME = 'theme.json';
 
+    public $name;
+
+    public $title;
+
     public $thumbnail;
 
-    private $themeViewsPath;
+    public $author = array('name' => 'NoName', 'email' => 'no_email');
 
-    protected function parse(array $json)
+    private $views;
+
+    private $assets;
+
+    private $webPath;
+
+    public function parse(array $json)
     {
-        if(isset($json['views']) && is_string($json['views'])) {
-            $this->themeViewsPath = $this->getPluginDir() . '/' . $json['views'];
+        $this->name = isset($json['name']) ? $json['name'] : 'vendor/name';
+        $this->title = isset($json['title']) ? $json['title'] : 'No title';
+        $this->thumbnail = isset($json['thumbnail']) ? $json['thumbnail'] : null;
 
-            unset($json['views']);
+        if (isset($json['author'])) {
+            $this->author = array(
+                'name' => isset($json['author']['name']) ? $json['author']['name'] : 'NoName',
+                'email' => isset($json['author']['email']) ? $json['author']['email'] : 'no_email',
+            );
         }
 
-        parent::parse($json);
+        if (isset($json['require'])) {
+            foreach ($json['require'] as $what => $version) {
+                $this->require[$what] = $version;
+            }
+        }
+
+        if(isset($json['views']) && is_string($json['views'])) {
+            $this->views = $this->getDir() . '/' . $json['views'];
+
+        }
+
+        if(isset($json['assets']) && is_string($json['assets'])) {
+            $this->assets = $this->getDir() . '/' . $json['assets'];
+        }
     }
 
     /**
      * @return string
      */
-    public function getThemeViewsPath()
+    public function getViews()
     {
-        return $this->themeViewsPath;
+        return $this->views;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAssets()
+    {
+        return $this->assets;
+    }
+
+    public function getWebPath()
+    {
+        return $this->webPath;
+    }
+
+    /**
+     * @param string $webPath
+     */
+    public function setWebPath($webPath)
+    {
+        $this->webPath = $webPath;
     }
 }

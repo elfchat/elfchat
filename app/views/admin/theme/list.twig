@@ -6,35 +6,28 @@
     {{ parent() }}
     <style type="text/css">
         .thumbnail {
-            width: 300px;
+            width: 500px;
             min-height: 200px;
+        }
+
+        .panel-inline {
+            display: inline-block;
         }
     </style>
 {% endblock %}
 
 {% block content %}
     {% for theme in themes %}
-        <div class="panel panel-default">
+        <div class="panel panel-default panel-inline">
             <div class="panel-heading">
-
                 <h2 class="panel-title">{{ theme.title|trans() }}</h2>
             </div>
             <div class="panel-body">
-                <div class="row">
-                    <div class="col-sm-7">
-                        <img class="img-thumbnail thumbnail" src="{{ theme.thumbnail }}">
-                    </div>
-                    <div class="col-sm-5">
-                        <ul>
-                            <li><strong>{{ 'Author'|trans() }}</strong>: {{ theme.author.name }}</li>
-                            <li><strong>{{ 'Email'|trans() }}</strong>: {{ theme.author.email }}</li>
-                        </ul>
-                    </div>
-                </div>
+                <img class="img-thumbnail thumbnail" src="{{ theme.getWebPath() }}/{{ theme.thumbnail }}">
             </div>
             <div class="panel-footer">
                 {% if theme.checkRequirements() %}
-                    {% if theme.installed %}
+                    {% if theme.name == app.config.get('theme') %}
                         <a class="btn btn-default" disabled="disabled" href="">
                             {{ 'Install theme'|trans() }}
                         </a>

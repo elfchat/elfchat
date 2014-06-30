@@ -11,6 +11,7 @@ use ElfChat\Controller;
 use ElfChat\Theme\Theme;
 use Silicone\Route;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -33,9 +34,10 @@ class Themes extends Controller
             ->in($this->app->getThemeDir());
 
         $themes = array();
+        /** @var $file SplFileInfo */
         foreach ($finder as $file) {
             $theme = new Theme($file);
-            $theme->installed = $this->app->config()->get('theme') === $theme->name;
+            $theme->setWebPath($this->app->request()->getBasePath() . '/theme/' . $file->getRelativePath());
             $themes[$theme->name] = $theme;
         }
 
@@ -63,11 +65,10 @@ class Themes extends Controller
         if (isset($themes[$name])) {
             $config = $this->app->config();
             $config->set('theme', $themes[$name]->name);
-            $config->set('theme_path', $themes[$name]->getThemeViewsPath());
+            $config->set('theme_path', $themes[$name]->getViews());
+            $config->set('theme_assets', $themes[$name]->getAssets());
             $config->save();
         }
-
-        //$this->installPlugins($themes);
 
         return $this->app->redirect($this->app->url('admin_themes'));
     }

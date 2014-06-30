@@ -57,7 +57,7 @@ $app[\'installed_plugins\'] = array(
 ';
 
         foreach ($plugins as $plugin) {
-            $content .= "    '{$plugin->name}' => '{$plugin->getPluginFile()}',\n";
+            $content .= "    '{$plugin->name}' => '{$plugin->getConfigFileName()}',\n";
         }
 
         $content .= ");\n";
