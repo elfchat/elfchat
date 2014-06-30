@@ -9,7 +9,7 @@
     </div>
     <div class="popover-content">
         <div class="btn-group">
-            <button class="btn btn-default" data-private="[user.id]">{{ 'Private'|trans() }}</button>
+            <button class="btn btn-default" data-private="[user.id]"><i class="icon icon-send"></i>{{ 'Private'|trans() }}</button>
             <button class="btn btn-default" data-ignore="[user.id]">{{ 'Ignore'|trans() }}</button>
         </div>
         {% if app.isModerator() %}

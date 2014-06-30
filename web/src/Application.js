@@ -7,6 +7,7 @@
 class Application {
     constructor(server) {
         this.server = server;
+        this.ignore = [];
 
         this.dom = {
             chat: $('#chat'),
@@ -41,7 +42,8 @@ class Application {
             .on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this))
             .on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this))
             .on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this))
-            .on('click.private', '[data-private]', $.proxy(this.onPrivateClick, this));
+            .on('click.private', '[data-private]', $.proxy(this.onPrivateClick, this))
+            .on('click.ignore', '[data-ignore]', $.proxy(this.onIgnoreClick, this));
 
         $('[data-action="bbcode"]')
             .on('click.bbcode', $.proxy(this.onBBCodeClick, this));
@@ -85,6 +87,11 @@ class Application {
     }
 
     onMessage(event, message) {
+        // Check on ignore.
+        if (message != undefined && message.user != undefined && this.ignore.indexOf(message.user.id) != -1) {
+            return;
+        }
+
         this.addMessage(message);
         window.sound.message.play();
     }
@@ -176,6 +183,18 @@ class Application {
     onBBCodeClick(event) {
         var bbcode = $(event.target).attr('data-bbcode');
         this.dom.textarea.insertAtCaret(bbcode);
+    }
+
+    onIgnoreClick(event) {
+        var button = $(event.target);
+        var ignoreId = parseInt(button.attr('data-ignore'));
+        if (this.ignore.indexOf(ignoreId) == -1) {
+            this.ignore.push(ignoreId);
+            button.addClass('btn-danger');
+        } else {
+            this.ignore.splice(this.ignore.indexOf(ignoreId), 1);
+            button.removeClass('btn-danger');
+        }
     }
 }
 

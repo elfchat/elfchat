@@ -1,5 +1,6 @@
 ElfChat 6.0.0 BETA 3,
 --------------------------------
+- Add ignore feature
 - Mobile view on desktop
 - Refactor to using bootstrap
 - Russian language

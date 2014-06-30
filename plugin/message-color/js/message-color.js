@@ -1,4 +1,4 @@
-var messageColor = localStorage.getItem('message-color');
+var messageColor = localStorage.getItem('message-color') || '#000000';
 
 $(function () {
     var textarea = $('footer textarea');

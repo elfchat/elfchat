@@ -989,6 +989,7 @@ var EmotionFilter = function EmotionFilter(list) {
 var Application = function Application(server) {
   "use strict";
   this.server = server;
+  this.ignore = [];
   this.dom = {
     chat: $('#chat'),
     textarea: $('#message'),
@@ -1002,7 +1003,7 @@ var Application = function Application(server) {
   init: function() {
     "use strict";
     var $window = $(window).on('connect', $.proxy(this.onConnect, this)).on('disconnect', $.proxy(this.onDisconnect, this)).on('message', $.proxy(this.onMessage, this)).on('log', $.proxy(this.onLog, this)).on('user_join', $.proxy(this.onUserJoin, this)).on('user_leave', $.proxy(this.onUserLeave, this)).on('error', $.proxy(this.onError, this));
-    $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this)).on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this)).on('click.private', '[data-private]', $.proxy(this.onPrivateClick, this));
+    $(document).on('click.popover', '[data-popover]', $.proxy(this.onPopoverClick, this)).on('click.profile', '[data-user-id]', $.proxy(this.onProfileClick, this)).on('click.username', '[data-user-name]', $.proxy(this.onUsernameClick, this)).on('click.private', '[data-private]', $.proxy(this.onPrivateClick, this)).on('click.ignore', '[data-ignore]', $.proxy(this.onIgnoreClick, this));
     $('[data-action="bbcode"]').on('click.bbcode', $.proxy(this.onBBCodeClick, this));
     if (window.config.mobile_enable) {
       var snapper = new Snap({
@@ -1036,6 +1037,9 @@ var Application = function Application(server) {
   },
   onMessage: function(event, message) {
     "use strict";
+    if (message != undefined && message.user != undefined && this.ignore.indexOf(message.user.id) != -1) {
+      return;
+    }
     this.addMessage(message);
     window.sound.message.play();
   },
@@ -1121,6 +1125,18 @@ var Application = function Application(server) {
     "use strict";
     var bbcode = $(event.target).attr('data-bbcode');
     this.dom.textarea.insertAtCaret(bbcode);
+  },
+  onIgnoreClick: function(event) {
+    "use strict";
+    var button = $(event.target);
+    var ignoreId = parseInt(button.attr('data-ignore'));
+    if (this.ignore.indexOf(ignoreId) == -1) {
+      this.ignore.push(ignoreId);
+      button.addClass('btn-danger');
+    } else {
+      this.ignore.splice(this.ignore.indexOf(ignoreId), 1);
+      button.removeClass('btn-danger');
+    }
   }
 }, {});
 var SendBehavior = function SendBehavior(chat) {
