@@ -25,6 +25,9 @@ class Theme extends AbstractPlugin
 
     private $assets;
 
+    /**
+     * @var string Web path to theme directory.
+     */
     private $webPath;
 
     public function parse(array $json)
@@ -52,7 +55,7 @@ class Theme extends AbstractPlugin
         }
 
         if(isset($json['assets']) && is_string($json['assets'])) {
-            $this->assets = $this->getDir() . '/' . $json['assets'];
+            $this->assets = $json['assets'];
         }
     }
 
@@ -72,16 +75,19 @@ class Theme extends AbstractPlugin
         return $this->assets;
     }
 
-    public function getWebPath()
-    {
-        return $this->webPath;
-    }
-
     /**
      * @param string $webPath
      */
     public function setWebPath($webPath)
     {
         $this->webPath = $webPath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWebPath()
+    {
+        return $this->webPath;
     }
 }

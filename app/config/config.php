@@ -115,24 +115,22 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
 ));
 $app->register(new Silicone\Provider\TwigServiceProviderExtension());
 $app['twig'] = $app->share($app->extend('twig', function (\Twig_Environment $twig, $app) {
-    $twig->addExtension(new ElfChat\Twig\ViewExtension());
-    $twig->addExtension(new \Assetic\Extension\Twig\AsseticExtension($app['asset.factory']));
+    $twig->addExtension(new ElfChat\Twig\ElfChatExtension($app['assetic']));
     return $twig;
 }));
 
 /**
  * Assetic
  */
-$app['asset.manager'] = $app->share(function () use ($app) {
-    $am = new \Assetic\AssetManager();
-    $am->set('base', new \Assetic\Asset\GlobAsset($app->getRootDir() . '/../web/'));
-    return $am;
-});
+$app['assetic'] = $app->share(function () use ($app) {
+    $assetic = new ElfChat\Theme\Assetic();
+    $assetic->addAsset($app->getWebDir(), $app->request()->getBasePath() . '/web');
 
-$app['asset.factory'] = $app->share(function () use ($app) {
-    $factory = new \Assetic\Factory\AssetFactory($app->getRootDir() . '/../web/');
-    $factory->setAssetManager($app['asset.manager']);
-    return $factory;
+    if(!empty($app['theme.assets_dir'])) {
+        $assetic->addAsset($app['theme.assets_dir'], $app['theme.assets_webpath']);
+    }
+
+    return $assetic;
 });
 
 /**
@@ -144,7 +142,7 @@ $app['twig.loader.theme'] = $app->share(function () use ($app, $config) {
         array(
             // Order of keys is really matter.
             'plugin' => $app['plugin_view_dir'],
-            'theme' => $config->get('theme_path'),
+            'theme' => $config->get('theme.views'),
             'base' => $app->getRootDir() . '/views/',
         )
     );

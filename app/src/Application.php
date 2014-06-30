@@ -91,6 +91,15 @@ class Application extends Silicone\Application
         return $dir;
     }
 
+    public function getWebDir()
+    {
+        static $dir;
+        if (empty($dir)) {
+            $dir = dirname(dirname(__DIR__)) . '/web';
+        }
+        return $dir;
+    }
+
     /**
      * @return \Symfony\Component\HttpFoundation\Request
      */

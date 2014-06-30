@@ -45,9 +45,12 @@ return array(
 
     'mobile_enable' => true,
     'chat_title' => 'ElfChat',
-    'theme' => 'elfchat/theme',
-    'theme_path' => null,
-    'theme_assets' => null,
+    'theme' => array(
+        'name' => null,
+        'views' => null,
+        'assets_dir' => null,
+        'assets_webpath' => null,
+    ),
     'trusted_proxy' => '127.0.0.1',
     'is_chat_open' => true,
 );

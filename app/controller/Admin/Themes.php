@@ -63,10 +63,15 @@ class Themes extends Controller
 
         $name = $request->get('name');
         if (isset($themes[$name])) {
+            /** @var $theme Theme */
+            $theme = $themes[$name];
             $config = $this->app->config();
-            $config->set('theme', $themes[$name]->name);
-            $config->set('theme_path', $themes[$name]->getViews());
-            $config->set('theme_assets', $themes[$name]->getAssets());
+
+            $config->set('theme.name', $theme->name);
+            $config->set('theme.views', $theme->getViews());
+            $config->set('theme.assets_dir', $theme->getDir() . '/' . $theme->getAssets());
+            $config->set('theme.assets_webpath', $theme->getWebPath() . '/' . $theme->getAssets());
+
             $config->save();
         }
 

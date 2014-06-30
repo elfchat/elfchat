@@ -2,7 +2,7 @@
 
 {% block style %}
     {{ parent() }}
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/chat.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ css('css/chat.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/theme.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('icons/css/icons.css') }}">
     {% if app.config.get('mobile_enable') %}

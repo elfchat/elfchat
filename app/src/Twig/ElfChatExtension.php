@@ -7,19 +7,28 @@
 
 namespace ElfChat\Twig;
 
+use ElfChat\Theme\Assetic;
 use Symfony\Component\HttpFoundation\Request;
 
-class ViewExtension extends \Twig_Extension
+class ElfChatExtension extends \Twig_Extension
 {
+    private $assetic;
+
+    public function __construct(Assetic $assetic)
+    {
+        $this->assetic = $assetic;
+    }
+
     public function getName()
     {
-        return 'ViewExtension';
+        return 'ElfChatExtension';
     }
 
     public function getFunctions()
     {
         return array(
             'view' => new \Twig_Function_Method($this, 'view', array('needs_environment' => true)),
+            'css' => new \Twig_Function_Method($this, 'css'),
         );
     }
 
@@ -30,5 +39,10 @@ class ViewExtension extends \Twig_Extension
         $html = $env->resolveTemplate($path)->render($variables);
         $html = "<script type=\"text/html\" id=\"view_$name\">$html</script>";
         return $html;
+    }
+
+    public function css($path)
+    {
+        return $this->assetic->getAssetWebPath($path);
     }
 }
