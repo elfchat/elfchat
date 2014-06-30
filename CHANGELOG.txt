@@ -2,6 +2,7 @@ ElfChat 6.0.0 BETA 3, 2014-06-30
 --------------------------------
 - Black theme
 - Cerulean theme
+- Default theme update
 - Add theme assets
 - Add ignore feature
 - Mobile view on desktop
