@@ -1,0 +1,14 @@
+{
+    "name": "elfchat/cerulean",
+    "title": "Cerulean Theme",
+    "thumbnail": "thumbnail.png",
+    "author": {
+        "name": "ElfChat",
+        "email": "support@elfchat.net"
+    },
+    "require": {
+        "php": "5.*",
+        "elfchat": "6.0.*"
+    },
+    "assets": "assets/"
+}
