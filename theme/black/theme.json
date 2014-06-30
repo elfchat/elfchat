@@ -1,6 +1,6 @@
 {
-    "name": "elfchat/theme",
-    "title": "Default Theme",
+    "name": "elfchat/black",
+    "title": "Black Theme",
     "thumbnail": "thumbnail.png",
     "author": {
         "name": "ElfChat",
@@ -10,5 +10,6 @@
         "php": "5.*",
         "elfchat": "6.0.*"
     },
-    "views": "views/"
+    "views": "views/",
+    "assets": "assets/"
 }

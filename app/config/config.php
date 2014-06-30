@@ -122,13 +122,16 @@ $app['twig'] = $app->share($app->extend('twig', function (\Twig_Environment $twi
 /**
  * Assetic
  */
-$app['assetic'] = $app->share(function () use ($app) {
+$app['assetic'] = $app->share(function () use ($app, $config) {
     $assetic = new ElfChat\Theme\Assetic();
-    $assetic->addAsset($app->getWebDir(), $app->request()->getBasePath() . '/web');
 
-    if(!empty($app['theme.assets_dir'])) {
-        $assetic->addAsset($app['theme.assets_dir'], $app['theme.assets_webpath']);
+    // Theme assets
+    if (is_dir($config->get('theme.assets_dir'))) {
+        $assetic->addAsset($config->get('theme.assets_dir'), $config->get('theme.assets_webpath'));
     }
+
+    // Base assets
+    $assetic->addAsset($app->getWebDir(), $app->request()->getBasePath() . '/web');
 
     return $assetic;
 });

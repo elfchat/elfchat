@@ -1,0 +1,49 @@
+header,
+aside,
+footer {
+    background-color: #060606;
+}
+
+/**
+ * Borders
+ */
+
+header {
+    border-bottom: solid 1px #282828;
+}
+
+aside {
+    border-right: solid 1px #282828;
+}
+
+aside .user {
+    border-bottom: solid 1px #282828;
+}
+
+.chat > div {
+    border-bottom: solid 1px #282828;
+}
+
+footer {
+    border-top: solid 1px #282828;
+}
+
+/**
+ * Over colors
+ */
+
+.chat {
+    background-color: #060606;
+}
+
+.chat .time {
+    color: #898989;
+}
+
+.name {
+    color: #2180ac;
+}
+
+footer textarea.form-control {
+    background-color: #000000;
+}

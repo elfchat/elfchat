@@ -4,6 +4,34 @@ footer {
     background-color: #fbfbfb;
 }
 
+/**
+ * Borders
+ */
+
+header {
+    border-bottom: solid 1px #e1e1e1;
+}
+
+aside {
+    border-right: solid 1px #e1e1e1;
+}
+
+aside .user {
+    border-bottom: solid 1px #e1e1e1;
+}
+
+.chat > div {
+    border-bottom: solid 1px #f7f7f7;
+}
+
+footer {
+    border-top: solid 1px #e1e1e1;
+}
+
+/**
+ * Over colors
+ */
+
 .chat {
     background-color: #ffffff;
 }

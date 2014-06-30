@@ -7,7 +7,7 @@
     <style type="text/css">
         .thumbnail {
             width: 500px;
-            min-height: 200px;
+            height: 275px;
         }
 
         .panel-inline {
@@ -23,7 +23,11 @@
                 <h2 class="panel-title">{{ theme.title|trans() }}</h2>
             </div>
             <div class="panel-body">
-                <img class="img-thumbnail thumbnail" src="{{ theme.getWebPath() }}/{{ theme.thumbnail }}">
+                {% if theme.thumbnail is not empty %}
+                    <img class="img-thumbnail thumbnail" src="{{ theme.getWebPath() }}/{{ theme.thumbnail }}">
+                {% else %}
+                    <img class="img-thumbnail thumbnail" src="">
+                {% endif %}
             </div>
             <div class="panel-footer">
                 {% if theme.checkRequirements() %}

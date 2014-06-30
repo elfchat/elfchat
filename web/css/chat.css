@@ -48,7 +48,6 @@ header {
     vertical-align: middle;
     padding-left: 10px;
     padding-right: 10px;
-    border-bottom: solid 1px #e1e1e1;
     z-index: 20;
 }
 
@@ -77,7 +76,6 @@ aside {
     width: 300px;
     overflow-x: hidden;
     overflow-y: auto;
-    border-right: solid 1px #e1e1e1;
     z-index: 1;
 }
 
@@ -86,7 +84,6 @@ aside .user {
     line-height: 40px;
     padding-left: 5px;
     padding-right: 5px;
-    border-bottom: solid 1px #e1e1e1;
 }
 
 aside .user .avatar {
@@ -119,7 +116,6 @@ aside .user .name {
     padding-bottom: 10px;
     padding-left: 10px;
     padding-right: 10px;
-    border-bottom: solid 1px #f7f7f7;
 }
 
 .chat .user {
@@ -169,7 +165,6 @@ footer {
     left: 300px; /* users width */
     right: 0;
     bottom: 0;
-    border-top: solid 1px #e1e1e1;
     padding: 10px;
     z-index: 20;
 }
