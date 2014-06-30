@@ -8,6 +8,7 @@ ElfChat 6.0.0 BETA 3,
 - Add guest name check
 - Refactor hooks system
 - Refactor message-color plugin
+- Message-color plugin remembers users pick
 - Fix magic quotes error
 - Fix IP detection
 - Fix avatar upload input
