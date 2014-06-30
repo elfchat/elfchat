@@ -20,6 +20,12 @@ aside .user {
     border-bottom: solid 1px #282828;
 }
 
+@media only screen and (min-width: 320px) and (max-width: 480px) {
+    .chat {
+        border-left: solid 1px #282828;
+    }
+}
+
 .chat > div {
     border-bottom: solid 1px #282828;
 }

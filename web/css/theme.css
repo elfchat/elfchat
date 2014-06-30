@@ -8,6 +8,12 @@ footer {
  * Borders
  */
 
+@media only screen and (min-width: 320px) and (max-width: 480px) {
+    .chat {
+        border-left: solid 1px #e1e1e1;
+    }
+}
+
 header {
     border-bottom: solid 1px #e1e1e1;
 }
