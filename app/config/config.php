@@ -344,7 +344,10 @@ if ($app->isInstalled()) {
         return $app->config()->get('server.type') === 'ajax' ?
             new ElfChat\Server\AjaxServer($app->user()) :
             new ElfChat\Server\WebSocketServerProxy(
-                'http://' . $app->config()->get('server.host') . ':' . $app->config()->get('server.port'),
+                'http://'
+                . $app->config()->get('server.host')
+                . ':' . $app->config()->get('server.port')
+                . $app->config()->get('server.path'),
                 $app->request()->headers->get('Cookie')
             );
     });

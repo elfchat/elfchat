@@ -48,7 +48,8 @@ class Configuration extends Controller
                     'label' => 'Server Type',
                 ))
                 ->add('server:host', 'text', array('label' => 'Server Host'))
-                ->add('server:port', 'text', array('label' => 'Server Port'));
+                ->add('server:port', 'text', array('label' => 'Server Port'))
+                ->add('server:path', 'text', array('label' => 'Server Path'));
         }
 
         $form = $formBuilder->getForm();

@@ -142,12 +142,13 @@ var AbstractServer = function AbstractServer() {
     console.error(error);
   }
 }, {});
-var WebSocketServer = function WebSocketServer(server, port) {
+var WebSocketServer = function WebSocketServer(server, port, path) {
   "use strict";
   $traceurRuntime.superCall(this, $WebSocketServer.prototype, "constructor", []);
   this.socket = null;
   this.server = server;
   this.port = port;
+  this.path = path;
   this.reconnect = null;
 };
 var $WebSocketServer = WebSocketServer;
@@ -155,7 +156,7 @@ var $WebSocketServer = WebSocketServer;
   connect: function() {
     "use strict";
     var $__2 = this;
-    this.socket = new WebSocket('ws://' + this.server + ':' + this.port);
+    this.socket = new WebSocket('ws://' + this.server + ':' + this.port + this.path);
     this.socket.onopen = (function() {
       $__2.onConnect();
       clearInterval($__2.reconnect);

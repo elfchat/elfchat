@@ -84,6 +84,7 @@ Integration key: Ключ интеграции
 Server Type: Тип сервера
 Server Host: Хост
 Server Port: Порт
+Server Path: Путь
 
 Save: Сохранить
 Reset: Восстановить

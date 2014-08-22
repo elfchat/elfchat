@@ -8,7 +8,8 @@ return array(
     'server' => array(
         'type' => 'ajax',
         'host' => 'localhost',
-        'port' => 1337,
+        'port' => 8080,
+        'path' => '/',
         'interval' => 1000,
     ),
     'database' => 'mysql',

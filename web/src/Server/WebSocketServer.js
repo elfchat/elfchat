@@ -5,16 +5,17 @@
  */
 
 class WebSocketServer extends AbstractServer {
-    constructor(server, port) {
+    constructor(server, port, path) {
         super();
         this.socket = null;
         this.server = server;
         this.port = port;
+        this.path = path;
         this.reconnect = null;
     }
 
     connect() {
-        this.socket = new WebSocket('ws://' + this.server + ':' + this.port);
+        this.socket = new WebSocket('ws://' + this.server + ':' + this.port + this.path);
 
         this.socket.onopen = () => {
             this.onConnect();

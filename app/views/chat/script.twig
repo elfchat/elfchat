@@ -12,6 +12,7 @@
             type: '{{ app.config.get('server.type') }}',
             host: '{{ app.config.get('server.host') }}',
             port: {{ app.config.get('server.port') }},
+            path: '{{ app.config.get('server.path') }}',
             interval: {{ app.config.get('server.interval') }}
         },
         sound: {
@@ -45,7 +46,7 @@
         });
         {% else %}
         container.set('server', function () {
-            return new WebSocketServer(window.config.server.host, window.config.server.port);
+            return new WebSocketServer(window.config.server.host, window.config.server.port, window.config.server.path);
         });
         {% endif %}
 

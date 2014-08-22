@@ -12,61 +12,52 @@ use Ratchet\Server\IoServer;
 use Ratchet\Session\SessionProvider;
 use Ratchet\WebSocket\WsServer;
 
-$runable = function () {
-    // We need to configure application to use common parts.
-    $app = new ElfChat\Application();
-    $app->boot();
+// Use cli opt
+$opt = getopt('', array('host::', 'port::', 'path::'));
 
-    // Error logger.
-    ElfChat\Server\WebSocketServer\ErrorLogger::register($app['logger']);
+// We need to configure application to use common parts.
+$app = new ElfChat\Application();
+$app->boot();
 
-    $config = $app->config();
-    $host = $config->get('server.host', 'macbook.local');
-    $port = $config->get('server.port', 1337);
-    $address = '0.0.0.0'; // 0.0.0.0 means receive connections from any
+// Error logger.
+ElfChat\Server\WebSocketServer\ErrorLogger::register($app['logger']);
 
-    // Init Ratchet server
-    $loop = LoopFactory::create();
-    $ratchet = new Ratchet\App($host, $port, $address, $loop);
+$host = array_key_exists('host', $opt) ? $opt['host'] : 'localhost';
+$port = array_key_exists('port', $opt) ? $opt['port'] : '8080';
+$path = array_key_exists('path', $opt) ? $opt['path'] : '/';
+$address = '0.0.0.0'; // 0.0.0.0 means receive connections from any
 
-    // Session Integration
-    $sessionWrapper = function ($component) use ($app) {
-        return new SessionProvider($component, $app['session.storage.handler'], array('name' => 'ELFCHAT'));
-    };
+// Init Ratchet server
+$loop = LoopFactory::create();
+$ratchet = new Ratchet\App($host, $port, $address, $loop);
 
-    // WebSocket Server
-    $chat = new ElfChat\Server\WebSocketServer($app);
-    $wsServer = new WsServer($sessionWrapper($chat));
-    $ratchet->route('/', $wsServer, array('*'));
-
-    // WebSocket Controller
-    $controller = new ElfChat\Server\WebSocketServer\Controller($chat);
-    $factory = new \ElfChat\Server\WebSocketServer\Controller\ActionFactory(
-        $controller,
-        $app['session.storage.handler'],
-        $app['security.provider']
-    );
-
-    // Http services
-    $ratchet->route('/kill', $factory->create('kill', 'ROLE_MODERATOR'), array('*'));
-    $ratchet->route('/log', $factory->create('log', 'ROLE_MODERATOR'), array('*'));
-    $ratchet->route('/update_user', $factory->create('updateUser', 'ROLE_GUEST'), array('*'));
-    $ratchet->route('/memory_usage', $factory->create('memoryUsage', 'ROLE_ADMIN'), array('*'));
-
-    // Loops
-    $loop->addPeriodicTimer(1, function () use ($controller) {
-        $controller->gatherMemoryUsage();
-    });
-
-    $ratchet->run();
+// Session Integration
+$sessionWrapper = function ($component) use ($app) {
+    return new SessionProvider($component, $app['session.storage.handler'], array('name' => 'ELFCHAT'));
 };
 
-if (extension_loaded('pcntl')) {
-    GracefulDeath::around($runable)
-        ->reanimationPolicy(function () {
-            return true;
-        })
-        ->run();
-} else {
-    $runable();
-}
+// WebSocket Server
+$chat = new ElfChat\Server\WebSocketServer($app);
+$wsServer = new WsServer($sessionWrapper($chat));
+$ratchet->route($path, $wsServer, array('*'));
+
+// WebSocket Controller
+$controller = new ElfChat\Server\WebSocketServer\Controller($chat);
+$factory = new \ElfChat\Server\WebSocketServer\Controller\ActionFactory(
+    $controller,
+    $app['session.storage.handler'],
+    $app['security.provider']
+);
+
+// Http services
+$ratchet->route("$path/kill", $factory->create('kill', 'ROLE_MODERATOR'), array('*'));
+$ratchet->route("$path/log", $factory->create('log', 'ROLE_MODERATOR'), array('*'));
+$ratchet->route("$path/update_user", $factory->create('updateUser', 'ROLE_GUEST'), array('*'));
+$ratchet->route("$path/memory_usage", $factory->create('memoryUsage', 'ROLE_ADMIN'), array('*'));
+
+// Loops
+$loop->addPeriodicTimer(1, function () use ($controller) {
+    $controller->gatherMemoryUsage();
+});
+
+$ratchet->run();
