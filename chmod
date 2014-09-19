@@ -1,9 +1,0 @@
-#!/bin/bash
-
-sudo rm -rf app/open/*
-
-sudo chmod +a "_www allow delete,write,append,file_inherit,directory_inherit" app/open/
-sudo chmod +a "anton allow delete,write,append,file_inherit,directory_inherit" app/open/
-
-sudo chmod +a "_www allow delete,write,append,file_inherit,directory_inherit" upload/
-sudo chmod +a "anton allow delete,write,append,file_inherit,directory_inherit" upload/
