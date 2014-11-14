@@ -29,6 +29,7 @@ class Configuration extends Controller
             ->add('debug', 'checkbox', array('label' => 'Debug', 'required' => false))
             ->add('locale', 'choice', array(
                 'choices' => array(
+                    'fa' => 'فارسی',
                     'ru' => 'Russian',
                     'en' => 'English',
                 ),

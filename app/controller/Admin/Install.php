@@ -40,7 +40,8 @@ class Install extends Controller
         $form = $this->app->form($config)
             ->add('locale', 'choice', array(
                 'choices' => array(
-                    'ru' => 'Russian',
+                    'fa' => 'فارسی',
+					'ru' => 'Russian',
                     'en' => 'English',
                 ),
                 'label' => 'Language',

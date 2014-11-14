@@ -1,0 +1,113 @@
+Register: عضویت
+Login: ورود
+Username: نام کاربری
+Name: نام
+User: کاربر
+Email: ایمیل
+Password: رمزعبور
+Repeat password: تکرار رمزعبور
+Bad credentials: گواهینامه اشتباه
+Settings: تنظیمات
+Avatar: آواتار
+Logout: خروج
+Remember me: مرا به خاطر بسپار
+Admin Center: مرکز مدیریت
+Emotions: شکلک ها
+Send: ارسال
+Send private message: ارسال پیام خصوصی
+Private: خصوصی
+Ignore: نادیده گرفتن
+Created: ایجاد شده
+Guest: مهمان
+Admin: مدیریت کل
+Guest login: ورود مهمان
+
+Moderator Center: مرکز کنترل
+Moderator: مدیر
+Bans: ممنوعیت
+Add ban: افزودن ممنوعیت
+Ban: منع
+Ban %user%: منع %user%
+Active: معالسازی
+User ID: شناسه کاربری
+On how long: برای چه مدت
+Reason: دلیل
+Ban was deleted.: ممنوعیت حذف شد.
+User %user% was banned for %time%.: %user% به مدت %time% مشمول ممنوعیت شد.
+"Reason: %reason%": "دلیل: %reason%"
+Configuration saved.: پیکربندی ذخیره شد
+Edit user %name%: ویرایش %name%
+Delete user "%name%"?: حذف %name%?
+User "%name%" edited successful.: %name% با موفقیت ویرایش شد.
+Plugins reinstalled.: پلاگین نصب شد.
+
+One min: یک دقیقه
+5 min: ۵ دقیقه
+15 min: ۱۵ دقیقه
+One hour: یک ساعت
+12 hours: ۱۲ ساعت
+One day: یک روز
+2 days: ۲ روز
+7 days: ۷ روز
+14 days: ۱۴ روز
+31 days: ۳۱ روز
+Forever: برای همیشه
+
+BBCode: بی بی کد
+Color: رنگ
+for: برای
+Bolded text: متن درشت
+Italicized text: متن مورب
+Striked text: متن خط خورده
+Text color: رنگ متن
+Background color: رنگ پس زمینه
+
+Change avatar: تغییر آواتار
+Upload: آپلود
+Upload avatar: آپلو آواتار
+Crop avatar: چیدن آواتار
+Crop: چیدن
+
+All system operational.: تمام سامانه ها بدون مشکل فعال هستند.
+Configuration: پیکربندی
+Users: کاربران
+Themes: قالب ها
+Plugins: پلاگین ها
+
+Chat title: عنوان چت روم
+Is chat open: چت روم باز باشد؟
+Debug: رفع عیب
+Language: زبان
+Base URL: آدرس پایه
+Enable mobile: اجرا در موبایل ها
+Integration key: کلید ادغام
+Server Type: نوع سرور
+Server Host: سرور میزبان
+Server Port: پورت سرور
+Server Path: مسیر سرور
+
+Save: ذخیره
+Reset: تنظیم مجدد
+Edit: ویرایش
+Delete: حذف
+Cancel: لغو
+Exit: خروج
+
+ID: شناسه
+E-Mail: ایمیل
+Author: نویسنده
+Role: نقش
+Remove avatar: حذف آواتار؟
+
+Install plugin: نصب پلاگین
+Uninstall plugin: حذف پلاگین
+Reinstall plugins: نصب مجدد پلاگین ها
+
+Access denied: اجازه دست رسی ندارید
+Chat is closed: چت بسته است
+You are banned for %time%: شما به مدت %time% مشمول ممنوعیت هستید.
+You are banned: شما منع شدید
+Error: خطا
+Some error occurred: خطایی رخ داده
+To determine the cause of this error, see app/open/error_log.txt file.: دلیل خطا در مسیر رو به رو ذخیره شده است app/open/error_log.txt.
+Page not found: صفحه مورد نظر شما یافت نشد.

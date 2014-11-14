@@ -1,7 +1,8 @@
 <!doctype html>
 <htmL>
 <head>
-    <title>ElfChat Requirement</title>
+    <title>نیاز های نصب الف چت</title>
+    <meta http-equiv="content-type" content="text/html" charset="UTF-8">
     <style>
         body {
             margin: 30px 200px;
@@ -46,7 +47,7 @@ define('INSTALLED_PHP_VERSION', phpversion());
 requirement(
     version_compare(INSTALLED_PHP_VERSION, REQUIRED_PHP_VERSION, '>='),
     sprintf(
-        'You are running PHP version "<strong>%s</strong>", but ElfChat needs at least PHP "<strong>%s</strong>" to run.',
+        'نسخه php شما "<strong>%s</strong>" است, اما برای نصب کیو چت به php "<strong>%s</strong>" نیاز دارید.',
         INSTALLED_PHP_VERSION,
         REQUIRED_PHP_VERSION
     )
@@ -54,7 +55,7 @@ requirement(
 
 requirement(
     version_compare(INSTALLED_PHP_VERSION, '5.3.16', '!='),
-    'PHP version must not be 5.3.16 as ElfChat won\'t work properly with it'
+    'نباید نسخه php 5.3.16 باشد، چرا که کیوچت قادر ب اجرا در این نسخه نیست.'
 );
 
 requirement(
