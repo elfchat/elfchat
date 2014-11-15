@@ -7,6 +7,7 @@
         body {
             margin: 30px 200px;
             font-family: Verdana, Geneva, sans-serif;
+            direction:rtl;
         }
 
         .requirement {
@@ -60,12 +61,12 @@ requirement(
 
 requirement(
     version_compare(INSTALLED_PHP_VERSION, '5.3.4', '>='),
-    'You should use at least PHP 5.3.4 due to PHP bug #52083 in earlier versions.'
+    'بهتر است حداقل از PHP 5.3.4 استفاده کنید با توجه به باگ #52083 نسخه های قدیمی تر.'
 );
 
 requirement(
     version_compare(INSTALLED_PHP_VERSION, '5.3.8', '>='),
-    'You should have at least PHP 5.3.8 due to PHP bug #55156.'
+    'بهتر است حداقل از 5.3.8 استفاده کنید با توجه به وجود باگ PHP bug #55156 در نسخه های قبل تر.'
 );
 
 requirement(
@@ -76,38 +77,38 @@ requirement(
 
 requirement(
     is_writable(UPLOAD_DIR),
-    sprintf('%s directory must be writable', UPLOAD_DIR)
+    sprintf('پوشه %s باید قابل نوشتن باشد.', UPLOAD_DIR)
 );
 
 $timezone = ini_get('date.timezone');
 requirement(
     !empty($timezone),
-    'date.timezone setting must be set in php.ini.'
+    'date.timezone باید در php.ini تنظیم شود.'
 );
 
 requirement(
     function_exists('json_encode'),
-    'Install and enable the <strong>JSON</strong> extension.'
+    'افزونه <strong>JSON</strong> را نصب و فعال کنید.'
 );
 
 requirement(
     function_exists('session_start'),
-    'Install and enable the <strong>session</strong> extension.'
+    'افزونه <strong>session</strong> نصب و فعال کنید.'
 );
 
 requirement(
     function_exists('ctype_alpha'),
-    'Install and enable the <strong>ctype</strong> extension.'
+    'افزونه <strong>ctype</strong> را نصب و فعال کنید.'
 );
 
 requirement(
     function_exists('token_get_all'),
-    'Install and enable the <strong>Tokenizer</strong> extension.'
+    'افزونه <strong>Tokenizer</strong> را نصب و فعال کنید.'
 );
 
 requirement(
     extension_loaded('fileinfo'),
-    'Install and enable the <strong>Fileinfo</strong> extension.'
+    'افزونه <strong>Fileinfo</strong> را نصب و فعال کنید.'
 );
 
 if (function_exists('apc_store') && ini_get('apc.enabled')) {
@@ -119,7 +120,7 @@ if (function_exists('apc_store') && ini_get('apc.enabled')) {
     } else {
         requirement(
             version_compare(phpversion('apc'), '3.0.17', '>='),
-            'APC version must be at least 3.0.17'
+            'نسخه ACP باشد. باید حداقل 3.0.17'
         );
     }
 }
