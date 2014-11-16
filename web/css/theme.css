@@ -19,7 +19,7 @@ header {
 }
 
 aside {
-    border-right: solid 1px #e1e1e1;
+    border-left: solid 1px #e1e1e1;
 }
 
 aside .user {
