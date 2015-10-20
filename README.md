@@ -1,1 +1,1 @@
-# Elfchat is for sale [elfchat.net/](http://elfchat.net)
+# ElfChat is for sale [elfchat.net](http://elfchat.net)
