@@ -56,7 +56,7 @@ $ratchet->route("$path/update_user", $factory->create('updateUser', 'ROLE_GUEST'
 $ratchet->route("$path/memory_usage", $factory->create('memoryUsage', 'ROLE_ADMIN'), array('*'));
 
 // Loops
-$loop->addPeriodicTimer(1, function () use ($controller) {
+$loop->addPeriodicTimer(1, function () use ($app,$controller) {
     // http://stackoverflow.com/a/26791224/1677077
     if ($app['em']->getConnection()->ping() === false) {
         $app['em']->getConnection()->close();
