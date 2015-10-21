@@ -57,6 +57,11 @@ $ratchet->route("$path/memory_usage", $factory->create('memoryUsage', 'ROLE_ADMI
 
 // Loops
 $loop->addPeriodicTimer(1, function () use ($controller) {
+    // http://stackoverflow.com/a/26791224/1677077
+    if ($app['em']->getConnection()->ping() === false) {
+        $app['em']->getConnection()->close();
+        $app['em']->getConnection()->connect();
+    }
     $controller->gatherMemoryUsage();
 });
 
